@@ -30,6 +30,21 @@ import {
 function fmtYMD(y, m, d) { return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
 function parseYMD(s) { const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s || ''); return m ? { y: +m[1], mo: +m[2], d: +m[3] } : null; }
 
+// ---- activity picker tabs: SINGLE auditable source for the 日常 / 凶事 split ----
+// Categories map wholesale to a tab; `items` additionally pulls specific activity ids into 凶事
+// even though their category (居家) is otherwise Everyday — the clearly-inauspicious Demolish (拆卸)
+// and Break-earth-for-grave (破土). Move house etc. stay in 日常. Audit the split here, nowhere else.
+const CATEGORY_TABS = {
+  everyday: { zh: '日常', en: 'Everyday', cats: ['医疗', '婚嫁', '居家', '商业', '出行', '祭祀', '农牧', '杂事'] },
+  xiong: { zh: '凶事', en: 'Inauspicious', cats: ['丧葬'], items: ['chaixie', 'potu'] },
+};
+const ACT_TAB_ORDER = ['everyday', 'xiong'];
+const activityTab = (a) => {
+  for (const k of ACT_TAB_ORDER) { const t = CATEGORY_TABS[k]; if (t.items && t.items.includes(a.id)) return k; }
+  for (const k of ACT_TAB_ORDER) { const t = CATEGORY_TABS[k]; if (t.cats.includes(a.cat)) return k; }
+  return 'everyday';
+};
+
 export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', initialFindView = 'list' } = {}) {
   const now = new Date();
   const today = { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
@@ -56,6 +71,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
   const [birthTime, setBirthTime] = useState('');
   const [screenZodiac, setScreenZodiac] = useState(true);
   const [sortMode, setSortMode] = useState('score');
+  const [actTab, setActTab] = useState('everyday'); // activity picker tab: 'everyday' | 'xiong'
   const [findView, setFindView] = useState(initialFindView); // 'list' | 'cal' (heat-strip)
   const [findCalY, setFindCalY] = useState(today.y);
   const [findCalM, setFindCalM] = useState(today.mo);
@@ -252,6 +268,8 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
   // category groups for the activity picker
   const catGroups = useMemo(() => { const m = {}; ACTIVITIES.forEach(a => { (m[a.cat] = m[a.cat] || []).push(a); }); return m; }, []);
   const catLabel = (c) => { try { return L((CATEGORIES && CATEGORIES[c]) || c, (CATEGORIES_EN && CATEGORIES_EN[c]) || c); } catch (e) { return c; } };
+  // count current selections per tab so the inactive tab can show a "(+N)" hint
+  const selCountByTab = useMemo(() => { const c = { everyday: 0, xiong: 0 }; selIds.forEach(id => { const a = ACTIVITIES.find(x => x.id === id); if (a) c[activityTab(a)]++; }); return c; }, [selIds]);
 
   const preset = (sj, ej) => { const s = jdnToGregorian(sj), e = jdnToGregorian(ej); setStartStr(fmtYMD(s.y, s.m, s.d)); setEndStr(fmtYMD(e.y, e.m, e.d)); };
 
@@ -296,14 +314,18 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
 
             <div className="a-card" ref={refActivities}>
               <div className="a-sec" style={{ marginTop: 0 }}>{L('事项', 'Activities')} <span className="en">{selActs.length} selected</span></div>
-              {Object.keys(catGroups).map(c => (
+              <div className="a-seg" style={{ marginBottom: '12px' }}>
+                {ACT_TAB_ORDER.map(k => { const hint = (actTab !== k && selCountByTab[k] > 0) ? ` (+${selCountByTab[k]})` : ''; return <button key={k} className={actTab === k ? 'on' : ''} onClick={() => setActTab(k)}>{L(CATEGORY_TABS[k].zh, CATEGORY_TABS[k].en)}{hint}</button>; })}
+              </div>
+              {CATEGORIES.map(c => { const acts = (catGroups[c] || []).filter(a => activityTab(a) === actTab); if (!acts.length) return null; return (
                 <div key={c} style={{ marginBottom: '10px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--ink-faint)', margin: '4px 0' }}>{catLabel(c)}</div>
                   <div className="a-chips">
-                    {catGroups[c].map(a => <button key={a.id} className={'a-chip' + (selIds.includes(a.id) ? ' on' : '')} onClick={() => setSelIds(s => s.includes(a.id) ? s.filter(x => x !== a.id) : [...s, a.id])}>{lang === 'en' ? a.en : a.zh}</button>)}
+                    {acts.map(a => <button key={a.id} className={'a-chip' + (selIds.includes(a.id) ? ' on' : '')} onClick={() => setSelIds(s => s.includes(a.id) ? s.filter(x => x !== a.id) : [...s, a.id])}>{lang === 'en' ? a.en : a.zh}</button>)}
                   </div>
                 </div>
-              ))}
+              ); })}
+              {actTab === 'xiong' && <div className="a-note" style={{ marginTop: '2px' }}>{L('凶事类（丧葬・拆卸・破土）已与日常分开，避免误选；选择仍跨标签保留。', 'Inauspicious acts (funerary · demolish · break-earth) are kept apart from everyday to avoid mis-selection; choices persist across tabs.')}</div>}
             </div>
 
             <div className="a-card" style={{ marginTop: '10px' }} ref={refRange}>
