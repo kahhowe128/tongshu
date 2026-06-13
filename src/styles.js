@@ -164,7 +164,10 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-tab.on .ic{transform:translateY(-1px);}
 
 /* bottom sheet */
-.a-scrim{position:fixed;inset:0;background:var(--scrim);z-index:50;animation:afade .18s ease;}
+/* backdrop blurs the page so its top bar + page h1 don't bleed through behind the sheet heading */
+.a-scrim{position:fixed;inset:0;background:var(--scrim);z-index:50;animation:afade .18s ease;-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);}
+/* on the narrow (scrim) layout the page chrome is redundant under the modal sheet — keep it from showing above the sheet's verdict heading */
+@media (max-width:979px){.a-root[data-sheet="1"] .a-bar{visibility:hidden;}}
 .a-sheet{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:540px;height:90vh;
   background:var(--surface);border-radius:18px 18px 0 0;z-index:51;display:flex;flex-direction:column;
   box-shadow:var(--sh2);animation:aslide .24s cubic-bezier(.2,.8,.2,1);}

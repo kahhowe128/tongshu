@@ -3,3 +3,4 @@ dist/
 .cache/
 .DS_Store
 tongshu-app-repo.zip
+.claude/
