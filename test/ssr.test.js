@@ -13,8 +13,8 @@ esbuild.buildSync({ entryPoints: ['src/App.jsx'], bundle: true, platform: 'node'
 const App = require(process.cwd() + '/.cache/app.test.cjs').default;
 const variants = [
   { name: 'home (default)', props: {}, expect: ['通書擇日', '选个吉日', '免费 / 升级', '历法精确可验证'] },
-  { name: 'find', props: { initialTab: 'find' }, expect: ['通書擇日', '择吉日', '日历'] },
-  { name: 'find · calendar', props: { initialTab: 'find', initialFindView: 'cal' }, expect: ['日历', '范围外日期变淡'] },
+  { name: 'find', props: { initialTab: 'find' }, expect: ['通書擇日', '择吉日', '月历'] },
+  { name: 'find · calendar', props: { initialTab: 'find', initialFindView: 'cal' }, expect: ['月历', '范围外日期变淡'] },
   { name: 'learn', props: { initialTab: 'learn' }, expect: ['快速上手', '学堂', '抬头看天', '用例', '挑一个嫁娶吉日', '词汇表', '历法源流', '天德', '协纪辨方书', '未纳入之神煞', '引擎自检'] },
   { name: 'learn · EN', props: { initialTab: 'learn', initialLang: 'en' }, expect: ['Quick start', 'Academy', 'Looking up at the sky', 'Examples', 'Choosing a wedding date', 'Glossary', 'Heavenly stems', 'never definitive'] },
   { name: 'tools', props: { initialTab: 'tools' }, expect: ['引擎自检', '二十八宿'] },

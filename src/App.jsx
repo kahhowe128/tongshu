@@ -75,10 +75,12 @@ const NAV = [
   { id: 'learn', icon: 'info', zh: '关于', en: 'About' },
 ];
 const MOBILE_TABS = ['home', 'find', 'academy', 'tools']; // 5th slot is the "More" overflow
+// activity category -> Phase-3 icon (decorative top-宜 glyph on calendar cells; no new logic)
+const CAT_ICON = { '医疗': 'catHealth', '婚嫁': 'catMarriage', '居家': 'catHome', '商业': 'catBusiness', '出行': 'catTravel', '祭祀': 'catRitual', '农牧': 'catAgriculture', '杂事': 'catMisc', '丧葬': 'catInauspicious' };
 const THEME_CYCLE = { light: 'dark', dark: 'contrast', contrast: 'red', red: 'light' };
 const THEME_SHORT = { light: '浅', dark: '深', contrast: '高', red: '红' };
 
-export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', initialFindView = 'list' } = {}) {
+export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', initialFindView = 'cal' } = {}) {
   const now = new Date();
   const today = { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
   const todayJDN = gregorianToJDN(today.y, today.mo, today.d);
@@ -136,6 +138,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const L = (zh, en) => (lang === 'en' ? en : lang === 'both' ? `${zh} / ${en}` : zh);
   const colorClass = c => ({ green: 'v-good', red: 'v-bad', amber: 'v-amber', grey: 'v-grey' }[c] || 'v-grey');
   const vIcon = c => ({ green: '✓', red: '✗', amber: '～', grey: '·' }[c] || '·');
+  const topYiCat = (dv) => { const g = (dv.perActivity || []).find(p => p.v.color === 'green'); return g ? CAT_ICON[g.act.cat] : null; }; // decorative top-宜 glyph
   // WS-4 saved/favourite dates — local only, persisted on change
   const isSaved = (jdn) => savedJDNs.includes(jdn);
   const toggleSaved = (jdn) => setSavedJDNs(s => s.includes(jdn) ? s.filter(x => x !== jdn) : [...s, jdn].sort((a, b) => a - b));
@@ -269,7 +272,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   }, []);
   useEffect(() => {
     if (!hashLoaded.current) return;
-    try { const p = new URLSearchParams(); p.set('s', startStr); p.set('e', endStr); if (birthDate) p.set('b', birthDate); if (birthTime) p.set('t', birthTime); p.set('tz', tzKey); if (selIds.length) p.set('a', selIds.join(',')); p.set('p', profile); p.set('l', lang); p.set('th', theme); if (lateZi) p.set('lz', '1'); if (mansionOffset) p.set('mo', String(mansionOffset)); if (brideBranch >= 0) p.set('br', String(brideBranch)); if (findView !== 'list') p.set('fv', findView); if (typeof window !== 'undefined') window.history.replaceState(null, '', '#' + p.toString()); saveLocal(p.toString()); } catch (e) {}
+    try { const p = new URLSearchParams(); p.set('s', startStr); p.set('e', endStr); if (birthDate) p.set('b', birthDate); if (birthTime) p.set('t', birthTime); p.set('tz', tzKey); if (selIds.length) p.set('a', selIds.join(',')); p.set('p', profile); p.set('l', lang); p.set('th', theme); if (lateZi) p.set('lz', '1'); if (mansionOffset) p.set('mo', String(mansionOffset)); if (brideBranch >= 0) p.set('br', String(brideBranch)); p.set('fv', findView); if (typeof window !== 'undefined') window.history.replaceState(null, '', '#' + p.toString()); saveLocal(p.toString()); } catch (e) {}
   }, [startStr, endStr, birthDate, birthTime, tzKey, selIds, profile, lang, theme, lateZi, mansionOffset, brideBranch, findView]);
 
   // ---- keyboard + focus ----
@@ -497,32 +500,55 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
             </div>
 
             <div className="a-sec" ref={refList}>{selActs.length ? L('最佳日期', 'Best dates') : L('范围内日期', 'Days in range')} <span className="en">{listData.length} days</span>
-              <span className="a-seg" style={{ marginLeft: 'auto' }}><button className={findView === 'list' ? 'on' : ''} onClick={() => setFindView('list')}>{L('列表', 'List')}</button><button className={findView === 'cal' ? 'on' : ''} onClick={() => setFindView('cal')}>{L('日历', 'Calendar')}</button></span>
+              <span className="a-seg" style={{ marginLeft: 'auto' }}>
+                <button className={findView === 'cal' ? 'on' : ''} onClick={() => setFindView('cal')}>{L('月历', 'Month')}</button>
+                <button className={findView === 'agenda' ? 'on' : ''} onClick={() => setFindView('agenda')}>{L('日程', 'Agenda')}</button>
+                <button className={findView === 'list' ? 'on' : ''} onClick={() => setFindView('list')}>{L('列表', 'List')}</button>
+              </span>
             </div>
             {findView === 'list' && wuxProfile && <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}><span className="a-seg"><button className={sortMode === 'score' ? 'on' : ''} onClick={() => setSortMode('score')}>{L('宜忌', 'Verdict')}</button><button className={sortMode === 'wuxing' ? 'on' : ''} onClick={() => setSortMode('wuxing')}>五行</button></span></div>}
 
-            {findView === 'cal' ? (
+            {findView === 'cal' && (
               <div className="a-card">
                 <div className="a-calnav">
                   <button className="a-iconbtn" aria-label={L('上个月', 'previous month')} onClick={() => { let m = findCalM - 1, y = findCalY; if (m < 1) { m = 12; y--; } setFindCalM(m); setFindCalY(y); }}>‹</button>
                   <div className="t">{findCalY} · {findCalM}{L('月', '')}</div>
                   <button className="a-iconbtn" aria-label={L('下个月', 'next month')} onClick={() => { let m = findCalM + 1, y = findCalY; if (m > 12) { m = 1; y++; } setFindCalM(m); setFindCalY(y); }}>›</button>
                 </div>
-                <div className="a-cal">
+                <div className="a-cal a-cal-rich">
                   {(lang === 'en' ? DOW_EN : DOW_ZH).map((d, i) => <div key={i} className="dow">{lang === 'en' ? d.slice(0, 2) : d}</div>)}
-                  {findCalData.map((c, i) => c == null
-                    ? <div key={'p' + i} className="a-cell out" />
-                    : <button key={c.jdn} className={'a-cell' + (selActs.length ? ' tint ' + colorClass(c.dv.color) : '') + (c.inRange ? '' : ' out') + (c.jdn === todayJDN ? ' today' : '')} onClick={() => setSelJDN(c.jdn)} aria-label={`${c.day.greg.m}/${c.dnum}${selActs.length ? ' · ' + (lang === 'en' ? c.dv.verdictEn : c.dv.verdict) : ''}`}>
+                  {findCalData.map((c, i) => {
+                    if (c == null) return <div key={'p' + i} className="a-cell out" />;
+                    const yi = selActs.length ? topYiCat(c.dv) : null;
+                    const lunar = LUNAR_DAY_NAMES[c.day.lunar.day] === '初一' ? monthNamesZh[c.day.lunar.monthNum] + '月' : LUNAR_DAY_NAMES[c.day.lunar.day];
+                    return (
+                      <button key={c.jdn} className={'a-cell' + (selActs.length ? ' tint ' + colorClass(c.dv.color) : '') + (c.inRange ? '' : ' out') + (c.jdn === todayJDN ? ' today' : '') + (selJDN === c.jdn ? ' sel' : '')} onClick={() => setSelJDN(c.jdn)} aria-label={`${c.day.greg.m}/${c.dnum} ${lunar} ${c.day.dayGanzhi}${selActs.length ? ' · ' + (lang === 'en' ? c.dv.verdictEn : c.dv.verdict) : ''}`}>
                         <span className="g">{c.dnum}</span>
-                        {selActs.length > 0 && <span className="vg">{vIcon(c.dv.color)}</span>}
+                        <span className="cl">{lunar}</span>
+                        <span className="cgz">{c.day.dayGanzhi}</span>
+                        {selActs.length > 0 && <span className="cv2"><span className="cvg">{vIcon(c.dv.color)}</span><span className="cvt">{lang === 'en' ? c.dv.verdictEn : c.dv.verdict}</span></span>}
+                        {yi && <span className="cyi"><Icon name={yi} size={12} title={L('宜', 'favorable')} /></span>}
                         {screenZodiac && (c.dv.benmingChong || c.dv.clashedPersons.length) ? <span className="cf" aria-hidden="true">⚠</span> : null}
                         {cellStar(c.jdn)}
                       </button>
-                  )}
+                    );
+                  })}
                 </div>
-                <div className="a-hint">{L('点选日期查看详情；范围外日期变淡，颜色同列表裁断。', 'Tap a day for detail; out-of-range days are dimmed, colours match the list verdict.')}</div>
+                <div className="a-cal-legend" aria-label={L('图例', 'Legend')}>
+                  <span className="lg"><b className="v-good">✓</b>{L('宜', 'Favorable')}</span>
+                  <span className="lg"><b className="v-bad">✗</b>{L('忌', 'Avoid')}</span>
+                  <span className="lg"><b className="v-amber">～</b>{L('参考', 'Mixed')}</span>
+                  <span className="lg"><b className="v-grey">·</b>{L('中性', 'Neutral')}</span>
+                  <span className="lg">⭐ {L('收藏', 'Save')}</span>
+                </div>
+                <div className="a-hint">{L('点选日期查看详情（桌面端在右侧并排显示）；范围外日期变淡。', 'Tap a day for detail (docks beside the grid on desktop); out-of-range days are dimmed.')}</div>
               </div>
-            ) : (<>
+            )}
+            {findView === 'agenda' && (<>
+              {listData.length === 0 && <div className="a-empty">{L('没有可显示的日期。', 'No days to show.')}</div>}
+              {listData.slice().sort((a, b) => a.jdn - b.jdn).slice(0, 120).map(({ jdn, day, dv }) => dateCard(jdn, day, dv))}
+            </>)}
+            {findView === 'list' && (<>
               {listData.length === 0 && <div className="a-empty">{L('没有可显示的日期。', 'No days to show.')}</div>}
               {listData.slice(0, 120).map(({ jdn, day, dv }) => dateCard(jdn, day, dv))}
             </>)}

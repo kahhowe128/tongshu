@@ -321,16 +321,15 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
   .a-app{max-width:600px;}
   .a-screen{padding-left:18px;padding-right:18px;}
 }
-@media (min-width:980px){
-  .a-root[data-sheet="1"] .a-app{margin-right:480px;transition:margin-right .2s ease;}
+/* Desktop two-pane "almanac desk": the day detail becomes an in-flow right pane (not a modal).
+   .a-sheet is already a sibling of .a-app inside .a-root, so docking = make .a-root a centered flex row. */
+@media (min-width:1024px){
+  .a-root[data-sheet="1"]{display:flex;flex-direction:row;align-items:flex-start;max-width:1320px;margin:0 auto;}
+  .a-root[data-sheet="1"] .a-app{flex:1 1 auto;min-width:0;max-width:none;margin:0;border-right:0;}
   .a-root[data-sheet="1"] .a-scrim{display:none;}
-  .a-root[data-sheet="1"] .a-sheet{left:auto;right:0;transform:none;width:480px;height:100vh;
-    border-radius:0;border-left:1px solid var(--line);box-shadow:-8px 0 24px rgba(40,30,20,.10);animation:none;}
-  .a-root[data-sheet="1"] .a-sheet .a-handle{display:none;}
-}
-@media (min-width:980px) and (prefers-reduced-motion:no-preference){
-  .a-root[data-sheet="1"] .a-sheet{animation:aslideR .22s ease;}
-  @keyframes aslideR{from{transform:translateX(40px);opacity:.4}to{transform:translateX(0);opacity:1}}
+  .a-root[data-sheet="1"] .a-sheet:not(.settings){position:sticky;top:0;left:auto;right:auto;bottom:auto;transform:none;
+    flex:0 0 440px;width:440px;height:100vh;max-height:100vh;border-radius:0;border-left:1px solid var(--line);box-shadow:none;animation:none;}
+  .a-root[data-sheet="1"] .a-sheet:not(.settings) .a-handle{display:none;}
 }
 
 /* ===== coachmark / onboarding tour ===== */
@@ -448,6 +447,29 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
   .a-screen{padding-bottom:40px;}
   .a-bar{height:60px;padding:0 22px;}
   .a-screen{padding-left:24px;padding-right:24px;}
+}
+
+/* ===== WS-3 richer almanac-desk calendar cells + legend ===== */
+.a-cal-rich .a-cell{aspect-ratio:auto;min-height:60px;gap:1px;padding:4px 3px;justify-content:flex-start;}
+.a-cell .cl{font-size:8.5px;color:var(--ink-faint);line-height:1.1;}
+.a-cell .cgz{display:none;font-family:var(--font-serif);font-size:11px;color:var(--ink-soft);line-height:1.1;}
+.a-cell .cv2{display:inline-flex;align-items:center;gap:3px;font-size:9px;line-height:1;margin-top:1px;}
+.a-cell .cv2 .cvg{font-weight:700;}
+.a-cell .cv2 .cvt{display:none;}
+.a-cell .cyi{display:none;color:var(--ink-soft);margin-top:1px;}
+.a-cell.tint.v-good .cv2 .cvg{color:var(--good);} .a-cell.tint.v-bad .cv2 .cvg{color:var(--bad);}
+.a-cell.tint.v-amber .cv2 .cvg{color:var(--warn);} .a-cell.tint.v-grey .cv2 .cvg{color:var(--ink-faint);}
+.a-cell.sel{outline:2px solid var(--seal);outline-offset:-2px;z-index:1;}
+.a-cal-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;font-size:11px;color:var(--ink-soft);}
+.a-cal-legend .lg{display:inline-flex;align-items:center;gap:3px;}
+.a-cal-legend b{font-style:normal;}
+.a-cal-legend .v-good{color:var(--good);} .a-cal-legend .v-bad{color:var(--bad);}
+.a-cal-legend .v-amber{color:var(--warn);} .a-cal-legend .v-grey{color:var(--ink-faint);}
+@media (min-width:1024px){
+  .a-cal-rich .a-cell{min-height:96px;align-items:flex-start;text-align:left;padding:7px 8px;}
+  .a-cal-rich .a-cell .g{font-size:15px;}
+  .a-cell .cgz{display:block;} .a-cell .cv2 .cvt{display:inline;} .a-cell .cyi{display:inline-flex;}
+  .a-cell .cl{font-size:10px;}
 }
 `;
 export { CSS };
