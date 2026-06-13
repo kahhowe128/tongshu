@@ -426,13 +426,16 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {tab === 'home' && (
           <main className="a-screen a-home">
             <section className="a-hero">
-              <div className="seal big">通</div>
-              <h1 className="a-h1" style={{ fontSize: '26px' }}>{L('通書擇日', 'Tong Shu Date Selector')}</h1>
-              <p className="a-hero-vp">{L('传统通书择日，算得准、说得明白。', 'The Chinese almanac — computed exactly, explained honestly.')}</p>
-              <div className="a-hero-cta">
-                <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="calendar" size={18} /> {L('选个吉日', 'Find a date')}</button>
-                <button className="a-btn-ghost" onClick={() => setTab('academy')}><Icon name="academy" size={18} /> {L('开始学习', 'Start learning')}</button>
+              <div className="a-hero-text">
+                <div className="a-eyebrow">{L('传统 · 历法 · 择吉', 'Tradition · Almanac · Date-selection')}</div>
+                <h1 className="a-hero-h1">{L('擇日的學問', 'The art of the almanac')}</h1>
+                <p className="a-hero-vp">{L('读懂一天，挑一个好日子——算得准，说得明白。', 'Read a day, choose a good one — computed exactly, explained honestly.')}</p>
+                <div className="a-hero-cta">
+                  <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="calendar" size={18} /> {L('选个吉日', 'Find a date')}</button>
+                  <button className="a-btn-ghost" onClick={() => setTab('academy')}><Icon name="academy" size={18} /> {L('开始学习', 'Start learning')} →</button>
+                </div>
               </div>
+              <div className="a-hero-art"><Illustration name="hero" lang={lang === 'en' ? 'en' : 'zh'} size={380} /></div>
             </section>
 
             <div className="a-trust">

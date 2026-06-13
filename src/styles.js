@@ -390,11 +390,24 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-figcap{text-align:center;font-size:11px;color:var(--ink-faint);margin-top:6px;}
 .a-illus{color:var(--ink-soft);margin:6px auto;}
 /* WS-1 home / landing */
-.a-hero{text-align:center;padding:18px 8px 8px;}
-.a-hero .seal.big{width:56px;height:56px;border-radius:14px;font-size:30px;margin:0 auto 12px;}
-.a-hero-vp{font-size:15px;color:var(--ink-soft);max-width:34ch;margin:6px auto 16px;line-height:1.6;}
+.a-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:22px 8px 14px;}
+.a-eyebrow{font-size:11.5px;letter-spacing:.22em;color:var(--seal);text-transform:uppercase;font-weight:600;}
+.a-hero-text{display:flex;flex-direction:column;align-items:center;}
+.a-hero-h1{font-family:var(--font-serif);font-size:30px;font-weight:700;color:var(--ink);margin:8px 0 2px;letter-spacing:.03em;line-height:1.2;}
+.a-hero-vp{font-size:15px;color:var(--ink-soft);max-width:36ch;margin:6px 0 16px;line-height:1.65;}
 .a-hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
 .a-hero-cta .a-btn,.a-hero-cta .a-btn-ghost{display:inline-flex;align-items:center;gap:7px;min-height:46px;width:auto;}
+.a-hero-art{margin-top:8px;width:100%;display:flex;justify-content:center;}
+.a-hero-art .a-illus{max-width:300px;}
+.a-home .a-sec{margin:26px 0 12px;}
+@media (min-width:768px){
+  .a-hero{flex-direction:row;text-align:left;justify-content:space-between;align-items:center;gap:28px;padding:38px 8px 30px;}
+  .a-hero-text{align-items:flex-start;flex:1 1 auto;min-width:0;}
+  .a-hero-cta{justify-content:flex-start;}
+  .a-hero-art{flex:0 0 auto;width:auto;margin-top:0;}
+  .a-hero-art .a-illus{max-width:380px;}
+  .a-hero-h1{font-size:36px;}
+}
 .a-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0;}
 @media (max-width:520px){.a-trust{grid-template-columns:1fr;}}
 .a-trust-pill{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r2);padding:11px 12px;cursor:pointer;display:flex;flex-direction:column;gap:3px;font-family:var(--font-sans);color:var(--ink);}
