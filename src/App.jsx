@@ -22,6 +22,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CSS } from './styles.js';
 import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
 import { loadSaved, saveLocal, loadSavedDates, saveSavedDates } from './lib/storage.js';
+import { Icon } from './assets/icons.jsx';
 import {
   STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, rankHours, hourClass, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
 } from './engine/tongshu.js';
@@ -627,11 +628,11 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
 
         {/* bottom tabs */}
         <nav className="a-tabs" role="tablist" ref={refTabs}>
-          <button className={'a-tab' + (tab === 'find' ? ' on' : '')} role="tab" aria-selected={tab === 'find'} onClick={() => setTab('find')}><span className="ic">🔍</span><span className="tl">{L('择日', 'Find')}</span></button>
-          <button className={'a-tab' + (tab === 'calendar' ? ' on' : '')} role="tab" aria-selected={tab === 'calendar'} onClick={() => setTab('calendar')}><span className="ic">📅</span><span className="tl">{L('黄历', 'Calendar')}</span></button>
-          <button className={'a-tab' + (tab === 'learn' ? ' on' : '')} role="tab" aria-selected={tab === 'learn'} onClick={() => setTab('learn')}><span className="ic">📖</span><span className="tl">{L('学习', 'Learn')}</span></button>
-          <button className={'a-tab' + (tab === 'tools' ? ' on' : '')} role="tab" aria-selected={tab === 'tools'} onClick={() => setTab('tools')}><span className="ic">🧰</span><span className="tl">{L('工具', 'Tools')}</span></button>
-          <button className="a-tab" onClick={() => setSettingsOpen(true)}><span className="ic">⚙</span><span className="tl">{L('设置', 'Settings')}</span></button>
+          <button className={'a-tab' + (tab === 'find' ? ' on' : '')} role="tab" aria-selected={tab === 'find'} onClick={() => setTab('find')}><span className="ic"><Icon name="find" size={22} /></span><span className="tl">{L('择日', 'Find')}</span></button>
+          <button className={'a-tab' + (tab === 'calendar' ? ' on' : '')} role="tab" aria-selected={tab === 'calendar'} onClick={() => setTab('calendar')}><span className="ic"><Icon name="calendar" size={22} /></span><span className="tl">{L('黄历', 'Calendar')}</span></button>
+          <button className={'a-tab' + (tab === 'learn' ? ' on' : '')} role="tab" aria-selected={tab === 'learn'} onClick={() => setTab('learn')}><span className="ic"><Icon name="learn" size={22} /></span><span className="tl">{L('学习', 'Learn')}</span></button>
+          <button className={'a-tab' + (tab === 'tools' ? ' on' : '')} role="tab" aria-selected={tab === 'tools'} onClick={() => setTab('tools')}><span className="ic"><Icon name="tools" size={22} /></span><span className="tl">{L('工具', 'Tools')}</span></button>
+          <button className="a-tab" onClick={() => setSettingsOpen(true)}><span className="ic"><Icon name="settings" size={22} /></span><span className="tl">{L('设置', 'Settings')}</span></button>
         </nav>
       </div>
 

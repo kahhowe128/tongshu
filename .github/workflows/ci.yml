@@ -15,8 +15,8 @@ jobs:
         with: { node-version: 20, cache: npm }
       - run: npm ci
       - run: npm run docs
-      - name: gates (engine 22/22 · color AA · docs↔engine · SSR ×4 · hours 3-state)
-        run: node test/engine.test.js && node test/color.test.js && node test/docs.test.js && node test/ssr.test.js && node test/hours.test.js
+      - name: gates (engine · color AA ×4 · docs↔engine · SSR · hours · assets)
+        run: node test/engine.test.js && node test/color.test.js && node test/docs.test.js && node test/ssr.test.js && node test/hours.test.js && node test/assets.test.js
       - run: npx playwright install --with-deps chromium
       - name: print user guide PDF from the same HTML source
         run: npm run pdf

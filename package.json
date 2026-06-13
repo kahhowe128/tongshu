@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "docs": "node scripts/gen-docs.mjs",
     "pdf": "node scripts/print-pdf.mjs",
-    "test": "npm run docs && node test/engine.test.js && node test/color.test.js && node test/docs.test.js && node test/ssr.test.js && node test/hours.test.js",
+    "test": "npm run docs && node test/engine.test.js && node test/color.test.js && node test/docs.test.js && node test/ssr.test.js && node test/hours.test.js && node test/assets.test.js",
     "test:offline": "node test/engine.test.js && node test/color.test.js && node test/docs.test.js"
   },
   "dependencies": {

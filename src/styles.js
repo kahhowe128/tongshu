@@ -166,7 +166,7 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
   border-top:1px solid var(--line);z-index:40;padding-bottom:env(safe-area-inset-bottom,0);}
 .a-tab{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:3px;cursor:pointer;color:var(--ink-faint);font-family:var(--font-sans);}
-.a-tab .ic{font-size:19px;line-height:1;}
+.a-tab .ic{font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;height:22px;}
 .a-tab .tl{font-size:10px;}
 .a-tab.on{color:var(--seal);}
 .a-tab.on .ic{transform:translateY(-1px);}
@@ -386,5 +386,9 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-case-link{border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--seal);font-size:11.5px;padding:3px 9px;cursor:pointer;font-family:var(--font-sans);}
 .a-case-link:active{background:var(--surface-pressed);}
 @media (hover:hover){.a-case-link:hover{background:var(--surface-hover);}}
+/* WS-2 figures / illustrations */
+.a-figure{margin:14px 0;padding:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r2);}
+.a-figcap{text-align:center;font-size:11px;color:var(--ink-faint);margin-top:6px;}
+.a-illus{color:var(--ink-soft);margin:6px auto;}
 `;
 export { CSS };
