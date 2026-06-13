@@ -16,7 +16,7 @@ const PAIRS = [
   ['line2','surface',1.6],['lineStrong','surface',3.0],['focus','surface',3.0],
 ];
 let fails = 0;
-for (const th of ['light','dark','contrast']) {
+for (const th of ['light','dark','contrast','red']) {
   const t = TOKENS[th]; const bad = [];
   let worst = null;
   for (const [fg, bg, min] of PAIRS) {
@@ -39,7 +39,7 @@ const g2s = c => c <= 0.0031308 ? 12.92*c : 1.055*Math.pow(c, 1/2.4) - 0.055;
 const sim = (h, m) => { const [r,g,b] = rgb(h).map(lin); return m.map(row => g2s(Math.min(1, Math.max(0, row[0]*r+row[1]*g+row[2]*b)))); };
 const dE = (a,b) => Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
 const minPair = L => { let m = 1e9; for (let i = 0; i < L.length; i++) for (let j = i+1; j < L.length; j++) m = Math.min(m, dE(L[i], L[j])); return m.toFixed(3); };
-for (const th of ['light','dark','contrast']) {
+for (const th of ['light','dark','contrast','red']) {
   const t = TOKENS[th]; const set = ['good','bad','warn','neutral'].map(k => t[k]);
   const out = Object.entries(M).map(([n,m]) => `${n}=${minPair(set.map(h => lab(sim(h, m))))}`).join(' ');
   console.log(`[${th}] CVD min ΔE: ${out}`);

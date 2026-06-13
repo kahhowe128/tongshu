@@ -89,6 +89,38 @@ const TOKENS = {
   scrim: "rgba(0,0,0,.6)",
   sh: "0 0 0 1px #000",
   sh2: "0 0 0 1px #000"
+ },
+ // 红运 Lucky Red — festive cinnabar/vermilion paper; hex baked from OKLCH (see scripts history),
+ // AA-gated on all pairs across the 4-theme color test; seal kept distinct from verdict-忌 (bad).
+ red: {
+  bg: "#fbe2d9",
+  surface: "#fff1eb",
+  surface2: "#f5d4c9",
+  surfaceHover: "#f9e2da",
+  surfacePressed: "#eec7ba",
+  ink: "#301b17",
+  inkSoft: "#674b44",
+  inkFaint: "#6a4f48",
+  line: "#e6c1b5",
+  line2: "#d1a697",
+  lineStrong: "#885d51",
+  seal: "#b02c11",
+  sealDeep: "#9b1d00",
+  sealPressed: "#881700",
+  sealSoft: "#fdcec4",
+  onSeal: "#ffffff",
+  good: "#006a2b",
+  goodSoft: "#c8ecce",
+  bad: "#790c1b",
+  badSoft: "#ffcfcb",
+  warn: "#7b5100",
+  warnSoft: "#fadba3",
+  neutral: "#6c5d56",
+  neutralSoft: "#efe1dc",
+  focus: "#b02c11",
+  scrim: "rgba(60,14,6,.48)",
+  sh: "0 1px 2px rgba(90,24,12,.06),0 6px 18px rgba(90,24,12,.10)",
+  sh2: "0 -2px 16px rgba(90,24,12,.16)"
  }
 };
 const TOKEN_VAR = {bg:"--bg",surface:"--surface",surface2:"--surface-2",surfaceHover:"--surface-hover",surfacePressed:"--surface-pressed",ink:"--ink",inkSoft:"--ink-soft",inkFaint:"--ink-faint",line:"--line",line2:"--line-2",lineStrong:"--line-strong",seal:"--seal",sealDeep:"--seal-deep",sealPressed:"--seal-pressed",sealSoft:"--seal-soft",onSeal:"--on-seal",good:"--good",goodSoft:"--good-soft",bad:"--bad",badSoft:"--bad-soft",warn:"--warn",warnSoft:"--warn-soft",neutral:"--neutral",neutralSoft:"--neutral-soft",focus:"--focus",scrim:"--scrim",sh:"--sh",sh2:"--sh2"};
