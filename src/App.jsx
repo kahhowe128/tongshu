@@ -427,8 +427,8 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
               <h1 className="a-h1" style={{ fontSize: '26px' }}>{L('通書擇日', 'Tong Shu Date Selector')}</h1>
               <p className="a-hero-vp">{L('传统通书择日，算得准、说得明白。', 'The Chinese almanac — computed exactly, explained honestly.')}</p>
               <div className="a-hero-cta">
-                <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="find" size={18} /> {L('选个吉日', 'Find a date')}</button>
-                <button className="a-btn-ghost" onClick={() => setTab('learn')}><Icon name="learn" size={18} /> {L('学习', 'Learn')}</button>
+                <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="calendar" size={18} /> {L('选个吉日', 'Find a date')}</button>
+                <button className="a-btn-ghost" onClick={() => setTab('academy')}><Icon name="academy" size={18} /> {L('开始学习', 'Start learning')}</button>
               </div>
             </section>
 
@@ -437,6 +437,36 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
               <button className="a-trust-pill" onClick={() => { setTab('learn'); setGFocus('exactgraded'); }}><b>{L('传统如实分级', 'Honestly graded')}</b><span>{L('高/中置信，未纳入者明示', 'H/M confidence; omissions shown')}</span></button>
               <div className="a-trust-pill static"><b>{L('离线·不收集数据', 'Offline & private')}</b><span>{L('全部本机计算，传输为零', 'All on-device, nothing sent')}</span></div>
             </div>
+
+            {/* today's almanac teaser — real engine, free */}
+            <div className="a-card">
+              <div className="a-sec" style={{ marginTop: 0 }}>{L('今日通书', 'Today’s almanac')} <span className="en">{fmtYMD(today.y, today.mo, today.d)}</span></div>
+              {dateCard(todayJDN)}
+              <div className="a-note" style={{ marginTop: '4px' }}>{L('点开查看完整一天；在「黄历」改事项会更新结论。', 'Tap for the full day; change activities in Calendar to update the verdict.')}</div>
+            </div>
+
+            {/* featured lessons from the Academy (real ACADEMY content) */}
+            <div className="a-sec">{L('精选课程', 'Featured lessons')} <button className="a-seemore" onClick={() => setTab('academy')}>{L('全部学堂 →', 'All lessons →')}</button></div>
+            <div className="a-feature-row">
+              {DOCS.academy.slice(0, 4).map(c => (
+                <button key={c.id} className="a-feature-card" onClick={() => setTab('academy')}>
+                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={240} />
+                  <div className="ft">{L(c.title[0], c.title[1])}</div>
+                </button>
+              ))}
+            </div>
+
+            {/* videos (graceful placeholder until the owner supplies content via MEDIA) */}
+            <div className="a-sec">{L('视频', 'Videos')} <button className="a-seemore" onClick={() => setTab('videos')}>{L('全部 →', 'All →')}</button></div>
+            {(() => { const vids = (DOCS.media && DOCS.media.videos) || []; return vids.length === 0
+              ? <div className="a-empty">{L('课程视频即将上线。', 'Video lessons coming soon.')}</div>
+              : <div className="a-feature-row">{vids.slice(0, 4).map(v => <button key={v.id} className="a-feature-card" onClick={() => setTab('videos')}><div className="ft">{L(v.title[0], v.title[1])}</div></button>)}</div>; })()}
+
+            {/* articles (graceful placeholder until the owner supplies content via MEDIA) */}
+            <div className="a-sec">{L('文章', 'Articles')} <button className="a-seemore" onClick={() => setTab('articles')}>{L('全部 →', 'All →')}</button></div>
+            {(() => { const arts = (DOCS.media && DOCS.media.articles) || []; return arts.length === 0
+              ? <div className="a-empty">{L('文章敬请期待。', 'Articles coming soon.')}</div>
+              : <div className="a-feature-row">{arts.slice(0, 4).map(a => <button key={a.id} className="a-feature-card" onClick={() => setTab('articles')}><div className="ft">{L(a.title[0], a.title[1])}</div></button>)}</div>; })()}
 
             <div className="a-card a-tiers">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('免费 / 升级', 'Free / Upgrade')}</div>
