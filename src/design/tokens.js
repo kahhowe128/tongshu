@@ -125,4 +125,14 @@ const TOKENS = {
 };
 const TOKEN_VAR = {bg:"--bg",surface:"--surface",surface2:"--surface-2",surfaceHover:"--surface-hover",surfacePressed:"--surface-pressed",ink:"--ink",inkSoft:"--ink-soft",inkFaint:"--ink-faint",line:"--line",line2:"--line-2",lineStrong:"--line-strong",seal:"--seal",sealDeep:"--seal-deep",sealPressed:"--seal-pressed",sealSoft:"--seal-soft",onSeal:"--on-seal",good:"--good",goodSoft:"--good-soft",bad:"--bad",badSoft:"--bad-soft",warn:"--warn",warnSoft:"--warn-soft",neutral:"--neutral",neutralSoft:"--neutral-soft",focus:"--focus",scrim:"--scrim",sh:"--sh",sh2:"--sh2"};
 
-export { TOKENS, TOKEN_VAR };
+// Illustration accent palette (Phase 5) — vivid, per-theme, emitted as --ill-* by theme.js.
+// These colour the decorative SVG art (not text), so they're free to be saturated and are NOT in the
+// WCAG text-contrast gate. Each theme keeps the art legible on its own background.
+const ILL = {
+ light:    { cinnabar:"#b83a23", jade:"#3f9b78", gold:"#e3a02a", terra:"#cf6b34", plum:"#8a5a86", jadeSoft:"#e0efe7", goldSoft:"#f7e9cf", terraSoft:"#f3e2d5", plumSoft:"#efe4ef", ink:"#6b6051", paper:"#fdf8ec" },
+ dark:     { cinnabar:"#e2776e", jade:"#83d4a9", gold:"#d7b769", terra:"#e09a6a", plum:"#bd9fc6", jadeSoft:"#1d3528", goldSoft:"#3a2f12", terraSoft:"#3c261b", plumSoft:"#302538", ink:"#a49e92", paper:"#2b261f" },
+ contrast: { cinnabar:"#8c2716", jade:"#006039", gold:"#7a5600", terra:"#8a3d12", plum:"#5a3a66", jadeSoft:"#d3f1de", goldSoft:"#f6e9c4", terraSoft:"#f3ddcf", plumSoft:"#e9def0", ink:"#333333", paper:"#ffffff" },
+ red:      { cinnabar:"#b02c11", jade:"#2f7d5f", gold:"#b07a1a", terra:"#a8521f", plum:"#7d4f78", jadeSoft:"#e3eee7", goldSoft:"#f6e6cf", terraSoft:"#f4ddcf", plumSoft:"#efe0ec", ink:"#674b44", paper:"#fff1eb" },
+};
+
+export { TOKENS, TOKEN_VAR, ILL };
