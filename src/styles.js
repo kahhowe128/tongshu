@@ -412,5 +412,16 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-home-foot .lnk{border:0;background:none;color:var(--seal);font-size:12.5px;cursor:pointer;font-family:var(--font-sans);text-decoration:none;}
 .a-diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
 @media (max-width:520px){.a-diagram-grid{grid-template-columns:1fr;}}
+/* WS-3 upgrade gate + honest explanation */
+.a-gate{border:1px dashed var(--seal);border-radius:var(--r2);padding:14px;background:var(--surface-2);text-align:center;}
+.a-gate-h{font-family:var(--font-serif);font-weight:700;font-size:14px;color:var(--seal);display:flex;align-items:center;justify-content:center;gap:7px;}
+.a-gate-d{font-size:12px;color:var(--ink-soft);line-height:1.55;margin:6px 0;}
+.a-gate-price{font-family:var(--font-mono);font-size:12px;color:var(--ink);margin-bottom:2px;}
+.a-explain{display:flex;flex-direction:column;gap:5px;}
+.ex-row{display:flex;gap:8px;align-items:baseline;font-size:12.5px;color:var(--ink);}
+.ex-tag{flex:none;font-size:9px;font-weight:700;font-family:var(--font-mono);padding:1px 6px;border-radius:999px;}
+.ex-tag.exact{background:var(--good-soft);color:var(--good);}
+.ex-tag.graded{background:var(--warn-soft);color:var(--warn);}
+.ex-txt{line-height:1.5;}
 `;
 export { CSS };

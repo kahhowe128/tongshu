@@ -25,6 +25,8 @@ import { loadSaved, saveLocal, loadSavedDates, saveSavedDates } from './lib/stor
 import { Icon } from './assets/icons.jsx';
 import { Illustration } from './assets/illustrations.jsx';
 import { Diagram, DIAGRAM_NAMES } from './assets/diagrams.jsx';
+import { loadLicence, saveLicence, clearLicence, isEntitled, needsRevalidation, validateLicence, WORKER_URL, CHECKOUT } from './lib/entitlement.js';
+import { buildExplanation, explanationToText } from './lib/explain.js';
 import {
   STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, rankHours, hourClass, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
 } from './engine/tongshu.js';
@@ -47,6 +49,20 @@ const activityTab = (a) => {
   for (const k of ACT_TAB_ORDER) { const t = CATEGORY_TABS[k]; if (t.cats.includes(a.cat)) return k; }
   return 'everyday';
 };
+
+// WS-3 — wraps a paid action; shows an inline upgrade card when not entitled. Free features never use it.
+function Gate({ paid, lang, onUpgrade, children }) {
+  if (paid) return <>{children}</>;
+  const L = (zh, en) => (lang === 'en' ? en : lang === 'both' ? `${zh} / ${en}` : zh);
+  return (
+    <div className="a-gate">
+      <div className="a-gate-h"><Icon name="export" size={18} /> {L('升级解锁丰富导出', 'Upgrade to unlock rich export')}</div>
+      <p className="a-gate-d">{L('把这天（或收藏）导出到 WhatsApp／邮件／卡片，并附诚实的逐项「为什么」解读——只陈述引擎实际算出的因素。', 'Export this day (or your saved set) to WhatsApp / email / a card, with an honest factor-by-factor "why" explanation — only what the engine actually computed.')}</p>
+      <div className="a-gate-price">US$8/yr · US$88 {L('永久', 'lifetime')}</div>
+      <button className="a-btn" style={{ marginTop: '8px' }} onClick={onUpgrade}>{L('升级 / 输入许可证', 'Upgrade / enter licence')}</button>
+    </div>
+  );
+}
 
 export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', initialFindView = 'list' } = {}) {
   const now = new Date();
@@ -88,6 +104,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const [calM, setCalM] = useState(today.mo);
   const [selJDN, setSelJDN] = useState(null);
   const [savedJDNs, setSavedJDNs] = useState(() => loadSavedDates()); // WS-4: local-only favourites (JDN array)
+  const [licence, setLicence] = useState(() => loadLicence()); // WS-3 entitlement
+  const [licKey, setLicKey] = useState(''); const [licBusy, setLicBusy] = useState(false); const [licMsg, setLicMsg] = useState(null);
+  const paid = isEntitled(licence, Date.now());
   const [openAcc, setOpenAcc] = useState({ acts: true, shensha: true });
   const [popId, setPopId] = useState(null);
   const [ssCal, setSsCal] = useState({});
@@ -107,6 +126,26 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const toggleSaved = (jdn) => setSavedJDNs(s => s.includes(jdn) ? s.filter(x => x !== jdn) : [...s, jdn].sort((a, b) => a - b));
   const clearSaved = () => setSavedJDNs([]);
   useEffect(() => { saveSavedDates(savedJDNs); }, [savedJDNs]);
+  // WS-3 licence helpers
+  const applyLicence = (st) => { saveLicence(st); setLicence(st); };
+  const removeLicence = () => { clearLicence(); setLicence(null); setLicMsg(null); };
+  const doValidate = async () => {
+    setLicBusy(true); setLicMsg(null);
+    try {
+      const st = await validateLicence(licKey);
+      if (st) { applyLicence(st); setLicKey(''); setLicMsg({ ok: true, text: L('已解锁 ✓', 'Unlocked ✓') }); }
+      else setLicMsg({ ok: false, text: L('密钥无效或非本产品', 'Invalid or foreign-product key') });
+    } catch (e) {
+      setLicMsg({ ok: false, text: e.message === 'verifier-not-configured' ? L('验证服务尚未配置（见 worker/README）', 'Verifier not configured yet (see worker/README)') : L('网络错误，请稍后再试', 'Network error, try again') });
+    } finally { setLicBusy(false); }
+  };
+  // best-effort re-validation on load — offline-safe (cached entitlement stays valid within grace)
+  useEffect(() => {
+    if (!licence || !needsRevalidation(licence, Date.now())) return;
+    let cancelled = false;
+    validateLicence(licence.key).then(st => { if (!cancelled && st) applyLicence(st); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, [licence && licence.key]);
 
   // ---- derived ----
   const dayCache = useRef({});
@@ -301,6 +340,25 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   // corner star toggle for calendar cells (stops propagation so the cell still opens the sheet)
   const cellStar = (jdn) => { const sv = isSaved(jdn); return <span className={'a-cell-star' + (sv ? ' on' : '')} role="button" tabIndex={0} aria-pressed={sv} aria-label={L(sv ? '取消收藏' : '收藏', sv ? 'Unsave' : 'Save')} onClick={(e) => { e.stopPropagation(); toggleSaved(jdn); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleSaved(jdn); } }}>{sv ? '★' : '☆'}</span>; };
 
+  // WS-3 paid rich-export panel for the open day (honest, factor-derived explanation + share/export)
+  const exportPanel = () => {
+    const exp = buildExplanation(D, DV, selActs, profile);
+    const text = explanationToText(exp, lang === 'en' ? 'en' : 'zh');
+    const wa = 'https://wa.me/?text=' + encodeURIComponent(text);
+    const mail = 'mailto:?subject=' + encodeURIComponent(lang === 'en' ? exp.title[1] : exp.title[0]) + '&body=' + encodeURIComponent(text);
+    const fn = `tongshu-${D.greg.y}${String(D.greg.m).padStart(2, '0')}${String(D.greg.d).padStart(2, '0')}.txt`;
+    return (<>
+      <div className="a-note" style={{ marginBottom: '8px' }}>{L('诚实导出：仅陈述引擎实际算出的因素，标注精确／分级与置信度，并重申非定论。', 'Honest export: only the factors the engine actually computed — each tagged exact / graded with confidence, non-definitive restated.')}</div>
+      <div className="a-explain">{exp.lines.map((l, i) => <div key={i} className="ex-row"><span className={'ex-tag ' + l.tag}>{L(l.tag === 'exact' ? '精确' : '分级', l.tag === 'exact' ? 'exact' : 'graded')}</span><span className="ex-txt">{L(l.zh, l.en)}{l.grade ? ` · ${l.grade}` : ''}</span></div>)}</div>
+      <div className="a-chips" style={{ marginTop: '10px' }}>
+        <a className="a-chip" href={wa} target="_blank" rel="noopener"><Icon name="whatsapp" size={15} /> WhatsApp</a>
+        <a className="a-chip" href={mail}><Icon name="email" size={15} /> {L('邮件', 'Email')}</a>
+        <button className="a-chip" onClick={() => downloadText(fn, text)}><Icon name="export" size={15} /> {L('卡片 .txt', 'Card .txt')}</button>
+        <button className="a-chip" onClick={() => { try { if (typeof window !== 'undefined') window.print(); } catch (e) {} }}>{L('打印·PDF', 'Print·PDF')}</button>
+      </div>
+    </>);
+  };
+
   // =========================== RENDER ===========================
   return (
     <div className="a-root" data-theme={theme} data-sheet={selJDN != null ? '1' : '0'}>
@@ -364,7 +422,8 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                 <div className="lab"><Icon name="export" size={16} /> {L('升级', 'Upgrade')} <i className="a-graded">US$8/yr · US$88 {L('永久', 'lifetime')}</i></div>
                 <div className="desc">{L('把某天或收藏导出到 WhatsApp／邮件／卡片·PDF，并附「为什么是这天／对你生肖」的诚实逐项解读。', 'Export a day or your saved set to WhatsApp / email / a card·PDF, with an honest factor-by-factor "why this day / for your zodiac" explanation.')}</div>
               </div>
-              <div className="a-note">{L('升级只解锁导出与解读；计算与学习永远免费。结账与解读将在导出处开通。', 'Upgrading unlocks only export & explanation; the calculator and learning stay free forever. Checkout opens at the export step.')}</div>
+              <div className="a-note">{L('升级只解锁导出与解读；计算与学习永远免费。', 'Upgrading unlocks only export & explanation; the calculator and learning stay free forever.')}</div>
+              <button className="a-btn" style={{ marginTop: '12px' }} onClick={() => setSettingsOpen(true)}>{paid ? L('已解锁 ✓', 'Unlocked ✓') : L('升级 / 输入许可证', 'Upgrade / enter licence')}</button>
             </div>
 
             <footer className="a-home-foot">
@@ -729,6 +788,13 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   ); })
               )}
 
+              {/* 丰富导出 (paid, WS-3) */}
+              {acc('export', '丰富导出', 'Rich export', paid ? L('已解锁', 'unlocked') : L('升级', 'upgrade'), (
+                <Gate paid={paid} lang={lang} onUpgrade={() => { setSelJDN(null); setSettingsOpen(true); }}>
+                  {paid && exportPanel()}
+                </Gate>
+              ))}
+
               {/* 神煞 */}
               {acc('shensha', '神煞', 'Spirits', `${D.shensha.goodCount}吉/${D.shensha.badCount}凶`, (() => {
                 const strong = []; if (D.officer === '破') strong.push(L('月破·诸吉难解', 'Month-Breaker')); if (D.shousi) strong.push(L('受死', 'Shou-Si')); if (D.siliSijue) strong.push(L(D.siliSijue.type, D.siliSijue.en)); if (D.yanggong) strong.push(L('杨公十三忌', 'Yang-Gong'));
@@ -843,6 +909,25 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
               <div className="a-field"><label>{L('女命生肖（嫁娶大利月）', "Bride's zodiac")}</label><select className="a-in" value={brideBranch} onChange={e => setBrideBranch(+e.target.value)}><option value={-1}>{L('未选', 'unset')}</option>{ZODIAC.map((z, i) => <option key={i} value={i}>{z}</option>)}</select></div>
               <label style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', fontSize: '14px' }}><input type="checkbox" checked={lateZi} onChange={e => setLateZi(e.target.checked)} /><span>{L('晚子时换日（23:00 起算次日 · 八字）', 'Late-子 day boundary (23:00 · BaZi)')}</span></label>
               <div className="a-note">{L('影响 23:00–01:00 出生者的八字日柱；日历日值仍按民用日。所有设置仅存于当前会话，并编码进可分享链接。', 'Affects the BaZi day pillar for late-night births; calendar days stay civil. Settings live in this session and the shareable URL only.')}</div>
+
+              <div className="a-field" style={{ marginTop: '14px', borderTop: '1px solid var(--line)', paddingTop: '14px' }}>
+                <label>{L('升级 / 许可证', 'Upgrade / Licence')} <span className="gloss">{L('解锁丰富导出与解读', 'unlock rich export & explanation')}</span></label>
+                {paid ? (
+                  <div className="a-note" style={{ color: 'var(--good)' }}>{L('已解锁', 'Unlocked')} · {licence && licence.tier === 'lifetime' ? L('永久', 'Lifetime') : L('年度', 'Annual')} <button className="a-btn-ghost" style={{ marginLeft: '10px', minHeight: '32px' }} onClick={removeLicence}>{L('移除', 'Remove')}</button></div>
+                ) : (<>
+                  <div className="a-note" style={{ marginBottom: '6px' }}>{L('购买后把许可证密钥粘贴于此解锁；计算与全部学习内容永远免费。', 'After purchase, paste your licence key here to unlock; the calculator and all learning stay free forever.')}</div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input className="a-in" value={licKey} onChange={e => setLicKey(e.target.value)} placeholder={L('许可证密钥', 'Licence key')} aria-label={L('许可证密钥', 'Licence key')} />
+                    <button className="a-btn-ghost" disabled={licBusy || !licKey.trim()} onClick={doValidate}>{licBusy ? '…' : L('验证', 'Verify')}</button>
+                  </div>
+                  {licMsg && <div className="a-note" style={{ marginTop: '6px', color: licMsg.ok ? 'var(--good)' : 'var(--bad)' }}>{licMsg.text}</div>}
+                  <div className="a-chips" style={{ marginTop: '8px' }}>
+                    <a className="a-chip" href={CHECKOUT.annual || '#'} target="_blank" rel="noopener">{L('年度 US$8/年', 'Annual US$8/yr')}</a>
+                    <a className="a-chip" href={CHECKOUT.lifetime || '#'} target="_blank" rel="noopener">{L('永久 US$88', 'Lifetime US$88')}</a>
+                  </div>
+                  {!WORKER_URL && <div className="a-note" style={{ marginTop: '6px' }}>{L('（验证服务尚未配置——见 worker/README.md）', '(Verifier not configured yet — see worker/README.md)')}</div>}
+                </>)}
+              </div>
               <button className="a-btn-ghost" style={{ width: '100%', marginTop: '14px', minHeight: '46px' }} onClick={() => { setSettingsOpen(false); setTimeout(() => goTour(0), 120); }}>{L('重看使用教程', 'Take the tour again')}</button>
               <button className="a-btn" style={{ marginTop: '10px' }} onClick={() => setSettingsOpen(false)}>{L('完成', 'Done')}</button>
             </div>

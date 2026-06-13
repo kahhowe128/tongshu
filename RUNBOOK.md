@@ -53,6 +53,27 @@ npx cap sync && npx cap open android       # builds in Android Studio / Xcode
   guaranteed-outcome or fortune-telling language; anti-superstition (封建迷信) review applies —
   get local policy review first. Privacy declaration is simple and true: collects nothing, offline.
 
+## 6) Phase 3 — paid export verifier (Lemon Squeezy + a Cloudflare Worker)
+The free app needs no server. Only the **paid export/explanation** is gated, and that needs one tiny
+verifier. Full checklist + secret/var names are in [`worker/README.md`](worker/README.md); in brief:
+1. Lemon Squeezy: create the store + two products — **Annual US$8/yr** (subscription) and **Lifetime
+   US$88** (single-payment) — and enable **license keys** on both. Note the store ID, both product IDs,
+   and create an **API token**.
+2. Put the non-secret IDs in `worker/wrangler.toml` `[vars]`; then:
+   ```bash
+   cd worker
+   wrangler login
+   wrangler secret put LEMONSQUEEZY_API_KEY   # token stays a secret — never committed
+   wrangler deploy                            # copy the printed Worker URL
+   ```
+3. In `src/lib/entitlement.js` set `WORKER_URL` (the Worker URL) and `CHECKOUT.annual` / `CHECKOUT.lifetime`
+   (your LS hosted-checkout links). Commit + push → CI redeploys Pages.
+4. Test (LS test mode): paste a test key in **Settings → 升级 / Upgrade** → export unlocks; a foreign-product
+   key is rejected; the LS token never appears in the client bundle (`test/entitlement.test.js` enforces this).
+- **Names/secrets:** `LEMONSQUEEZY_API_KEY` (Worker secret, never commit); `EXPECTED_STORE_ID`,
+  `ANNUAL_PRODUCT_ID`, `LIFETIME_PRODUCT_ID` (Worker `[vars]`); `WORKER_URL`, `CHECKOUT.*` (app, public).
+- **Payments & credentials stay with the human** — do not put any token in the repo.
+
 ## What was NOT run in the build sandbox (no network) — your first `npm ci && npm test && npm run build` covers it
 - dependency install, the Vite production build, the esbuild SSR test path, Capacitor.
 

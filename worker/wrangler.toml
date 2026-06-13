@@ -1,0 +1,14 @@
+name = "tongshu-licence"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# Public, non-secret IDs from your Lemon Squeezy account (Settings → Stores / Products).
+# Safe to commit. Replace the TODO placeholders before `wrangler deploy`.
+[vars]
+EXPECTED_STORE_ID = "TODO_STORE_ID"
+ANNUAL_PRODUCT_ID = "TODO_ANNUAL_PRODUCT_ID"
+LIFETIME_PRODUCT_ID = "TODO_LIFETIME_PRODUCT_ID"
+
+# SECRET — do NOT put it here or anywhere in the repo. Set it once with:
+#   wrangler secret put LEMONSQUEEZY_API_KEY
+# (Lemon Squeezy → Settings → API → create token.)
