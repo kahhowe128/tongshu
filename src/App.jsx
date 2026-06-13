@@ -92,6 +92,8 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false); // mobile "More" overflow sheet (WS-5)
   const [acaChapter, setAcaChapter] = useState(null); // Academy reader: chapter id or null (index) (WS-2)
+  const [vidPlaying, setVidPlaying] = useState(null); // WS-4 lazy video embed (id currently playing)
+  const [artId, setArtId] = useState(null); // WS-4 article reader: id or null (index)
   const [tourStep, setTourStep] = useState(-1);
   const [tourRect, setTourRect] = useState(null);
   const [gq, setGq] = useState(''); const [gFocus, setGFocus] = useState(null);
@@ -853,19 +855,66 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
           </main>
         )}
 
-        {/* ===================== VIDEOS (WS-4 fills) ===================== */}
+        {/* ===================== VIDEOS ===================== */}
         {tab === 'videos' && (
           <main className="a-screen a-media a-videos">
             <h1 className="a-h1">{L('视频', 'Videos')}</h1>
-            <div className="a-empty">{L('课程视频即将上线。', 'Video lessons coming soon.')}</div>
+            <p className="a-lede">{L('择吉与历法的短课程。', 'Short lessons on date-selection and the almanac.')}</p>
+            {(DOCS.media.videos || []).length === 0
+              ? <div className="a-empty">{L('课程视频即将上线。', 'Video lessons coming soon.')}</div>
+              : <div className="a-vidgrid">{DOCS.media.videos.map(v => {
+                  const t = lang === 'en' ? v.title[1] : v.title[0];
+                  return (
+                    <div key={v.id} className="a-vidcard">
+                      <div className="a-vidframe">
+                        {v.src && v.provider === 'youtube' && vidPlaying === v.id
+                          ? <iframe className="a-vidembed" src={`https://www.youtube-nocookie.com/embed/${encodeURIComponent(v.src)}?rel=0`} title={t} loading="lazy" allow="encrypted-media; picture-in-picture" allowFullScreen referrerPolicy="no-referrer" />
+                          : v.src && v.provider === 'file' && vidPlaying === v.id
+                          ? <video className="a-vidembed" src={v.src} controls preload="none" />
+                          : <button className="a-vidposter" onClick={() => { if (v.src) setVidPlaying(v.id); }} aria-label={t + (v.src ? '' : ' — ' + L('即将上线', 'coming soon'))}>
+                              <span className="a-vidplay" aria-hidden="true"><Icon name="video" size={30} /></span>
+                              {!v.src && <span className="a-vidsoon">{L('即将上线', 'Coming soon')}</span>}
+                              {v.duration && <span className="a-viddur">{v.duration}</span>}
+                            </button>}
+                      </div>
+                      <div className="a-vidmeta"><div className="vt">{t}</div><div className="vte">{L(v.teaser[0], v.teaser[1])}</div></div>
+                    </div>
+                  );
+                })}</div>}
+            <div className="a-note" style={{ marginTop: '10px' }}>{L('视频以 youtube-nocookie 隐私模式按需加载；离线时优雅降级。', 'Videos load on demand via privacy-friendly youtube-nocookie; they degrade gracefully offline.')}</div>
           </main>
         )}
 
-        {/* ===================== ARTICLES (WS-4 fills) ===================== */}
+        {/* ===================== ARTICLES ===================== */}
         {tab === 'articles' && (
           <main className="a-screen a-media a-articles">
-            <h1 className="a-h1">{L('文章', 'Articles')}</h1>
-            <div className="a-empty">{L('文章敬请期待。', 'Articles coming soon.')}</div>
+            {(() => {
+              const arts = DOCS.media.articles || [];
+              const cur = artId ? arts.find(a => a.id === artId) : null;
+              if (cur) return (
+                <article className="a-reader">
+                  <button className="a-seemore" onClick={() => setArtId(null)}>‹ {L('返回文章', 'All articles')}</button>
+                  <h1 className="a-h1">{L(cur.title[0], cur.title[1])}</h1>
+                  {(cur.author || cur.date) && <div className="a-reader-no">{[cur.author, cur.date].filter(Boolean).join(' · ')}</div>}
+                  {cur.body ? <p className="a-reader-body">{L(cur.body[0], cur.body[1])}</p> : <div className="a-empty">{L('敬请期待。', 'Coming soon.')}</div>}
+                  {cur.sourceAttribution ? <p className="a-gl-src">{L('出处：', 'Source: ')}{cur.sourceAttribution}</p> : null}
+                  <div className="a-disc">{L('推算参考，非定论。', 'Computed guidance, not definitive.')}</div>
+                </article>
+              );
+              return (<>
+                <h1 className="a-h1">{L('文章', 'Articles')}</h1>
+                <p className="a-lede">{L('深入的择吉与历法文章。', 'In-depth articles on date-selection and the almanac.')}</p>
+                {arts.length === 0
+                  ? <div className="a-empty">{L('文章敬请期待。', 'Articles coming soon.')}</div>
+                  : <div className="a-lessons-grid">{arts.map(a => (
+                      <button key={a.id} className="a-lesson-card" onClick={() => setArtId(a.id)}>
+                        <div className="lc-title">{L(a.title[0], a.title[1])}</div>
+                        <div className="lc-teaser">{L(a.excerpt[0], a.excerpt[1])}</div>
+                        <div className="lc-no">{a.body ? (L(a.date || '', a.date || '')) : L('即将上线', 'Coming soon')}</div>
+                      </button>
+                    ))}</div>}
+              </>);
+            })()}
           </main>
         )}
 

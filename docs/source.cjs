@@ -318,4 +318,21 @@ const ACADEMY = [
   },
 ];
 
-module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES, ACADEMY };
+// 视频 / 文章 — content scaffolding (Phase 4 WS-4). The OWNER adds real items later; the app renders
+// graceful "coming soon" states while a src/body is empty. Shapes:
+//   video:   { id, title:[zh,en], teaser:[zh,en], poster:'', src:'' | '<youtube id>' | '<file url>',
+//              provider:'youtube' | 'file' | '', duration:'', tags:[] }   // src '' => coming soon
+//   article: { id, title:[zh,en], excerpt:[zh,en], cover:'', body:[zh,en] | null,
+//              author:'', date:'', tags:[], sourceAttribution:'' }        // body null => coming soon
+// INTEGRITY: a non-empty article body MUST carry a non-empty sourceAttribution (docs lint enforces this);
+// never fabricate fengshui claims; never bundle copyrighted media; only youtube-nocookie embeds are allowed.
+const MEDIA = {
+  videos: [
+    { id: 'intro', title: ['通書擇日 · 上手介绍', 'Tong Shu · Getting started'], teaser: ['一分钟了解如何挑一个吉日。', 'A one-minute tour of finding an auspicious date.'], poster: '', src: '', provider: '', duration: '', tags: ['intro'] },
+  ],
+  articles: [
+    { id: 'read-a-day', title: ['如何读懂一天', 'How to read a day page'], excerpt: ['日页各部分的含义速览。', 'A quick tour of what each part of the day sheet means.'], cover: '', body: null, author: '', date: '', tags: ['guide'], sourceAttribution: '' },
+  ],
+};
+
+module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES, ACADEMY, MEDIA };

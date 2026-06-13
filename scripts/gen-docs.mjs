@@ -28,10 +28,17 @@ D.GLOSS.forEach(g => {
   if (!c.id || !pair(c.title) || !pair(c.story)) throw 'ACADEMY shape ' + (c.id || '?');
   if (!Array.isArray(c.glossaryLinks) || !c.glossaryLinks.length || !c.glossaryLinks.every(id => ids.has(id))) throw 'ACADEMY links ' + c.id;
 });
-console.log('shapes OK — gloss entries:', D.GLOSS.length, '| cats:', D.GLOSS_CATS.length, '| cases:', (D.CASES || []).length, '| academy:', (D.ACADEMY || []).length);
+const MEDIA = D.MEDIA || { videos: [], articles: [] };
+(MEDIA.videos || []).forEach(v => { if (!v.id || !pair(v.title) || !pair(v.teaser)) throw 'MEDIA.video ' + (v.id || '?'); });
+(MEDIA.articles || []).forEach(a => {
+  if (!a.id || !pair(a.title) || !pair(a.excerpt)) throw 'MEDIA.article ' + (a.id || '?');
+  if (a.body != null && !pair(a.body)) throw 'MEDIA.article body must be [zh,en] or null: ' + a.id;
+  if (a.body != null && a.body[0] && a.body[0].trim() && !(a.sourceAttribution || '').trim()) throw 'MEDIA.article with a body needs a sourceAttribution: ' + a.id;
+});
+console.log('shapes OK — gloss entries:', D.GLOSS.length, '| cats:', D.GLOSS_CATS.length, '| cases:', (D.CASES || []).length, '| academy:', (D.ACADEMY || []).length, '| media:', (MEDIA.videos || []).length + 'v/' + (MEDIA.articles || []).length + 'a');
 
 // ---- (1) in-app consts ----
-const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [], academy: D.ACADEMY || [] };
+const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [], academy: D.ACADEMY || [], media: D.MEDIA || { videos: [], articles: [] } };
 let inapp = '// GENERATED from docs/source.js by scripts/gen-docs.mjs — single source; do not hand-edit.\n'
   + 'export const DOCS = ' + JSON.stringify(DOCS) + ';\n'
   + 'export const GLOSS_CATS = ' + JSON.stringify(D.GLOSS_CATS) + ';\n'

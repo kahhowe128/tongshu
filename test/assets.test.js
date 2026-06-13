@@ -20,5 +20,12 @@ const diagrams = fs.readFileSync('src/assets/diagrams.jsx', 'utf8');
 ['wuxing', 'jianchu', 'ganzhi', 'mansion', 'leap', 'daypage'].forEach(n => { if (!new RegExp('\\b' + n + ':').test(diagrams)) bad(`diagrams.jsx: missing diagram "${n}"`); });
 const illus = fs.readFileSync('src/assets/illustrations.jsx', 'utf8');
 ['sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn'].forEach(n => { if (!new RegExp('\\b' + n + ':').test(illus)) bad(`illustrations.jsx: missing illustration "${n}"`); });
-console.log(fail ? `${fail} problem(s)` : '✅ assets lint clean — every SVG titled; icons currentColor; no external/raster refs; tabs+categories+verdicts+diagrams covered');
+// WS-4: any video embed must be the privacy-friendly youtube-nocookie iframe, loaded lazily
+const app = fs.readFileSync('src/App.jsx', 'utf8');
+if (/youtube/i.test(app)) {
+  if (/youtube\.com\/embed/i.test(app)) bad('App.jsx: use youtube-nocookie.com, not youtube.com/embed');
+  if (!/youtube-nocookie\.com/.test(app)) bad('App.jsx: youtube embeds must use youtube-nocookie.com');
+  if (!/loading="lazy"|loading={['"]lazy/.test(app)) bad('App.jsx: youtube embeds must be lazy (loading="lazy")');
+}
+console.log(fail ? `${fail} problem(s)` : '✅ assets lint clean — every SVG titled; icons currentColor; no external/raster refs; youtube-nocookie lazy embed only');
 process.exit(fail ? 1 : 0);

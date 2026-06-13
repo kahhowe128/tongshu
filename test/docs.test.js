@@ -42,5 +42,18 @@ academy.forEach(c => {
 const spiritsCh = academy.find(c => c.id === 'spirits');
 if (!spiritsCh) bad('academy missing the spirits chapter (teaches the honesty principle)');
 else { const txt = JSON.stringify(spiritsCh); if (!txt.includes('未纳入')) bad('academy spirits chapter missing 未纳入 caveat'); if (!/omitted/i.test(txt)) bad('academy spirits chapter missing "omitted" caveat'); }
-console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞; omitted list mirrors engine; ${cases.length} cases + ${academy.length} academy chapters, glossary links resolve`);
+// MEDIA (Phase 4 WS-4): shape, attribution discipline, no external non-allowlisted media hosts
+const media = DOCS.media || { videos: [], articles: [] };
+const hostOk = u => !u || /^assets\//.test(u) || /^(https?:)?\/\/(www\.)?youtube-nocookie\.com\//.test(u);
+(media.videos || []).forEach(v => {
+  if (!v.id || !Array.isArray(v.title) || !Array.isArray(v.teaser)) bad(`media video shape: ${v.id || '?'}`);
+  if (v.poster && !hostOk(v.poster)) bad(`media video poster external host: ${v.id}`);
+  if (v.provider === 'file' && v.src && !hostOk(v.src)) bad(`media video file src external host: ${v.id}`);
+});
+(media.articles || []).forEach(a => {
+  if (!a.id || !Array.isArray(a.title) || !Array.isArray(a.excerpt)) bad(`media article shape: ${a.id || '?'}`);
+  if (a.body && a.body[0] && a.body[0].trim() && !(a.sourceAttribution || '').trim()) bad(`media article with a body needs sourceAttribution: ${a.id}`);
+  if (a.cover && !hostOk(a.cover)) bad(`media article cover external host: ${a.id}`);
+});
+console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞; omitted mirrors engine; ${cases.length} cases + ${academy.length} academy + media ${(media.videos || []).length}v/${(media.articles || []).length}a; links resolve`);
 process.exit(fail ? 1 : 0);
