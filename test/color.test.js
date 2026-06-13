@@ -14,6 +14,10 @@ const PAIRS = [
   ['neutral','neutralSoft',4.5],['neutral','surface',4.5],
   ['onSeal','seal',4.5],['seal','surface',4.5],['seal','surface2',4.5],
   ['line2','surface',1.6],['lineStrong','surface',3.0],['focus','surface',3.0],
+  // Phase 4: calendar-cell text on the soft verdict tints (new wide-surface component pairs)
+  ['ink','goodSoft',4.5],['ink','badSoft',4.5],['ink','warnSoft',4.5],['ink','neutralSoft',4.5],
+  ['inkSoft','goodSoft',4.5],['inkSoft','badSoft',4.5],['inkSoft','warnSoft',4.5],['inkSoft','neutralSoft',4.5],
+  ['inkFaint','goodSoft',4.5],['inkFaint','badSoft',4.5],['inkFaint','warnSoft',4.5],['inkFaint','neutralSoft',4.5],
 ];
 let fails = 0;
 for (const th of ['light','dark','contrast','red']) {
