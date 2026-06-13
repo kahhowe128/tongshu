@@ -221,12 +221,18 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-bar .bt i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--warn));}
 .a-bar .bn{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-align:right;}
 
-/* hours grid */
-.a-hours{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
-.a-hour{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 9px;border:1px solid var(--line);border-radius:var(--r1);font-size:12px;background:var(--surface);}
-.a-hour.good{background:var(--good-soft);border-color:var(--good);}
+/* hours grid — three-state (吉/平/忌), driven by rankHours weight */
+.a-hours{display:flex;flex-direction:column;gap:6px;}
+.a-hour{padding:8px 10px;border:1px solid var(--line);border-left-width:3px;border-radius:var(--r1);font-size:12px;background:var(--surface);}
+.a-hour.good{border-left-color:var(--good);}
+.a-hour.neutral{border-left-color:var(--line-2);}
+.a-hour.avoid{border-left-color:var(--bad);}
+.a-hour .htop{display:flex;align-items:center;gap:8px;}
 .a-hour .hg{font-family:var(--font-serif);}
 .a-hour .ht{font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);}
+.a-hour .hsp{flex:1;}
+.a-hour .hr{font-size:11px;color:var(--ink-soft);line-height:1.5;margin-top:4px;}
+.a-hours-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
 
 /* compare boxes */
 .a-cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px;}

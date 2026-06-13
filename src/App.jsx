@@ -23,7 +23,7 @@ import { CSS } from './styles.js';
 import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
 import { loadSaved, saveLocal } from './lib/storage.js';
 import {
-  STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
+  STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, rankHours, hourClass, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
 } from './engine/tongshu.js';
 
 // ====================================================================
@@ -596,10 +596,36 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } =
                 <div className="a-note" style={{ marginTop: '6px' }}>{L(DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN)}</div>
               </>))}
 
-              {/* 时辰 */}
-              {acc('hours', '十二时辰', '12 double-hours', '', (
-                <div className="a-hours">{D.hours.map((h, i) => <div key={i} className={'a-hour' + (h.isYellow ? ' good' : '')}><span className="hg">{h.branchZh}{L('时', '')}</span><span className="ht">{h.range}</span><span>{h.isYellow ? '✓' : ''}</span></div>)}</div>
-              ))}
+              {/* 时辰 — three states (吉/平/忌) driven only by rankHours()'s signed weight */}
+              {(() => {
+                const hr = rankHours(D);
+                const good = hr.rows.filter(r => hourClass(r.w).key === 'good').length;
+                const avoid = hr.rows.filter(r => hourClass(r.w).key === 'avoid').length;
+                return acc('hours', '十二时辰', '12 double-hours', `${good}吉/${avoid}忌`, (<>
+                  <div className="a-hours">{hr.rows.map((h, i) => {
+                    const hc = hourClass(h.w);
+                    const pc = hc.key === 'good' ? 'good' : hc.key === 'avoid' ? 'bad' : 'neutral';
+                    const reason = h.tags.map(t => t.sign + L(t.zh, t.en)).join(' · ');
+                    return (
+                      <div key={i} className={'a-hour ' + hc.key}>
+                        <div className="htop">
+                          <span className="hg">{h.branchZh}{L('时', '')}</span>
+                          <span className="ht">{h.range}</span>
+                          <span className="hsp" />
+                          <span className={'a-pill ' + pc}>{L(hc.zh, hc.en)}</span>
+                        </div>
+                        <div className="hr">{reason}</div>
+                      </div>
+                    );
+                  })}</div>
+                  <div className="a-hours-legend">
+                    <span className="a-pill good">{L('吉 宜', '吉 Favorable')}</span>
+                    <span className="a-pill neutral">{L('平 中性', '平 Neutral')}</span>
+                    <span className="a-pill bad">{L('忌 冲日支/黑道', '忌 Avoid (clash/black-path)')}</span>
+                  </div>
+                  <div className="a-note" style={{ marginTop: '8px' }}>{L('时辰按精确规则排序（时之黄道/黑道 + 时支冲合日支）；时家神煞未纳入。', 'Hours ranked by exact rules (hour path-god + hour-vs-day branch); hour-family spirits omitted.')} {pop('zeshi', '择时', 'Hour ranking', '按时之黄道/黑道与时支冲合日支排序（皆精确规则）；时家神煞（日禄、天乙贵人、喜神时等）版本繁多，未纳入。', 'Ranked by the hour path-god and hour-vs-day branch relations (exact rules); hour-family spirits (day-lu, noble-person, joy hours) vary by edition and are omitted.', 'zeshi')}</div>
+                </>));
+              })()}
 
               {/* 专项模块 */}
               {isMarriage && acc('marry', '嫁娶专项', 'Marriage', '', (() => { const ml = brideBranch >= 0 ? marriageMonthLuck(brideBranch, D.lunar.monthNum) : null; const sn = sanniang(D.lunar.day); const rel = D.shensha.list.filter(s => ['月厌', '往亡', '八专', '上朔'].includes(s.key)); return (<>
