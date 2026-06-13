@@ -174,4 +174,100 @@ const GLOSS = [
   { id: 'zeshi', cat: 4, zh: '择时（时辰排序）', py: 'zéshí', en: 'Hour ranking', d: ['按时之黄黑道与时支–日支冲合（皆精确规则）排序当日时辰并标最佳吉时；时家神煞（日禄、天乙贵人、喜神时等）版本繁多，未经核实暂不纳入。', 'Hours rank by exact rules only (hour path god + hour-day branch relations); hour-family spirits are omitted pending sourcing.'] },
 ];
 
-module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS };
+// 用例 / Examples — real scenarios end-to-end. Each case restates the non-definitive framing and any
+// omitted-item caveat that applies (weddings → 不将/周堂 omitted; burial → 山向/墓运 omitted). `links`
+// are glossary ids (must exist in GLOSS) surfaced as deep-links in-app. All [zh, en] pairs.
+const CASES = [
+  {
+    id: 'wedding',
+    title: ['挑一个嫁娶吉日', 'Choosing a wedding date'],
+    scenario: ['想在秋天办婚礼，新娘属兔，想避开冲煞与三娘煞。',
+      'A couple wants an autumn wedding; the bride is a Rabbit; they want to avoid clashes and Three-Maiden Sha.'],
+    steps: [
+      ['在「日常」选 嫁娶；在设置里把女命生肖设为 兔。', 'Pick Wedding under the Everyday tab; set the bride zodiac = Rabbit in Settings.'],
+      ['范围选未来 90 天，并打开生肖筛除。', 'Set the range to the next 90 days and turn on zodiac screening.'],
+      ['切到日历视图，找绿色聚集的周段。', 'Switch to the calendar view and look for clusters of green days.'],
+      ['点开候选日：看大利月是否相符、三娘煞是否标红、神煞吉凶与逐项裁断。',
+        'Open a candidate: check the marriage-month luck, whether Three-Maiden is flagged, the spirit grades and the per-activity verdict.'],
+    ],
+    reading: ['绿色＝净吉；若见三娘煞或冲新娘生肖则降级，大利月相符更稳。最终仍以纸本通书或择日师确认。',
+      'Green = net-favorable; Three-Maiden or a clash with the bride demotes it, and a matching lucky-month is steadier. Still confirm with a printed almanac or a specialist.'],
+    note: ['不将日与周堂本应用未纳入（各家版本分歧），故婚课请专业复核；本页为推算参考，非定论。',
+      'Bujiang and Zhoutang are omitted here (editions differ), so have wedding dates professionally reviewed; this page is computed guidance, not definitive.'],
+    links: ['dali', 'sanniang', 'zhoutang'],
+  },
+  {
+    id: 'opening',
+    title: ['为新店择开业日', 'Picking an opening day for a new shop'],
+    scenario: ['新店想在下个月开业，老板希望日子利于求财、避开诸事不宜之日。',
+      'A new shop wants to open next month; the owner wants a day that favors wealth and avoids broadly unsuitable days.'],
+    steps: [
+      ['在「日常」选 开市/开业（可加 立券、交易、纳财）。', 'Under Everyday pick Open business; optionally add Sign contract, Trade, Receive wealth.'],
+      ['范围选本月或下月。', 'Set the range to this month or next.'],
+      ['看排序列表顶部的净吉日，留意建除值日与黄黑道。', 'Read the top net-favorable days in the ranked list; note the day-officer and the yellow/black path.'],
+      ['点开候选日：避开 无禄／十恶大败、四废 等凶日；优先黄道、吉神多者。',
+        'Open a candidate: avoid Lu-void / Ten-Evils and Four-Voids days; prefer yellow-path days with more benefics.'],
+    ],
+    reading: ['优先黄道且吉神多、凶煞少之日；十恶大败、四废、月破等忌开市。可参考逐项「开市」裁断。',
+      'Prefer yellow-path days rich in benefics and light on ills; Ten-Evils, Four-Voids and Month-Breaker are avoided for opening. Lean on the per-activity verdict for Open business.'],
+    note: ['财神方位各家不一，本应用未纳入，仅取通行之喜神；本页为推算参考，非定论。',
+      'Wealth-god directions differ by source and are omitted; only the consensus Joy-god is kept. Computed guidance, not definitive.'],
+    links: ['wl', 'huangdao', 'jianchu'],
+  },
+  {
+    id: 'moving',
+    title: ['搬家入宅选日', 'Choosing a move-in date'],
+    scenario: ['一家人下个月搬新居，户主属马，想避开冲本命与往亡、归忌之日。',
+      'A family moves next month; the head of the household is a Horse and wants to avoid days clashing their sign, plus Going-to-Perish and Return-Taboo days.'],
+    steps: [
+      ['在「日常」选 搬家/移徙（可加 入宅、安床）。', 'Under Everyday pick Move house; optionally add Enter new home, Place bed.'],
+      ['工具→八字填户主生日，回到择日打开生肖筛除。', 'In Tools enter the household head birth date, then turn on zodiac screening in Find.'],
+      ['用日历视图避开标 ⚠ 的冲生肖日。', 'Use the calendar view to skip days flagged ⚠ for a zodiac clash.'],
+      ['点开候选日：确认非 往亡／归忌，喜神方位可作搬入朝向参考。',
+        'Open a candidate: confirm it is neither Going-to-Perish nor Return-Taboo; the Joy-god direction can guide the move-in orientation.'],
+    ],
+    reading: ['净吉且不冲户主本命为宜；往亡、归忌忌移徙归家。多人同住可在工具加入各人生肖一并筛除。',
+      'A net-favorable day that does not clash the household head sign is best; Going-to-Perish and Return-Taboo are avoided for moving in. Add each resident sign in Tools to screen for everyone.'],
+    note: ['本页为推算参考，非定论；重要搬迁可再以纸本通书或择日师复核。',
+      'This page is computed guidance, not definitive; for an important move, double-check with a printed almanac or a specialist.'],
+    links: ['ww', 'gj', 'benming'],
+  },
+  {
+    id: 'burial',
+    title: ['为安葬择日', 'Choosing a burial date'],
+    scenario: ['家属需为先人择安葬日，想避开重丧、重日，并了解本应用的边界。',
+      'A family needs a burial date for a late relative, wanting to avoid Double-Mourning and Double-Day, and to understand the limits of the tool.'],
+    steps: [
+      ['在「凶事」标签选 安葬（可加 入殓、移柩）。', 'Under the Inauspicious tab pick Burial; optionally add Encoffin, Move coffin.'],
+      ['范围按治丧时程选取（通常较短）。', 'Set the range to the funeral timeframe (usually short).'],
+      ['看列表或日历，排除标红之日。', 'Use the list or calendar and rule out the red days.'],
+      ['点开候选日：看安葬专项的 重丧／重日／复日，受死、月破等诸吉难解者尤忌。',
+        'Open a candidate: check the burial module for Double-Mourning / Double-Day / Repeat-Day; Receiving-Death and Month-Breaker are especially avoided.'],
+    ],
+    reading: ['避开重丧、重日、受死、月破；专项模块会逐一标示。安葬尚需配合逝者坐山与年命，超出本工具。',
+      'Avoid Double-Mourning, Double-Day, Receiving-Death and Month-Breaker; the burial module flags each. Burial also needs the grave sitting-facing and the year of the deceased — beyond this tool.'],
+    note: ['山向·墓运·年克山家本应用未纳入（需专业堪舆），故安葬日务必请择日师定夺；本页为推算参考，非定论。',
+      'Mountain-facing, grave-luck and year-conflicts are omitted here (they need professional geomancy), so a burial date must be set by a specialist; computed guidance, not definitive.'],
+    links: ['chongsang', 'cr', 'shanxiang'],
+  },
+  {
+    id: 'travel',
+    title: ['挑一个出行吉日', 'Choosing a day to travel'],
+    scenario: ['计划一趟远行，想选个顺利的日子与时辰，避开往亡。',
+      'Planning a long trip; wanting a smooth day and hour, while avoiding Going-to-Perish.'],
+    steps: [
+      ['在「日常」选 出行（赴任者可加 赴任）。', 'Under Everyday pick Travel; add Take office if relevant.'],
+      ['范围选出发可行的日段。', 'Set the range to your feasible departure window.'],
+      ['看排序列表选净吉日，避开 往亡、归忌。', 'Pick a net-favorable day from the list, avoiding Going-to-Perish and Return-Taboo.'],
+      ['点开当日，在「方位·吉时」看吉/平/忌时辰与喜神方位，择时择向出发。',
+        'Open the day and use Directions & Hours to read the favorable/neutral/avoid hours and the Joy-god direction for departure.'],
+    ],
+    reading: ['净吉日配吉时出行更稳；往亡尤忌远行。时辰按精确规则排序（黄黑道＋时支冲合日支），可直接参考。',
+      'A net-favorable day with a favorable hour travels best; Going-to-Perish is especially avoided. Hours are ranked by exact rules (path-god + hour-vs-day branch), ready to use.'],
+    note: ['时家神煞（日禄、贵人时等）版本繁多，未纳入；本页为推算参考，非定论。',
+      'Hour-family spirits (day-lu, noble hours) vary by edition and are omitted; computed guidance, not definitive.'],
+    links: ['ww', 'zeshi', 'huangdao'],
+  },
+];
+
+module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES };

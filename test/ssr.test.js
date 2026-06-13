@@ -14,8 +14,8 @@ const App = require(process.cwd() + '/.cache/app.test.cjs').default;
 const variants = [
   { name: 'find (default)', props: {}, expect: ['通書擇日', '择日', '学习', '日历'] },
   { name: 'find · calendar', props: { initialFindView: 'cal' }, expect: ['日历', '范围外日期变淡'] },
-  { name: 'learn', props: { initialTab: 'learn' }, expect: ['快速上手', '词汇表', '历法源流', '天德', '协纪辨方书', '未纳入之神煞', '引擎自检'] },
-  { name: 'learn · EN', props: { initialTab: 'learn', initialLang: 'en' }, expect: ['Quick start', 'Glossary', 'Heavenly stems', 'never definitive'] },
+  { name: 'learn', props: { initialTab: 'learn' }, expect: ['快速上手', '用例', '挑一个嫁娶吉日', '词汇表', '历法源流', '天德', '协纪辨方书', '未纳入之神煞', '引擎自检'] },
+  { name: 'learn · EN', props: { initialTab: 'learn', initialLang: 'en' }, expect: ['Quick start', 'Examples', 'Choosing a wedding date', 'Glossary', 'Heavenly stems', 'never definitive'] },
   { name: 'tools', props: { initialTab: 'tools' }, expect: ['引擎自检', '二十八宿'] },
 ];
 let fail = 0;

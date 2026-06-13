@@ -531,6 +531,19 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
               <ol className="a-ql">{DOCS.quick.map((s, i) => <li key={i}>{L(s[0], s[1])}</li>)}</ol>
             </div>
             <div className="a-card">
+              <div className="a-sec" style={{ marginTop: 0 }}>{L('用例', 'Examples')} <span className="en">{DOCS.cases.length}</span></div>
+              <p className="a-hist-p" style={{ marginTop: 0 }}>{L('跟着真实场景走一遍，看工具如何帮你择日。', 'Walk real scenarios end-to-end to see how the tool helps.')}</p>
+              {DOCS.cases.map((c) => <div key={c.id}>{acc('case-' + c.id, c.title[0], c.title[1], null, (
+                <div>
+                  <p className="a-hist-p" style={{ marginTop: 0 }}><b>{L('情境', 'Scenario')}：</b>{L(c.scenario[0], c.scenario[1])}</p>
+                  <ol className="a-ql">{c.steps.map((s, j) => <li key={j}>{L(s[0], s[1])}</li>)}</ol>
+                  <p className="a-hist-p"><b>{L('解读', 'Reading')}：</b>{L(c.reading[0], c.reading[1])}</p>
+                  {c.note && <div className="a-note" style={{ marginTop: '6px' }}>{L(c.note[0], c.note[1])}</div>}
+                  {c.links && c.links.length > 0 && <div className="a-case-links">{c.links.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => setGFocus(id)}>{g.zh} ↗</button> : null; })}</div>}
+                </div>
+              ))}</div>)}
+            </div>
+            <div className="a-card">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('读懂一天', 'Reading a day page')}</div>
               {DOCS.read.map((r, i) => <div key={i} className="a-gl-row"><b className="a-gl-k">{L(r.k[0], r.k[1])}</b><span className="a-gl-d">{L(r.d[0], r.d[1])}</span></div>)}
             </div>

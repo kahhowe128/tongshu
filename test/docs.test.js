@@ -18,5 +18,17 @@ keys.forEach(k => { if (omitText.includes(k) && k !== '土王用事') bad(`score
 const allTxt = JSON.stringify(GLOSSARY);
 ['建除满平定执破危成收开闭'.split(''), ['青龙','明堂','天刑','朱雀','金匮','天德','白虎','玉堂','天牢','玄武','司命','勾陈']]
   .flat().forEach(n => { if (!allTxt.includes(n)) bad(`officer/path-god missing: ${n}`); });
-console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞 covered with matching grades; omitted list mirrors engine`);
+// CASES (Phase 2 Feature 4): shape, glossary deep-links resolve, omitted caveats present
+const cases = DOCS.cases || [];
+if (cases.length < 5) bad(`CASES too few: expected ≥5, got ${cases.length}`);
+const glossIds = new Set(GLOSSARY.map(g => g.id));
+cases.forEach(c => {
+  ['id', 'title', 'scenario', 'steps', 'reading'].forEach(k => { if (!c[k]) bad(`case ${c.id || '?'} missing ${k}`); });
+  if (!Array.isArray(c.steps) || !c.steps.length) bad(`case ${c.id} has no steps`);
+  const links = c.links || [];
+  if (!links.some(id => glossIds.has(id))) bad(`case ${c.id} references no valid glossary id`);
+  links.forEach(id => { if (!glossIds.has(id)) bad(`case ${c.id} bad glossary id: ${id}`); });
+});
+['wedding', 'burial'].forEach(id => { const c = cases.find(x => x.id === id); if (!c) return bad(`missing case: ${id}`); const txt = JSON.stringify(c); if (!txt.includes('未纳入')) bad(`case ${id} missing 未纳入 caveat`); if (!/omitted/i.test(txt)) bad(`case ${id} missing "omitted" caveat`); });
+console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞 covered with matching grades; omitted list mirrors engine; ${cases.length} cases, glossary links resolve`);
 process.exit(fail ? 1 : 0);

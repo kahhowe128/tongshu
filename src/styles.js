@@ -370,5 +370,10 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-gl-src{color:var(--ink-faint);font-size:11px;margin:6px 0;}
 .a-poplink{display:block;margin-top:8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--seal);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font-sans);}
 @media (hover:hover){.a-poplink:hover{background:var(--surface-hover);}}
+/* examples / case-study glossary deep-links */
+.a-case-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.a-case-link{border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--seal);font-size:11.5px;padding:3px 9px;cursor:pointer;font-family:var(--font-sans);}
+.a-case-link:active{background:var(--surface-pressed);}
+@media (hover:hover){.a-case-link:hover{background:var(--surface-hover);}}
 `;
 export { CSS };
