@@ -30,7 +30,7 @@ import {
 function fmtYMD(y, m, d) { return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`; }
 function parseYMD(s) { const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(s || ''); return m ? { y: +m[1], mo: +m[2], d: +m[3] } : null; }
 
-export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } = {}) {
+export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', initialFindView = 'list' } = {}) {
   const now = new Date();
   const today = { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
   const todayJDN = gregorianToJDN(today.y, today.mo, today.d);
@@ -56,6 +56,9 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } =
   const [birthTime, setBirthTime] = useState('');
   const [screenZodiac, setScreenZodiac] = useState(true);
   const [sortMode, setSortMode] = useState('score');
+  const [findView, setFindView] = useState(initialFindView); // 'list' | 'cal' (heat-strip)
+  const [findCalY, setFindCalY] = useState(today.y);
+  const [findCalM, setFindCalM] = useState(today.mo);
   const [mansionOffset, setMansionOffset] = useState(0);
   const [calDateStr, setCalDateStr] = useState('');
   const [calMansionIdx, setCalMansionIdx] = useState(11);
@@ -124,6 +127,23 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } =
     return arr;
   }, [rStart, rEnd, selIds, birthYearBranch, screenZodiac, profile, persons, wuxProfile, sortMode, mansionOffset]);
 
+  // heat-strip: anchor the visible month to the start of the chosen range (re-sync when From changes)
+  useEffect(() => { const g = jdnToGregorian(rStart); setFindCalY(g.y); setFindCalM(g.m); }, [rStart]);
+  // one month of per-day verdicts using the SAME dayView the ranked list uses; memoized per (month, activity-set, screening)
+  const findCalData = useMemo(() => {
+    const first = gregorianToJDN(findCalY, findCalM, 1);
+    const pad = weekday(first);
+    const daysIn = gregorianToJDN(findCalM === 12 ? findCalY + 1 : findCalY, findCalM === 12 ? 1 : findCalM + 1, 1) - first;
+    const cells = [];
+    for (let i = 0; i < pad; i++) cells.push(null);
+    for (let dnum = 0; dnum < daysIn; dnum++) {
+      const jdn = first + dnum; const day = getDay(jdn);
+      const dv = dayView(day, selActs, birthYearBranch, screenZodiac, profile, extraBranches, wuxProfile);
+      cells.push({ jdn, day, dv, dnum: dnum + 1, inRange: jdn >= rStart && jdn <= rEnd });
+    }
+    return cells;
+  }, [findCalY, findCalM, selIds, screenZodiac, profile, persons, birthYearBranch, wuxProfile, rStart, rEnd, mansionOffset]);
+
   const tests = useMemo(() => runSelfTests(), []);
   const testPass = tests.filter(t => t.ok).length;
   const accTerms = useMemo(() => Array.from({ length: 24 }, (_, i) => { const cj = termCivilJDN(accYear, i); const g = jdnToGregorian(cj); return { ...TERMS24[i], date: `${g.y}-${String(g.m).padStart(2, '0')}-${String(g.d).padStart(2, '0')}`, clock: termClock(accYear, i) }; }), [accYear]);
@@ -165,13 +185,13 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } =
 
   // ---- URL hash ----
   useEffect(() => {
-    try { let h = ((typeof window !== 'undefined' && window.location.hash) || '').replace(/^#/, ''); if (!h) h = loadSaved(); if (h) { const p = new URLSearchParams(h); if (p.get('s')) setStartStr(p.get('s')); if (p.get('e')) setEndStr(p.get('e')); if (p.get('b')) setBirthDate(p.get('b')); if (p.get('t')) setBirthTime(p.get('t')); if (p.get('tz')) setTzKey(p.get('tz')); if (p.get('a')) setSelIds(p.get('a').split(',').filter(Boolean)); if (p.get('p')) setProfile(p.get('p')); if (p.get('l')) setLang(p.get('l')); if (p.get('th')) setTheme(p.get('th')); if (p.get('lz')) setLateZi(p.get('lz') === '1'); if (p.get('mo')) setMansionOffset(+p.get('mo') || 0); if (p.get('br')) setBrideBranch(+p.get('br')); if (p.get('v')) setTab(p.get('v')); if (p.get('g')) { setTab('learn'); setGFocus(p.get('g')); } } } catch (e) {}
+    try { let h = ((typeof window !== 'undefined' && window.location.hash) || '').replace(/^#/, ''); if (!h) h = loadSaved(); if (h) { const p = new URLSearchParams(h); if (p.get('s')) setStartStr(p.get('s')); if (p.get('e')) setEndStr(p.get('e')); if (p.get('b')) setBirthDate(p.get('b')); if (p.get('t')) setBirthTime(p.get('t')); if (p.get('tz')) setTzKey(p.get('tz')); if (p.get('a')) setSelIds(p.get('a').split(',').filter(Boolean)); if (p.get('p')) setProfile(p.get('p')); if (p.get('l')) setLang(p.get('l')); if (p.get('th')) setTheme(p.get('th')); if (p.get('lz')) setLateZi(p.get('lz') === '1'); if (p.get('mo')) setMansionOffset(+p.get('mo') || 0); if (p.get('br')) setBrideBranch(+p.get('br')); if (p.get('fv')) setFindView(p.get('fv')); if (p.get('v')) setTab(p.get('v')); if (p.get('g')) { setTab('learn'); setGFocus(p.get('g')); } } } catch (e) {}
     hashLoaded.current = true;
   }, []);
   useEffect(() => {
     if (!hashLoaded.current) return;
-    try { const p = new URLSearchParams(); p.set('s', startStr); p.set('e', endStr); if (birthDate) p.set('b', birthDate); if (birthTime) p.set('t', birthTime); p.set('tz', tzKey); if (selIds.length) p.set('a', selIds.join(',')); p.set('p', profile); p.set('l', lang); p.set('th', theme); if (lateZi) p.set('lz', '1'); if (mansionOffset) p.set('mo', String(mansionOffset)); if (brideBranch >= 0) p.set('br', String(brideBranch)); if (typeof window !== 'undefined') window.history.replaceState(null, '', '#' + p.toString()); saveLocal(p.toString()); } catch (e) {}
-  }, [startStr, endStr, birthDate, birthTime, tzKey, selIds, profile, lang, theme, lateZi, mansionOffset, brideBranch]);
+    try { const p = new URLSearchParams(); p.set('s', startStr); p.set('e', endStr); if (birthDate) p.set('b', birthDate); if (birthTime) p.set('t', birthTime); p.set('tz', tzKey); if (selIds.length) p.set('a', selIds.join(',')); p.set('p', profile); p.set('l', lang); p.set('th', theme); if (lateZi) p.set('lz', '1'); if (mansionOffset) p.set('mo', String(mansionOffset)); if (brideBranch >= 0) p.set('br', String(brideBranch)); if (findView !== 'list') p.set('fv', findView); if (typeof window !== 'undefined') window.history.replaceState(null, '', '#' + p.toString()); saveLocal(p.toString()); } catch (e) {}
+  }, [startStr, endStr, birthDate, birthTime, tzKey, selIds, profile, lang, theme, lateZi, mansionOffset, brideBranch, findView]);
 
   // ---- keyboard + focus ----
   useEffect(() => {
@@ -302,23 +322,47 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh' } =
             </div>
 
             <div className="a-sec" ref={refList}>{selActs.length ? L('最佳日期', 'Best dates') : L('范围内日期', 'Days in range')} <span className="en">{listData.length} days</span>
-              {wuxProfile && <span className="a-seg" style={{ marginLeft: 'auto' }}><button className={sortMode === 'score' ? 'on' : ''} onClick={() => setSortMode('score')}>{L('宜忌', 'Verdict')}</button><button className={sortMode === 'wuxing' ? 'on' : ''} onClick={() => setSortMode('wuxing')}>五行</button></span>}
+              <span className="a-seg" style={{ marginLeft: 'auto' }}><button className={findView === 'list' ? 'on' : ''} onClick={() => setFindView('list')}>{L('列表', 'List')}</button><button className={findView === 'cal' ? 'on' : ''} onClick={() => setFindView('cal')}>{L('日历', 'Calendar')}</button></span>
             </div>
-            {listData.length === 0 && <div className="a-empty">{L('没有可显示的日期。', 'No days to show.')}</div>}
-            {listData.slice(0, 120).map(({ jdn, day, dv }) => {
-              const reason = (() => { const fa = dv.perActivity[0]; if (!fa) return day.officer + L('日', ''); const f = fa.v.factors.find(x => x.strong) || fa.v.factors[0]; return f ? (lang === 'en' ? f.en : f.zh) : day.officer + L('日', ''); })();
-              return (
-                <button key={jdn} className={'a-dcard ' + colorClass(dv.color)} onClick={() => setSelJDN(jdn)}>
-                  <div><div className="dn">{day.greg.m}/{day.greg.d}</div><div className="dw">{L(DOW_ZH[day.weekday], DOW_EN[day.weekday])}</div></div>
-                  <div className="dm">
-                    <div className="dl">{lunarLabel(day)} · {day.dayGanzhi}{L('日', '')} · {day.officer}{L('日', '')}</div>
-                    <div className="dr">{reason}</div>
-                    <div className="dz">{L('冲', 'clash')}{day.clash.clashZodiac} · {calMansion(day).name}{L('宿', '')}{day.shensha.goodCount ? ` · ${L('吉神', '吉')}${day.shensha.goodCount}` : ''}{day.shensha.badCount ? ` · ${L('凶煞', '凶')}${day.shensha.badCount}` : ''}{(dv.benmingChong || dv.clashedPersons.length) ? <span className="a-flag">⚠{L('冲生肖', 'clash')}</span> : null}</div>
-                  </div>
-                  <div className={'a-vbadge ' + colorClass(dv.color)}>{vIcon(dv.color)} {lang === 'en' ? dv.verdictEn : dv.verdict}</div>
-                </button>
-              );
-            })}
+            {findView === 'list' && wuxProfile && <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}><span className="a-seg"><button className={sortMode === 'score' ? 'on' : ''} onClick={() => setSortMode('score')}>{L('宜忌', 'Verdict')}</button><button className={sortMode === 'wuxing' ? 'on' : ''} onClick={() => setSortMode('wuxing')}>五行</button></span></div>}
+
+            {findView === 'cal' ? (
+              <div className="a-card">
+                <div className="a-calnav">
+                  <button className="a-iconbtn" aria-label={L('上个月', 'previous month')} onClick={() => { let m = findCalM - 1, y = findCalY; if (m < 1) { m = 12; y--; } setFindCalM(m); setFindCalY(y); }}>‹</button>
+                  <div className="t">{findCalY} · {findCalM}{L('月', '')}</div>
+                  <button className="a-iconbtn" aria-label={L('下个月', 'next month')} onClick={() => { let m = findCalM + 1, y = findCalY; if (m > 12) { m = 1; y++; } setFindCalM(m); setFindCalY(y); }}>›</button>
+                </div>
+                <div className="a-cal">
+                  {(lang === 'en' ? DOW_EN : DOW_ZH).map((d, i) => <div key={i} className="dow">{lang === 'en' ? d.slice(0, 2) : d}</div>)}
+                  {findCalData.map((c, i) => c == null
+                    ? <div key={'p' + i} className="a-cell out" />
+                    : <button key={c.jdn} className={'a-cell' + (selActs.length ? ' tint ' + colorClass(c.dv.color) : '') + (c.inRange ? '' : ' out') + (c.jdn === todayJDN ? ' today' : '')} onClick={() => setSelJDN(c.jdn)} aria-label={`${c.day.greg.m}/${c.dnum}${selActs.length ? ' · ' + (lang === 'en' ? c.dv.verdictEn : c.dv.verdict) : ''}`}>
+                        <span className="g">{c.dnum}</span>
+                        {selActs.length > 0 && <span className="vg">{vIcon(c.dv.color)}</span>}
+                        {screenZodiac && (c.dv.benmingChong || c.dv.clashedPersons.length) ? <span className="cf" aria-hidden="true">⚠</span> : null}
+                      </button>
+                  )}
+                </div>
+                <div className="a-hint">{L('点选日期查看详情；范围外日期变淡，颜色同列表裁断。', 'Tap a day for detail; out-of-range days are dimmed, colours match the list verdict.')}</div>
+              </div>
+            ) : (<>
+              {listData.length === 0 && <div className="a-empty">{L('没有可显示的日期。', 'No days to show.')}</div>}
+              {listData.slice(0, 120).map(({ jdn, day, dv }) => {
+                const reason = (() => { const fa = dv.perActivity[0]; if (!fa) return day.officer + L('日', ''); const f = fa.v.factors.find(x => x.strong) || fa.v.factors[0]; return f ? (lang === 'en' ? f.en : f.zh) : day.officer + L('日', ''); })();
+                return (
+                  <button key={jdn} className={'a-dcard ' + colorClass(dv.color)} onClick={() => setSelJDN(jdn)}>
+                    <div><div className="dn">{day.greg.m}/{day.greg.d}</div><div className="dw">{L(DOW_ZH[day.weekday], DOW_EN[day.weekday])}</div></div>
+                    <div className="dm">
+                      <div className="dl">{lunarLabel(day)} · {day.dayGanzhi}{L('日', '')} · {day.officer}{L('日', '')}</div>
+                      <div className="dr">{reason}</div>
+                      <div className="dz">{L('冲', 'clash')}{day.clash.clashZodiac} · {calMansion(day).name}{L('宿', '')}{day.shensha.goodCount ? ` · ${L('吉神', '吉')}${day.shensha.goodCount}` : ''}{day.shensha.badCount ? ` · ${L('凶煞', '凶')}${day.shensha.badCount}` : ''}{(dv.benmingChong || dv.clashedPersons.length) ? <span className="a-flag">⚠{L('冲生肖', 'clash')}</span> : null}</div>
+                    </div>
+                    <div className={'a-vbadge ' + colorClass(dv.color)}>{vIcon(dv.color)} {lang === 'en' ? dv.verdictEn : dv.verdict}</div>
+                  </button>
+                );
+              })}
+            </>)}
             <div className="a-disc">{L('推算参考，非定论。', 'Computed guidance, not definitive.')}</div>
           </main>
         )}

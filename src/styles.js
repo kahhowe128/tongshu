@@ -129,6 +129,18 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-cell .dot{position:absolute;bottom:3px;width:6px;height:6px;border-radius:50%;}
 .a-cell .dot.v-good{background:var(--good);} .a-cell .dot.v-bad{background:var(--bad);}
 .a-cell .dot.v-amber{background:var(--warn);} .a-cell .dot.v-grey{background:var(--line-2);}
+/* find heat-strip: verdict tint + glyph (colour is never the only cue) */
+.a-cell.tint{justify-content:center;gap:1px;}
+.a-cell.tint .vg{font-size:13px;font-weight:700;line-height:1;}
+.a-cell.tint.v-good{background:var(--good-soft);border-color:var(--good);}
+.a-cell.tint.v-good .vg{color:var(--good);}
+.a-cell.tint.v-bad{background:var(--bad-soft);border-color:var(--bad);}
+.a-cell.tint.v-bad .vg{color:var(--bad);}
+.a-cell.tint.v-amber{background:var(--warn-soft);border-color:var(--warn);}
+.a-cell.tint.v-amber .vg{color:var(--warn);}
+.a-cell.tint.v-grey{background:var(--neutral-soft);}
+.a-cell.tint.v-grey .vg{color:var(--ink-faint);}
+.a-cell .cf{position:absolute;top:2px;right:3px;font-size:9px;line-height:1;}
 .a-hint{text-align:center;font-size:10.5px;color:var(--ink-faint);margin-top:8px;}
 
 /* tags */
