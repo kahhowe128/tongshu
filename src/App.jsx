@@ -91,6 +91,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const [tab, setTab] = useState(initialTab);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false); // mobile "More" overflow sheet (WS-5)
+  const [acaChapter, setAcaChapter] = useState(null); // Academy reader: chapter id or null (index) (WS-2)
   const [tourStep, setTourStep] = useState(-1);
   const [tourRect, setTourRect] = useState(null);
   const [gq, setGq] = useState(''); const [gFocus, setGFocus] = useState(null);
@@ -449,7 +450,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
             <div className="a-sec">{L('精选课程', 'Featured lessons')} <button className="a-seemore" onClick={() => setTab('academy')}>{L('全部学堂 →', 'All lessons →')}</button></div>
             <div className="a-feature-row">
               {DOCS.academy.slice(0, 4).map(c => (
-                <button key={c.id} className="a-feature-card" onClick={() => setTab('academy')}>
+                <button key={c.id} className="a-feature-card" onClick={() => { setAcaChapter(c.id); setTab('academy'); }}>
                   <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={240} />
                   <div className="ft">{L(c.title[0], c.title[1])}</div>
                 </button>
@@ -744,19 +745,6 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
               <ol className="a-ql">{DOCS.quick.map((s, i) => <li key={i}>{L(s[0], s[1])}</li>)}</ol>
             </div>
             <div className="a-card">
-              <div className="a-sec" style={{ marginTop: 0 }}>{L('学堂', 'Academy')} <span className="en">{DOCS.academy.length} {L('章', 'chapters')}</span></div>
-              <p className="a-hist-p" style={{ marginTop: 0 }}>{L('用故事认识基础与术语；叙述生动，史实仍依典籍。', 'Meet the basics and terms through short stories — lively telling, sourced facts.')}</p>
-              {DOCS.academy.map((c) => <div key={c.id}>{acc('aca-' + c.id, c.title[0], c.title[1], null, (
-                <div>
-                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={180} />
-                  <p className="a-hist-p">{L(c.story[0], c.story[1])}</p>
-                  {c.glossaryLinks && c.glossaryLinks.length > 0 && <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => setGFocus(id)}>{g.zh} ↗</button> : null; })}</div>}
-                </div>
-              ))}</div>)}
-              <div className="a-sec">{L('图解', 'Diagrams')}</div>
-              <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={200} />)}</div>
-            </div>
-            <div className="a-card">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('用例', 'Examples')} <span className="en">{DOCS.cases.length}</span></div>
               <p className="a-hist-p" style={{ marginTop: 0 }}>{L('跟着真实场景走一遍，看工具如何帮你择日。', 'Walk real scenarios end-to-end to see how the tool helps.')}</p>
               {DOCS.cases.map((c) => <div key={c.id}>{acc('case-' + c.id, c.title[0], c.title[1], null, (
@@ -823,8 +811,45 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== ACADEMY (WS-2 fills) ===================== */}
         {tab === 'academy' && (
           <main className="a-screen a-academy">
-            <h1 className="a-h1">{L('学堂', 'Academy')}</h1>
-            <p className="a-lede">{L('用故事认识择吉的基础与术语。', 'Learn the basics and terms of date-selection through short stories.')}</p>
+            {!acaChapter ? (<>
+              <h1 className="a-h1">{L('学堂', 'Academy')}</h1>
+              <p className="a-lede">{L('用故事认识择吉的基础与术语；叙述生动，史实仍依典籍。', 'Learn the basics and terms of date-selection through short stories — lively telling, sourced facts.')}</p>
+              <div className="a-lessons-grid">
+                {DOCS.academy.map((c, i) => (
+                  <button key={c.id} className="a-lesson-card" onClick={() => setAcaChapter(c.id)}>
+                    <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={320} />
+                    <div className="lc-no">{L(`第${i + 1}章`, `Chapter ${i + 1}`)} · {L('约 2 分钟', '~2 min')}</div>
+                    <div className="lc-title">{L(c.title[0], c.title[1])}</div>
+                    <div className="lc-teaser">{L(c.story[0], c.story[1]).slice(0, 56)}…</div>
+                  </button>
+                ))}
+              </div>
+              <div className="a-sec">{L('图解', 'Diagrams')}</div>
+              <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={240} />)}</div>
+            </>) : (() => {
+              const idx = DOCS.academy.findIndex(c => c.id === acaChapter);
+              const c = DOCS.academy[idx]; if (!c) { setAcaChapter(null); return null; }
+              const prev = DOCS.academy[idx - 1], next = DOCS.academy[idx + 1];
+              return (
+                <article className="a-reader">
+                  <button className="a-seemore" onClick={() => setAcaChapter(null)}>‹ {L('返回课程', 'All lessons')}</button>
+                  <div className="a-progress" aria-hidden="true"><i style={{ width: ((idx + 1) / DOCS.academy.length * 100) + '%' }} /></div>
+                  <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}</div>
+                  <h1 className="a-h1">{L(c.title[0], c.title[1])}</h1>
+                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={460} />
+                  <p className="a-reader-body">{L(c.story[0], c.story[1])}</p>
+                  <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => { setTab('learn'); setGFocus(id); }}>{g.zh} ↗</button> : null; })}</div>
+                  <div className="a-reader-cross">
+                    <button className="a-btn-ghost" onClick={() => setTab('learn')}><Icon name="article" size={15} /> {L('看用例', 'See a worked example')}</button>
+                    <button className="a-btn-ghost" onClick={() => setTab('find')}><Icon name="calendar" size={15} /> {L('试试看 →', 'Try it →')}</button>
+                  </div>
+                  <div className="a-reader-nav">
+                    {prev ? <button className="a-btn-ghost" onClick={() => setAcaChapter(prev.id)}>‹ {L(prev.title[0], prev.title[1])}</button> : <span />}
+                    {next ? <button className="a-btn-ghost" onClick={() => setAcaChapter(next.id)}>{L(next.title[0], next.title[1])} ›</button> : <span />}
+                  </div>
+                </article>
+              );
+            })()}
           </main>
         )}
 

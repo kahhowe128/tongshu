@@ -481,5 +481,26 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 @media (hover:hover){.a-feature-card:hover{background:var(--surface-hover);}}
 .a-feature-card .ft{font-family:var(--font-serif);font-size:13px;font-weight:700;color:var(--ink);line-height:1.3;}
 .a-feature-card svg{width:100%;height:auto;}
+
+/* ===== WS-2 Academy lessons index + chapter reader ===== */
+.a-lessons-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:10px 0;}
+@media (min-width:768px){.a-lessons-grid{grid-template-columns:repeat(3,1fr);}}
+.a-lesson-card{display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;text-align:left;font-family:var(--font-sans);box-shadow:var(--sh);}
+.a-lesson-card:active{background:var(--surface-pressed);}
+@media (hover:hover){.a-lesson-card:hover{background:var(--surface-hover);}}
+.a-lesson-card svg{width:100%;height:auto;margin-bottom:4px;}
+.a-lesson-card .lc-no{font-family:var(--font-mono);font-size:10px;color:var(--ink-faint);}
+.a-lesson-card .lc-title{font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink);}
+.a-lesson-card .lc-teaser{font-size:11.5px;color:var(--ink-soft);line-height:1.5;}
+.a-reader{max-width:64ch;margin:0 auto;}
+.a-progress{height:4px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:8px 0;}
+.a-progress i{display:block;height:100%;background:var(--seal);}
+.a-reader-no{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+.a-reader .a-illus{margin:10px auto;max-width:460px;}
+.a-reader-body{font-size:15px;line-height:1.85;color:var(--ink);margin:12px 0;}
+.a-reader-cross{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.a-reader-cross .a-btn-ghost{display:inline-flex;align-items:center;gap:6px;}
+.a-reader-nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;}
+.a-reader-nav .a-btn-ghost{max-width:48%;text-align:left;}
 `;
 export { CSS };
