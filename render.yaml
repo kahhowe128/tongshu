@@ -1,0 +1,7 @@
+# Render Static Site — connect the GitHub repo and this file configures everything.
+services:
+  - type: web
+    name: tongshu
+    runtime: static
+    buildCommand: npm ci && npm run docs && npm run build
+    staticPublishPath: dist

@@ -1,0 +1,177 @@
+// docs_data.js — SINGLE SOURCE for all documentation surfaces (in-app Learn tab, website HTML, PDF guide).
+// Integrity: traditions stated as traditions; "versions differ" where they differ; classical sources named;
+// the omitted-items list mirrors the engine's omission flags exactly. Nothing invented.
+// All [zh, en] pairs.
+
+const V = { ver: '1.0', date: '2026-06-11', title: ['通書擇日 · 使用指南', 'Tong Shu Date Selector · User Guide'] };
+
+const ABOUT = {
+  what: ['本应用是传统中国历法（通书／黄历）的计算器与参考工具：以天文算法推算历法层（干支、节气、农历、置闰），并按典籍通行规则编码择吉层（建除、黄黑道、二十八宿、神煞），逐项给出宜忌参考。',
+    'This app is a calculator and reference for the traditional Chinese almanac (Tong Shu / Huangli): it computes the calendrical layer (sexagenary cycle, solar terms, lunisolar dates, leap months) with astronomical algorithms, and encodes the day-selection layer (12 officers, yellow/black path, 28 mansions, spirits) per named classical rules, giving per-activity guidance.'],
+  not: ['本应用不是算命服务、不构成专业建议、不能替代择日师。所有裁断为「依传统规则的推算参考」，绝非定论；婚丧、动土、开业等大事请以纸本通书或专业人士为准。',
+    'It is not a fortune-telling service, not professional advice, and not a substitute for a practitioner. Every verdict is computed guidance per stated traditions — never definitive. For weighty matters (marriage, burial, ground-breaking, opening) confirm with a printed almanac or a specialist.'],
+  method: ['方法：天文层采用 Meeus 级算法按定朔定气推算，民用日以东八区（UTC+8）为准，置闰依「无中气置闰」规则（参照 GB/T 33661-2017《农历的编算和颁行》）。择吉层依《协纪辨方书》等通行规则编码，并按置信度分级（高／中）；低置信、版本分歧大的项目不计分或明示未纳入。界面以「精确／分级」标签区分两层。',
+    'Method: the astronomical layer uses Meeus-grade algorithms with true new moons and true solar terms; civil days follow UTC+8; leap months follow the no-zhongqi rule (per GB/T 33661-2017). The interpretive layer encodes rules per the Xieji Bianfang Shu and common almanac practice, graded by confidence (H/M); low-confidence or divergent items are unscored or explicitly omitted. The UI tags every datum as exact or graded.'],
+  privacy: ['隐私：本应用不收集、不上传任何数据；全部计算在设备本地完成，可完全离线使用。设置仅存于当前会话并编码进可分享链接。',
+    'Privacy: the app collects and transmits nothing; all computation is on-device and works fully offline. Settings live only in the session and the shareable URL.'],
+  src: ['主要参考：《协纪辨方书》（清·乾隆敕撰）、《淮南子·天文训》、历代通行通书体例、GB/T 33661-2017、紫金山天文台历算传统。',
+    'Principal references: Xieji Bianfang Shu (Qing imperial compilation), Huainanzi "Tianwen", the common printed-almanac tradition, GB/T 33661-2017, and the Purple Mountain Observatory computational tradition.'],
+};
+
+const QUICK = [
+  ['在「择日」选择一项或多项事项（如搬家、嫁娶）。', 'In Find, pick one or more activities (e.g. moving house, marriage).'],
+  ['设定日期范围（未来30天／90天／本月，或自定义）。', 'Set a date range (next 30/90 days, this month, or custom).'],
+  ['浏览排序结果：✓宜（适合）、✗忌（避开）、～参考（吉凶互见）、·中性；卡片第二行是主要原因。', 'Read the ranked list: ✓favorable, ✗avoid, ～mixed, ·neutral; the second line shows the top reason.'],
+  ['点开某一天：顶部先给结论与最强因素，下方手风琴逐层展开依据（事项裁断→神煞→历法层→方位吉时→时辰）。', 'Open a day: the verdict and strongest factors come first; accordions expand the evidence (per-activity → spirits → calendar layers → directions/hours).'],
+];
+
+const READ = [
+  { k: ['裁断徽章', 'Verdict badge'], d: ['对所选事项的综合结论：宜／忌／参考／中性，永远带图标与文字，不只靠颜色。', 'The overall call for your activities — always icon + label, never colour alone.'] },
+  { k: ['因素列', 'Factor chips'], d: ['得出结论的最强加减分项；＋为吉、−为凶；标「中」者为中置信。', 'The strongest plus/minus drivers; M marks medium confidence.'] },
+  { k: ['事项裁断', 'Per-activity'], d: ['每个所选事项各自的宜忌与全部因素（建除基准＋黄黑道＋宿＋神煞±解神）。', 'Each activity judged separately with its full factor list.'] },
+  { k: ['神煞', 'Spirits'], d: ['当日吉神／凶煞，分高（H）／中（M）置信；吉神可解部分凶煞，月破等极凶诸吉难解。', 'Day spirits graded H/M; benefics can offset some ills, but a Month-Breaker is not dissolvable.'] },
+  { k: ['历法层', 'Calendar layers'], d: ['年月日干支、纳音、建除值日、黄黑道、二十八宿、冲煞与彭祖百忌——「精确」者为推算事实，「分级」者为传统断语。', 'Pillars, nayin, officer, path god, mansion, clash, Pengzu — exact facts vs graded readings, tagged.'] },
+  { k: ['方位·吉时', 'Directions & hours'], d: ['喜神方位与当日吉时；时辰排序按黄道时与时支–日支冲合（精确规则），时家神煞未纳入（见词汇表）。', 'Joy-god direction and ranked hours by exact rules; hour-family spirits are omitted (see glossary).'] },
+  { k: ['专项模块', 'Modules'], d: ['嫁娶（大利月、三娘煞等）与安葬（重丧、重日等）专项核对。', 'Marriage and burial modules with their dedicated checks.'] },
+  { k: ['校对工具', 'Cross-check'], d: ['可粘贴你纸本通书当日的神煞或宜忌做差异比对——只比对，不改引擎。', 'Paste your printed almanac for a diff — compare only, never alters the engine.'] },
+];
+
+const PERSONALIZE = [
+  ['填出生日期（可加时间）→ 得四柱八字、生肖，并自动筛除冲你本命之日。', 'Add your birth date (and time) → four pillars, zodiac, and automatic screening of days clashing your sign.'],
+  ['多人合冲：添加同行者生肖，冲任一人之日会被标红。', 'Multi-person: add companions; days clashing anyone are flagged.'],
+  ['嫁娶请在设置选「女命生肖」以显示大利月／妨月。', "For marriage, set the bride's zodiac to see lucky/unlucky months."],
+  ['晚子时开关：23:00–24:00 出生者八字日柱进一日（仅影响八字，黄历仍按民用日）。', 'Late-zi toggle: births 23:00–24:00 roll the BaZi day pillar forward (BaZi only; the calendar day stays civil).'],
+  ['评分取向（严／标／宽）调整凶煞权重与门槛，不改变任何事实层。', 'Scoring profile (strict/standard/lenient) reweights ills and thresholds — facts never change.'],
+];
+
+const TOOLS = [
+  ['八字与五行强弱：含地支藏干与月令加权的简化估算，仅作弱参考，非专业命理。', 'BaZi strength: a simplified estimate (hidden stems + month weighting) — a weak hint, not a professional reading.'],
+  ['二十八宿校准：各家通书宿位相位或异；输入你通书任一日的宿即可整体平移对齐（仅影响显示）。', '28-mansion calibration: almanacs differ in phase; enter one known day+mansion to shift alignment (display only).'],
+  ['精度核对：二十四节气（含时刻）、农历节日 2020–2030、任意日日柱、置闰 1900–2100 与临界年清单。', 'Accuracy: 24 terms with clock times, festivals 2020–2030, day-pillar lookup, leap placement 1900–2100 and razor-edge years.'],
+  ['引擎自检：全部内建验证门一键复跑，结果公开可见。', 'Self-test: all built-in gates re-run on demand, results visible.'],
+  ['导出：清单 CSV、日历 .ics、打印单页、可分享链接（设置编码于网址）。', 'Export: CSV, .ics, a print sheet, and a shareable URL.'],
+];
+
+const TRUST = {
+  exact: ['「精确」＝可验证的推算事实：儒略日、干支、节气与朔的时刻、农历月日与置闰、冲煞对象、时辰黄黑道。', '"Exact" = verifiable computed facts: JDN, pillars, term/new-moon instants, lunisolar dates and leaps, clash targets, hour path.'],
+  graded: ['「分级」＝传统断语：建除宜忌、宿吉凶、神煞及其权重。各书有出入，故标置信度且可调取向。', '"Graded" = traditional readings: officer suitability, mansion luck, spirits and weights. Sources differ, hence confidence grades and profiles.'],
+  omitted: ['未纳入（宁缺毋造）：逐日胎神六十日表；不将日与嫁娶周堂；安葬山向·墓运·年克山家；财神／福神／贵神方位（各家不一，仅收通行之喜神）；时家神煞（日禄、天乙贵人、喜神时等）；以及低置信神煞——天愿、月恩、时德、五合、鸣吠、大小耗、游祸、五墓、月刑。待有可靠出处再行加入。',
+    'Deliberately omitted (never fabricated): the 60-day Fetal-God table; Bujiang days & the marriage Zhoutang chart; burial mountain-facing / grave-luck; Wealth/Fortune/Noble-god directions (only the common Joy-god is kept); hour-family spirits (day-lu, Tianyi noble, joy-hour); and low-confidence spirits — Tianyuan, Yue\'en, Shide, Wuhe, Mingfei, Da/Xiaohao, Youhuo, Wumu, Yuexing. Each returns only with a verified source.'],
+  disclaimer: ['本应用所有输出均为依传统规则之推算参考，非定论、非建议。', 'All output is computed guidance per stated traditions — not definitive, not advice.'],
+};
+
+const FAQ = [
+  { q: ['为什么和我的纸本通书不一样？', 'Why does my printed almanac disagree?'],
+    a: ['三个常见原因：①各书收录的神煞集合不同（本应用只计高／中置信项）；②二十八宿相位各家或异（可在工具里一键校准）；③宜忌断语本就存在地域与师承差异。历法层（干支、节气、农历）若不一致，请用「精度核对」查证——这一层是可验证的。',
+      'Three common causes: different spirit sets (we score only H/M-confidence ones); different 28-mansion phase (calibrate in Tools); regional/lineage variation in readings. If the calendrical layer disagrees, check the Accuracy tool — that layer is verifiable.'] },
+  { q: ['加了生日后结论变了？', 'The verdict changed after I added my birthday?'],
+    a: ['是的——本命冲日会被筛除或降级，五行排序也会按你的喜用调整。这是个人化筛选，不是历法变了。', 'Yes — days clashing your natal sign get screened or demoted, and elemental sorting follows your favored elements. Personalization, not a calendar change.'] },
+  { q: ['什么是闰月？', 'What is a leap month?'],
+    a: ['农历月按朔定，12 个朔望月比回归年短约 11 天；为对齐四季，约每 19 年加 7 个闰月。规则：自冬至到下一冬至若含 13 个月，第一个不含中气的月为闰月，沿用上月之名（如 2025 闰六月）。', 'Lunar months track new moons; 12 of them run ~11 days short of the solar year, so ~7 leap months are inserted per 19 years. Rule: in a 13-month winter-solstice-to-winter-solstice span, the first month without a zhongqi becomes the leap month (e.g. leap-6th of 2025).'] },
+  { q: ['为什么有些项目写「未纳入」？', 'Why are some items "omitted"?'],
+    a: ['因为可靠出处不足或各家版本互斥。本应用宁可空缺并说明，也不臆造数据；清单见「信任与边界」。', 'Insufficient reliable sourcing or mutually exclusive versions. We leave a labeled gap rather than invent data; see Trust & limits for the list.'] },
+  { q: ['这是算命吗？', 'Is this fortune-telling?'],
+    a: ['不是。这是传统民俗历法的计算与查询工具：把典籍写明的规则如实算出来并标注置信度，不做预言、不保证结果、不提供个人命运判断。', 'No. It is a calculator for a folk-calendrical tradition: it computes rules the classics state, with confidence labels — no predictions, no guaranteed outcomes, no personal fortune readings.'] },
+  { q: ['黄历的「一天」和八字的「一天」一样吗？', 'Is the almanac "day" the same as the BaZi "day"?'],
+    a: ['黄历按民用日（午夜换日，UTC+8）；八字传统上子时起算，开启「晚子时」后 23:00 即进次日日柱。两者并行不悖，界面分别标示。', 'The almanac uses the civil day (midnight, UTC+8); BaZi traditionally turns at the zi-hour — with Late-zi on, 23:00 starts the next day pillar. Both views coexist and are labeled.'] },
+];
+
+const HIST = [
+  { t: ['观天：圭表与节气', 'Watching the sky: gnomon and solar terms'],
+    p: ['农耕中国最早的历法需求是「跟住太阳」。古人立圭表测日影：影最长为冬至，最短为夏至——冬至由此成为整年的锚点。把黄道一周均分，便得指导农时的二十四节气；《淮南子·天文训》（西汉）已完整列出今名。',
+      'Agrarian China needed to track the sun. The gnomon (guibiao) measured noon shadows: longest at winter solstice, shortest at summer — making the winter solstice the anchor of the year. Dividing the sun\'s annual path yields the 24 solar terms; the Western-Han Huainanzi already lists today\'s full set.'] },
+  { t: ['调和日月：置闰', 'Reconciling sun and moon: leap months'],
+    p: ['月相周期约 29.53 天，回归年约 365.24 天；12 个朔望月约 354 天，比太阳年短 11 天。古人很早发现 19 年≈235 朔望月（中国谓之「章」，西方谓 Metonic 周期），故 19 年置 7 闰。至于闰在哪个月：含 13 个月的「岁」中，第一个不含中气之月为闰——本应用 1900–2100 逐月验证此规则（74 闰、0 违例）。',
+      'A lunation is ~29.53 days; the tropical year ~365.24. Twelve lunations fall ~11 days short, and 19 years ≈ 235 lunations (the zhang, a.k.a. Metonic cycle) — hence 7 leap months per 19 years. Which month leaps? In a 13-month sui, the first month containing no zhongqi. This app verifies that rule month-by-month for 1900–2100 (74 leaps, 0 violations).'] },
+  { t: ['干支：三千年不断的纪日', 'The sexagenary cycle: an unbroken day count'],
+    p: ['十天干与十二地支相配成六十甲子。殷商甲骨已用干支纪日；学界通说自春秋以来两千七百余年逐日连续未断——这正是任何日期的日柱皆可严格推算与核验的原因。后世更以干支纪年、纪月、纪时，构成八字四柱。',
+      'Ten stems pair with twelve branches into the 60-term cycle. Shang oracle bones already date days by ganzhi, and by scholarly consensus the day count has run unbroken for some 2,700 years since the Spring-and-Autumn era — which is why any date\'s day pillar can be computed and checked exactly. Years, months and hours later joined, forming the four pillars.'] },
+  { t: ['从皇朝历法到民间通书', 'From state calendars to the people\'s almanac'],
+    p: ['颁历为皇朝大政：汉《太初历》（前 104 年）定正月建寅之制；祖冲之《大明历》（510 年行用）引入岁差；元郭守敬《授时历》（1281 年）定岁实 365.2425 日；清初《时宪历》（1645 年，汤若望等以西法修订）改平气为定气——本应用按真太阳黄经推节气，正是定气之法。官历之外，民间刊本在历日上叠加建除、黄黑道、神煞宜忌，遂成家家可用的通书／黄历。',
+      'Promulgating the calendar was an act of state: the Taichu reform (104 BCE) fixed the first month; Zu Chongzhi\'s Daming calendar (in use 510 CE) added precession; Guo Shoujing\'s Shoushi (1281) set the year at 365.2425 days; the Qing Shixian calendar (1645, revised with Jesuit astronomy by Adam Schall and colleagues) replaced mean terms with true solar terms — the very method this app uses. Around the official calendar, popular printings layered officers, path gods and spirits, becoming the household Tong Shu.'] },
+  { t: ['典籍化与今天', 'Codification and today'],
+    p: ['清乾隆年间敕撰《协纪辨方书》（1739–1741 编成），系统整理并删汰互相矛盾的选择神煞，是后世通书的主要依据。今日农历由紫金山天文台依天文实测编算，国家标准 GB/T 33661-2017 明文规定定朔定气、东八区民用日与无中气置闰。本应用即沿此分界：天文历法层精确推算、可验证；择吉层如实编码典籍规则并标注置信度——「精确」与「分级」之分，正是全应用的诚实基线。',
+      'The Qianlong-era Xieji Bianfang Shu (compiled 1739–1741) systematized day-selection and pruned contradictory spirits, becoming the main basis of later almanacs. Today\'s lunisolar calendar is computed by the Purple Mountain Observatory, with GB/T 33661-2017 codifying true new moons/terms, the UTC+8 civil day, and no-zhongqi leaps. This app keeps exactly that division: a verifiable astronomical layer, and an interpretive layer encoded faithfully from named sources with confidence grades — the exact-vs-graded line the whole product stands on.'] },
+];
+
+const GLOSS_CATS = [['基础', 'Fundamentals'], ['日课', 'Day systems'], ['神煞', 'Spirits'], ['择吉', 'Personal selection'], ['应用', 'In this app']];
+
+// g: 'H'|'M'|'略'(omitted)|undefined; src: attribution
+const GLOSS = [
+  // —— 基础 ——
+  { id: 'nongli', cat: 0, zh: '农历', py: 'nónglì', en: 'Chinese lunisolar calendar', d: ['以朔定月、以节气定年的阴阳合历；月随月相、年随太阳，靠闰月调和。', 'Months follow new moons, years follow the sun; leap months reconcile the two.'], src: 'GB/T 33661-2017' },
+  { id: 'jieqi', cat: 0, zh: '节气', py: 'jiéqì', en: '24 solar terms', d: ['太阳黄经每 15° 一气，共二十四，定季节农时；本应用按真太阳黄经（定气）推至分钟级。', 'One term per 15° of solar longitude; computed here from true longitude to the minute.'], src: '《淮南子·天文训》已具今名' },
+  { id: 'zhongqi', cat: 0, zh: '中气', py: 'zhōngqì', en: 'Major terms', d: ['二十四节气中逢偶者（雨水、春分…冬至、大寒）；农历月以所含中气命名，无中气之月为闰。', 'The even-indexed terms; a lunar month is named by its zhongqi — a month without one becomes the leap month.'] },
+  { id: 'shuo', cat: 0, zh: '朔', py: 'shuò', en: 'New moon (conjunction)', d: ['日月同黄经之刻；朔所在之日为初一。本应用以定朔推算。', 'The sun-moon conjunction instant; its civil day is day 1 of the month.'] },
+  { id: 'runyue', cat: 0, zh: '闰月', py: 'rùnyuè', en: 'Leap (intercalary) month', d: ['约十九年七闰；冬至至冬至含十三月时，首个无中气之月置闰，沿上月之名。', '~7 per 19 years; in a 13-month span the first zhongqi-less month leaps, reusing the prior month\'s name.'] },
+  { id: 'ganzhi', cat: 0, zh: '干支', py: 'gānzhī', en: 'Sexagenary cycle', d: ['十天干配十二地支成六十甲子，循环纪年、月、日、时；纪日连续两千七百余年未断。', 'Stems × branches form a 60-cycle for years, months, days, hours; the day count is historically continuous.'] },
+  { id: 'tiangan', cat: 0, zh: '天干', py: 'tiāngān', en: 'Heavenly stems', d: ['甲乙丙丁戊己庚辛壬癸，各属五行之阴阳（甲阳木、乙阴木……）。', 'The ten stems, each an elemental yin/yang (jia = yang wood, etc.).'] },
+  { id: 'dizhi', cat: 0, zh: '地支', py: 'dìzhī', en: 'Earthly branches', d: ['子丑寅卯辰巳午未申酉戌亥；配生肖、时辰与方位，并内藏天干（藏干）。', 'The twelve branches — mapped to zodiac signs, double-hours, directions, with hidden stems inside.'] },
+  { id: 'shengxiao', cat: 0, zh: '生肖', py: 'shēngxiào', en: 'Zodiac animal', d: ['地支的动物名（子鼠…亥猪）；以立春换年柱论本命生肖。', 'Animal names of the branches; the natal sign turns at Lichun with the year pillar.'] },
+  { id: 'bazi', cat: 0, zh: '四柱八字', py: 'sìzhù bāzì', en: 'Four pillars (BaZi)', d: ['出生年、月、日、时四组干支共八字，传统命理之基；本应用仅作粗略强弱估算并明示局限。', 'Year/month/day/hour pillars (eight characters); here only a rough strength estimate with stated limits.'] },
+  { id: 'wuxing', cat: 0, zh: '五行', py: 'wǔxíng', en: 'Five phases', d: ['木火土金水的生克体系；干支、纳音、季节皆有所属。', 'Wood-fire-earth-metal-water with generating/overcoming relations; stems, branches, nayin and seasons all map to them.'] },
+  { id: 'nayin', cat: 0, zh: '纳音', py: 'nàyīn', en: 'Nayin (melodic element)', d: ['六十甲子两两配一象（海中金、炉中火…），共三十象；通书用于日柱注记。', 'Each ganzhi pair takes one of thirty poetic elements (e.g. Sea Gold, Furnace Fire); printed under the day pillar.'], src: '历代通书通行' },
+  { id: 'ztys', cat: 0, zh: '真太阳时', py: 'zhēntàiyáng shí', en: 'True solar time', d: ['按当地经度与均时差校正的太阳时；用于判定出生时柱更贴传统。', 'Local solar time corrected for longitude and the equation of time; used for the birth hour pillar.'] },
+  { id: 'wanzi', cat: 0, zh: '晚子时', py: 'wǎnzǐshí', en: 'Late zi-hour convention', d: ['23:00–24:00 属次日子时的八字流派约定；开启后该时段出生者日柱进一日。仅影响八字。', 'A BaZi school convention: 23:00–24:00 belongs to the next day\'s zi hour, rolling the day pillar. BaZi only.'], src: '命理流派有异' },
+  { id: 'jdn', cat: 0, zh: '儒略日 JDN', py: 'rúlüèrì', en: 'Julian Day Number', d: ['天文学的连续日序号；本应用以其为一切推算的脊梁，避免历制换算误差。', 'Astronomy\'s continuous day count — the backbone of every computation here, immune to calendar-conversion slips.'] },
+  // —— 日课 ——
+  { id: 'jianchu', cat: 1, zh: '建除十二神', py: 'jiànchú', en: '12 day officers', d: ['建除满平定执破危成收开闭，逐日轮值、逢节气月建调整；口诀「建满平收黑，除危定执黄，成开皆可用，闭破不相当」。各书细目宜忌略异，故本应用计为分级项。', 'Twelve rotating officers reset by the monthly branch. Mnemonic: jian/man/ping/shou dark; chu/wei/ding/zhi bright; cheng/kai usable; bi/po unsuited. Detail lists vary by almanac — scored as graded.'], src: '《淮南子·天文训》有建除之名；后世通书沿用' },
+  { id: 'huangdao', cat: 1, zh: '黄道·黑道', py: 'huángdào hēidào', en: 'Yellow / Black path gods', d: ['十二神轮值：青龙、明堂、金匮、天德、玉堂、司命为六黄道（吉）；天刑、朱雀、白虎、天牢、玄武、勾陈为六黑道（凶）。日与时各有所值。', 'Twelve rotating gods: six bright (Azure Dragon, Bright Hall, Golden Coffer, Heavenly Virtue, Jade Hall, Controller) and six dark; both days and hours take one.'], src: '历代通书通行' },
+  { id: 'ershibasu', cat: 1, zh: '二十八宿', py: 'èrshíbā xiù', en: '28 lunar mansions', d: ['角亢氐房…轸，二十八宿逐日轮值并配吉凶与演禽；与七曜严格对齐（周期 28）。各家相位或异，本应用提供一键校准。', 'Twenty-eight mansions rotate daily with luck readings and animal lore, locked 1:1 to the seven luminaries. Phase differs across almanacs — calibrate in Tools.'], src: '《协纪辨方书》；演禽另系' },
+  { id: 'qiyao', cat: 1, zh: '七曜', py: 'qīyào', en: 'Seven luminaries', d: ['日月金木水火土对应星期；宿与七曜的对应使二十八宿可按星期核验。', 'Sun, Moon and five planets ↔ weekdays; the mansion-luminary lock lets the cycle be checked against the week.'] },
+  { id: 'shichen', cat: 1, zh: '十二时辰·吉时', py: 'shíchén', en: 'Double-hours & lucky hours', d: ['一日十二时辰，各两小时；时干由「五鼠遁」按日干起。本应用按时之黄黑道与时支–日支冲合（皆精确规则）排序吉时。', 'Twelve two-hour periods; hour stems derive from the day stem (wushu dun). Hours are ranked by exact rules: the hour path god and hour-vs-day branch relations.'] },
+  { id: 'pengzu', cat: 1, zh: '彭祖百忌', py: 'péngzǔ bǎijì', en: 'Pengzu\'s 100 taboos', d: ['按日干与日支各一句的传统忌语（如「甲不开仓」「子不问卜」）；民俗参考，不计分。', 'Traditional one-line taboos per day stem and branch; folk reference only, never scored.'], src: '通书通行，托名彭祖' },
+  // —— 神煞（与引擎计分项一一对应）——
+  { id: 'ss', cat: 2, zh: '神煞', py: 'shénshà', en: 'Spirits & evils (category)', d: ['依年月日干支推得的吉神与凶煞之总称，是通书宜忌的主要来源。各书取舍不一：本应用只计高／中置信项，吉神可解部分凶煞（解神优先），月破等极凶不可解。', 'Benefic and malefic day-spirits derived from the pillars — the main source of almanac do/avoid lists. Selections differ by book; only H/M-confidence ones are scored here, benefics can offset some ills, and a Month-Breaker cannot be dissolved.'], src: '《协纪辨方书》为主' },
+  { id: 'td', cat: 2, zh: '天德', py: 'tiāndé', en: 'Heavenly Virtue', g: 'H', d: ['月之大吉神，所值之日百事皆宜，并能化解多数凶煞。', 'The month\'s great benefic; favorable for most affairs and dissolves many ills.'], src: '《协纪辨方书》' },
+  { id: 'yd', cat: 2, zh: '月德', py: 'yuèdé', en: 'Monthly Virtue', g: 'H', d: ['与天德并称的月吉神，宜兴造、上任、嫁娶等众吉事。', 'Companion benefic to Heavenly Virtue; favors building, office-taking, marriage and more.'], src: '《协纪辨方书》' },
+  { id: 'ydh', cat: 2, zh: '月德合', py: 'yuèdé hé', en: 'Monthly Virtue Combine', g: 'H', d: ['与月德干相合之日，吉力相近。', 'The day whose stem combines with Monthly Virtue; similar benefit.'], src: '《协纪辨方书》' },
+  { id: 'tdh', cat: 2, zh: '天德合', py: 'tiāndé hé', en: 'Heavenly Virtue Combine', g: 'M', d: ['与天德相合之日；诸本起例略异，故列中置信。', 'Combines with Heavenly Virtue; derivations vary slightly across sources — medium confidence.'], src: '《协纪辨方书》，诸本小异' },
+  { id: 'tsh', cat: 2, zh: '天赦', py: 'tiānshè', en: 'Heavenly Pardon', g: 'H', d: ['四季各一干支（如冬甲子），赦过宥罪、百事可为之上吉日。', 'One stem-branch per season (e.g. jiazi in winter); a top day of pardon when most affairs go.'], src: '《协纪辨方书》' },
+  { id: 'mc', cat: 2, zh: '母仓', py: 'mǔcāng', en: 'Mother\'s Granary', g: 'M', d: ['当令所生之支值日，宜栽种、纳畜、养育之事。', 'Branch nourished by the season; favors planting, livestock, nurture.'], src: '《协纪辨方书》' },
+  { id: 'sx', cat: 2, zh: '四相', py: 'sìxiàng', en: 'Four Aspects', g: 'M', d: ['顺四时旺气之干值日（春丙丁、夏戊己之类），宜修造兴作。', 'Stems riding the season\'s rising qi; favors works and construction.'], src: '《协纪辨方书》' },
+  { id: 'yy', cat: 2, zh: '月厌', py: 'yuèyàn', en: 'Monthly Repulsion', g: 'H', d: ['阴建之辰，忌嫁娶、远行、归家。', 'The dark counterpart of the month-establish; avoid weddings, long travel, homecoming.'], src: '《协纪辨方书》' },
+  { id: 'ww', cat: 2, zh: '往亡', py: 'wǎngwáng', en: 'Going-to-Perish', g: 'H', d: ['每月一支，忌出行、赴任、嫁娶、求医。', 'One branch per month; avoid setting out, taking office, marrying, seeking treatment.'], src: '《协纪辨方书》' },
+  { id: 'tl', cat: 2, zh: '天吏', py: 'tiānlì', en: 'Heavenly Clerk', g: 'M', d: ['四时致死之气，忌赴任、词讼、远行。', 'A seasonal baleful breath; avoid office-taking, lawsuits, long journeys.'], src: '《协纪辨方书》' },
+  { id: 'js', cat: 2, zh: '劫煞', py: 'jiéshà', en: 'Robbery Sha', g: 'M', d: ['三合绝位之煞（申子辰见巳之类），忌兴造远行；与灾煞、月煞合称三煞。', 'Sha at the trine\'s extinction point; with Disaster and Month Sha forms the day-level Three Sha.'], src: '《协纪辨方书》' },
+  { id: 'zs', cat: 2, zh: '灾煞', py: 'zāishà', en: 'Disaster Sha', g: 'M', d: ['三煞之中位，忌动土、修造、移徙。', 'Middle of the Three Sha; avoid ground-breaking, building, moving.'], src: '《协纪辨方书》' },
+  { id: 'ys', cat: 2, zh: '月煞', py: 'yuèshà', en: 'Month Sha', g: 'M', d: ['三煞之末位，诸吉亦难全解，忌大兴作。', 'Last of the Three Sha; major works ill-advised.'], src: '《协纪辨方书》' },
+  { id: 'yh', cat: 2, zh: '月害', py: 'yuèhài', en: 'Monthly Harm', g: 'M', d: ['与月建相害之支值日，忌结亲、纳畜、上官。', 'Branch in harm with the month; avoid betrothal, livestock intake, office.'], src: '《协纪辨方书》' },
+  { id: 'xz', cat: 2, zh: '血支', py: 'xuèzhī', en: 'Blood Branch', g: 'M', d: ['逐月一支，忌针灸、出血之事。', 'One branch per month; avoid acupuncture and blood-letting.'], src: '《协纪辨方书》' },
+  { id: 'xj', cat: 2, zh: '血忌', py: 'xuèjì', en: 'Blood Taboo', g: 'M', d: ['与血支同类而起例异，亦忌针灸刺血。', 'Companion taboo with a different derivation; same avoidances.'], src: '《协纪辨方书》' },
+  { id: 'gj', cat: 2, zh: '归忌', py: 'guījì', en: 'Return Taboo', g: 'M', d: ['忌远行归家、移徙、嫁娶进门。', 'Avoid homecoming from afar, moving in, the bridal entry.'], src: '《协纪辨方书》' },
+  { id: 'fr', cat: 2, zh: '复日', py: 'fùrì', en: 'Repeat Day', g: 'M', d: ['日干与月建五行重叠之日，俗忌丧葬（恐事重）；吉事亦有谓宜者，故列中置信。', 'Day stem doubling the month\'s element; folk custom avoids funerals (fear of repetition) though some hold it doubles joys — medium confidence.'], src: '通书通行，说有两歧' },
+  { id: 'cr', cat: 2, zh: '重日', py: 'chóngrì', en: 'Double Day', g: 'H', d: ['巳、亥日，阴阳重叠，事易重来：尤忌安葬，吉事亦慎。', 'Si and hai days, when matters tend to repeat — especially avoided for burial.'], src: '《协纪辨方书》' },
+  { id: 'bz', cat: 2, zh: '八专', py: 'bāzhuān', en: 'Eight Concentrations', g: 'M', d: ['干支同气之专日（甲寅、己未之属），忌嫁娶、出军。', 'Days whose stem and branch share one nature; avoid weddings and campaigns.'], src: '《协纪辨方书》' },
+  { id: 'wl', cat: 2, zh: '无禄·十恶大败', py: 'wúlù', en: 'Lu-void (Ten Evils Great Defeat)', g: 'M', d: ['禄入空亡之十干支日，忌上任、求财、开市。', 'Ten pillars whose "salary" falls void; avoid taking office, seeking wealth, opening business.'], src: '命书与通书通行' },
+  { id: 'ssu', cat: 2, zh: '上朔', py: 'shàngshuò', en: 'Shang-shuo', g: 'M', d: ['按年干起例之凶日，忌宴会、嫁娶、远行。', 'A year-stem-derived ill day; avoid feasts, weddings, journeys.'], src: '《协纪辨方书》' },
+  { id: 'sf', cat: 2, zh: '四废', py: 'sìfèi', en: 'Four Voids', g: 'H', d: ['四时休废之干支（春庚申辛酉之类），气衰力竭，百事不宜。', 'Season-exhausted pillars; energy spent, most affairs unsuited.'], src: '《协纪辨方书》' },
+  { id: 'twys', cat: 2, zh: '土王用事', py: 'tǔwáng yòngshì', en: 'Earth-King in office', g: 'M', d: ['四立前约十八日土气当令，忌动土、穿井、破土。', 'About 18 days before each season-start the earth qi rules; avoid breaking ground or digging.'], src: '历注通行' },
+  { id: 'omit', cat: 2, zh: '未纳入之神煞', py: 'wèi nàrù', en: 'Omitted spirits', g: '略', d: ['天愿、月恩、时德、五合、鸣吠、大耗小耗、游祸、五墓、月刑等因版本互斥或出处不足而未计分；逐日胎神、不将周堂、山向墓运、财福贵神方位、时家神煞同此。宁缺毋造。', 'Tianyuan, Yue\'en, Shide, Wuhe, Mingfei, Da/Xiao-hao, Youhuo, Wumu, Yuexing are unscored for conflicting versions or thin sourcing; likewise the Fetal God table, Bujiang/Zhoutang, mountain-facing/grave-luck, Wealth/Fortune/Noble directions, and hour-family spirits. A labeled gap beats an invented number.'] },
+  // —— 择吉 ——
+  { id: 'benming', cat: 3, zh: '本命', py: 'běnmìng', en: 'Natal sign', d: ['出生年支（立春换年）所属生肖；值冲之日传统忌行大事。', 'Your birth-year branch (turning at Lichun); days clashing it are traditionally avoided for major acts.'] },
+  { id: 'cxhh', cat: 3, zh: '冲·刑·害·合', py: 'chōng xíng hài hé', en: 'Clash / Punish / Harm / Combine', d: ['地支两两的四种主要关系：相冲最忌，相刑相害次之，六合三合为吉。本应用以精确表驱动筛选与时辰排序。', 'The four principal branch relations: clash worst, punishment/harm lesser ills, combines auspicious — exact tables drive screening and hour ranking.'] },
+  { id: 'chongsha', cat: 3, zh: '冲煞方位', py: 'chōngshà', en: 'Clash target & sha direction', d: ['每日所冲生肖（按日支六冲）与煞之所在方（煞东南西北随支而定）；当日属冲生肖者忌大事、忌向煞方。', 'Each day clashes one zodiac (six-clash of the day branch) and carries a sha direction; the clashed sign avoids major acts and that direction.'] },
+  { id: 'xusui', cat: 3, zh: '虚岁', py: 'xūsuì', en: 'Nominal age', d: ['出生即一岁、逢春节加一岁的传统计龄；通书「冲某肖某岁」即虚岁。', 'Traditional age counting (1 at birth, +1 each New Year); almanac clash-ages use it.'] },
+  { id: 'dali', cat: 3, zh: '大利月·妨月', py: 'dàlì yuè', en: 'Marriage month luck', d: ['按女命生肖定各农历月嫁娶利否：大利、小利与妨翁姑／妨父母／妨夫／妨妇诸月。', 'By the bride\'s sign each lunar month is great/lesser-favorable or "harms" a named family role.'], src: '通书通行口诀' },
+  { id: 'sanniang', cat: 3, zh: '三娘煞', py: 'sānniáng shà', en: 'Three-Maiden Sha', g: 'M', d: ['每月初三、初七、十三、十八、廿二、廿七，民俗忌嫁娶。', 'Lunar 3/7/13/18/22/27 — folk custom avoids weddings.'], src: '民间通书，版本一致性较高' },
+  { id: 'chongsang', cat: 3, zh: '重丧', py: 'chóngsāng', en: 'Double Mourning', g: 'M', d: ['按月支对应特定日干之忌（正月甲日之类），忌安葬，恐丧事重见。', 'Month-keyed stem days on which burial is avoided lest mourning repeat.'], src: '通书通行，起例小异' },
+  { id: 'sili', cat: 3, zh: '四离·四绝', py: 'sìlí sìjué', en: 'Four Partings / Four Severings', g: 'H', d: ['二分二至前一日为四离，四立前一日为四绝：气之交脱，大事皆忌。', 'The day before each equinox/solstice (partings) and each season-start (severings): qi in transition, major acts avoided.'], src: '《协纪辨方书》' },
+  { id: 'yanggong', cat: 3, zh: '杨公十三忌', py: 'yánggōng', en: 'Yang Gong\'s 13 taboos', g: 'M', d: ['正月十三起逐月递退二日的十三个固定农历日，民俗百事忌之；托名堪舆家杨筠松。', 'Thirteen fixed lunar dates (1/13 then stepping back two days monthly), folk-avoided for all affairs; attributed to geomancer Yang Yunsong.'], src: '民间通书，托名杨公' },
+  { id: 'shousi', cat: 3, zh: '受死', py: 'shòusǐ', en: 'Receiving Death', g: 'H', d: ['逐月一支之大凶日，诸吉难解，惟宜畋猎；通书多整日标忌。', 'A monthly branch of grave ill that benefics scarcely lift — hunting alone excepted; almanacs mark the whole day avoid.'], src: '通书通行' },
+  { id: 'xishen', cat: 3, zh: '喜神方位', py: 'xǐshén', en: 'Joy-god direction', d: ['按日干定喜神所在（甲己东北之类），出行迎喜向之；为方位诸神中各家最一致者，故独收之。', 'Day-stem-keyed auspicious direction (jia/ji → NE, etc.) — the one direction god with cross-source consensus, hence the only one included.'], src: '通书通行定说' },
+  { id: 'nianxiong', cat: 3, zh: '年家凶方（太岁·岁破·三煞·五黄）', py: 'tàisuì suìpò sānshà wǔhuáng', en: 'Year afflictions', d: ['太岁居年支之方、岁破为其对冲、三煞按年支三合定方、五黄随九宫飞星（演算）：本年忌向之动土修造。', 'Tai Sui sits at the year branch, Sui Po opposes it, Three Sha follow the year trine, Five Yellow flies with the nine stars (calculated) — avoid major works toward them this year.'], src: '《协纪辨方书》；五黄系玄空飞星' },
+  { id: 'taishen', cat: 3, zh: '胎神（未纳入）', py: 'tāishén', en: 'Fetal God (omitted)', g: '略', d: ['孕妇所忌的逐日方位，需经典六十日表；本工具不臆造，请以纸本通书为准。', 'The daily location pregnant households avoid; requires the canonical 60-day table — omitted rather than invented.'] },
+  { id: 'zhoutang', cat: 3, zh: '不将日·周堂（未纳入）', py: 'bùjiāng zhōutáng', en: 'Bujiang & Zhoutang (omitted)', g: '略', d: ['嫁娶吉日细选（不将）与婚期周堂图，版本繁多易错，未纳入；请咨询择日师。', 'Fine wedding-day selection and the Zhoutang chart vary widely by edition — omitted; consult a specialist.'] },
+  { id: 'shanxiang', cat: 3, zh: '山向·墓运（未纳入）', py: 'shānxiàng', en: 'Mountain-facing & grave luck (omitted)', g: '略', d: ['安葬需逝者坐山方位与年克山家等专业判断，超出本工具范围。', 'Burial orientation work needs the grave\'s sitting-facing and professional judgment — beyond this tool\'s scope.'] },
+  { id: 'caifu', cat: 3, zh: '财·福·贵神方位（未纳入）', py: 'cáishén fúshén guìshén', en: 'Wealth/Fortune/Noble directions (omitted)', g: '略', d: ['《玉匣记》与坊间诸本互异，未臆造；仅收各家一致之喜神。', 'The Yuxiaji and street editions disagree; only the consensus Joy-god is kept.'] },
+  // —— 应用 ——
+  { id: 'verdict', cat: 4, zh: '宜·忌·参考·中性', py: 'yí jì cānkǎo zhōngxìng', en: 'Verdicts', d: ['✓宜＝净吉；✗忌＝有强凶或净凶；～参考＝吉凶互见；·中性＝无显著因素。永远图标＋文字并行。', '✓ net-favorable; ✗ strong/net ill; ～ mixed; · nothing notable. Always icon + label together.'] },
+  { id: 'grade', cat: 4, zh: '置信分级 H/M/略', py: 'zhìxìn fēnjí', en: 'Confidence grades', d: ['高＝诸书一致之通行规则；中＝起例或宜忌有版本差；略＝未纳入计分。分级只用于「分级」层，不及精确层。', 'H = cross-source consensus; M = derivations/readings vary; 略 = omitted from scoring. Applies only to the graded layer.'] },
+  { id: 'exactgraded', cat: 4, zh: '精确×分级', py: 'jīngquè fēnjí', en: 'Exact vs graded', d: ['精确＝可验证的推算事实（干支、节气时刻、农历、冲对象、时之黄黑道）；分级＝传统断语（建除宜忌、宿吉凶、神煞权重）。本应用以标签处处区分，绝不混淆。', 'Exact = verifiable computed facts; graded = traditional readings. The tag appears wherever the line runs — the app\'s honesty baseline.'] },
+  { id: 'profile', cat: 4, zh: '评分取向', py: 'píngfēn qǔxiàng', en: 'Scoring profile', d: ['严／标准／宽三档：调整凶煞权重与忌的门槛，宁严毋纵或反之；不改变任何事实层。', 'Strict/standard/lenient reweight ills and the avoid threshold; facts never move.'] },
+  { id: 'suoffset', cat: 4, zh: '宿位校准', py: 'sùwèi jiàozhǔn', en: 'Mansion calibration', d: ['因各家二十八宿相位或异，可输入你通书任一「日＋宿」整体平移对齐；只影响显示与宿断语，不影响其他层。', 'Aligns the 28-mansion phase to your almanac via one known day+mansion; display-level only.'] },
+  { id: 'zeshi', cat: 4, zh: '择时（时辰排序）', py: 'zéshí', en: 'Hour ranking', d: ['按时之黄黑道与时支–日支冲合（皆精确规则）排序当日时辰并标最佳吉时；时家神煞（日禄、天乙贵人、喜神时等）版本繁多，未经核实暂不纳入。', 'Hours rank by exact rules only (hour path god + hour-day branch relations); hour-family spirits are omitted pending sourcing.'] },
+];
+
+module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS };

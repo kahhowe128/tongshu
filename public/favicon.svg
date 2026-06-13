@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect x="2" y="2" width="96" height="96" rx="14" fill="#a8432f"/>
+  <text x="27" y="40" font-family="Noto Serif CJK SC, serif" font-size="34" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">通</text>
+  <text x="73" y="40" font-family="Noto Serif CJK SC, serif" font-size="34" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">書</text>
+  <text x="27" y="74" font-family="Noto Serif CJK SC, serif" font-size="34" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">擇</text>
+  <text x="73" y="74" font-family="Noto Serif CJK SC, serif" font-size="34" font-weight="700" fill="#fff" text-anchor="middle" dominant-baseline="central">日</text>
+</svg>
