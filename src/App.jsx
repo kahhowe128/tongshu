@@ -23,6 +23,8 @@ import { CSS } from './styles.js';
 import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
 import { loadSaved, saveLocal, loadSavedDates, saveSavedDates } from './lib/storage.js';
 import { Icon } from './assets/icons.jsx';
+import { Illustration } from './assets/illustrations.jsx';
+import { Diagram, DIAGRAM_NAMES } from './assets/diagrams.jsx';
 import {
   STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, rankHours, hourClass, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
 } from './engine/tongshu.js';
@@ -46,7 +48,7 @@ const activityTab = (a) => {
   return 'everyday';
 };
 
-export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', initialFindView = 'list' } = {}) {
+export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', initialFindView = 'list' } = {}) {
   const now = new Date();
   const today = { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
   const todayJDN = gregorianToJDN(today.y, today.mo, today.d);
@@ -244,8 +246,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
     else { setSelJDN(null); }
     setTourStep(i);
   };
-  // auto-launch once per mount (in-memory artifact; a real build persists "seenTutorial")
-  useEffect(() => { const id = setTimeout(() => goTour(0), 450); return () => clearTimeout(id); }, []);
+  // Home is now the landing surface (WS-1); the tour is launched on demand from the ? button, not auto.
   // measure the spotlight target
   useEffect(() => {
     if (tourStep < 0) return;
@@ -333,6 +334,48 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
           <button className="a-iconbtn" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)} style={{ marginRight: '8px' }}>?</button>
           <button className="a-iconbtn" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
         </header>
+
+        {/* ===================== HOME ===================== */}
+        {tab === 'home' && (
+          <main className="a-screen a-home">
+            <section className="a-hero">
+              <div className="seal big">通</div>
+              <h1 className="a-h1" style={{ fontSize: '26px' }}>{L('通書擇日', 'Tong Shu Date Selector')}</h1>
+              <p className="a-hero-vp">{L('传统通书择日，算得准、说得明白。', 'The Chinese almanac — computed exactly, explained honestly.')}</p>
+              <div className="a-hero-cta">
+                <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="find" size={18} /> {L('选个吉日', 'Find a date')}</button>
+                <button className="a-btn-ghost" onClick={() => setTab('learn')}><Icon name="learn" size={18} /> {L('学习', 'Learn')}</button>
+              </div>
+            </section>
+
+            <div className="a-trust">
+              <button className="a-trust-pill" onClick={() => setTab('tools')}><b>{L('历法精确可验证', 'Verifiable astronomy')}</b><span>{L('节气、朔、置闰皆可核对', 'Check terms, new moons, leaps')}</span></button>
+              <button className="a-trust-pill" onClick={() => { setTab('learn'); setGFocus('exactgraded'); }}><b>{L('传统如实分级', 'Honestly graded')}</b><span>{L('高/中置信，未纳入者明示', 'H/M confidence; omissions shown')}</span></button>
+              <div className="a-trust-pill static"><b>{L('离线·不收集数据', 'Offline & private')}</b><span>{L('全部本机计算，传输为零', 'All on-device, nothing sent')}</span></div>
+            </div>
+
+            <div className="a-card a-tiers">
+              <div className="a-sec" style={{ marginTop: 0 }}>{L('免费 / 升级', 'Free / Upgrade')}</div>
+              <div className="a-tier">
+                <div className="lab"><Icon name="vGood" size={16} /> {L('免费', 'Free')}</div>
+                <div className="desc">{L('完整择日、日历、日详情、学习与学堂、收藏、全部主题（含红运）。', 'The full calculator, calendar, day sheets, all learning & Academy, saved dates, every theme (incl. red).')}</div>
+              </div>
+              <div className="a-tier up">
+                <div className="lab"><Icon name="export" size={16} /> {L('升级', 'Upgrade')} <i className="a-graded">US$8/yr · US$88 {L('永久', 'lifetime')}</i></div>
+                <div className="desc">{L('把某天或收藏导出到 WhatsApp／邮件／卡片·PDF，并附「为什么是这天／对你生肖」的诚实逐项解读。', 'Export a day or your saved set to WhatsApp / email / a card·PDF, with an honest factor-by-factor "why this day / for your zodiac" explanation.')}</div>
+              </div>
+              <div className="a-note">{L('升级只解锁导出与解读；计算与学习永远免费。结账与解读将在导出处开通。', 'Upgrading unlocks only export & explanation; the calculator and learning stay free forever. Checkout opens at the export step.')}</div>
+            </div>
+
+            <footer className="a-home-foot">
+              <button className="lnk" onClick={() => setTab('learn')}>{L('学习', 'Learn')}</button>
+              <button className="lnk" onClick={() => setTab('learn')}>{L('用例', 'Examples')}</button>
+              <a className="lnk" href="./guide/" target="_blank" rel="noopener">{L('指南 PDF', 'Guide PDF')}</a>
+              <button className="lnk" onClick={() => setSettingsOpen(true)}>{L('设置', 'Settings')}</button>
+              <div className="a-disc" style={{ flexBasis: '100%' }}>{L('推算参考，非定论；不收集任何数据。', 'Computed guidance, not definitive. Collects nothing.')}</div>
+            </footer>
+          </main>
+        )}
 
         {/* ===================== FIND ===================== */}
         {tab === 'find' && (
@@ -563,6 +606,19 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
               <ol className="a-ql">{DOCS.quick.map((s, i) => <li key={i}>{L(s[0], s[1])}</li>)}</ol>
             </div>
             <div className="a-card">
+              <div className="a-sec" style={{ marginTop: 0 }}>{L('学堂', 'Academy')} <span className="en">{DOCS.academy.length} {L('章', 'chapters')}</span></div>
+              <p className="a-hist-p" style={{ marginTop: 0 }}>{L('用故事认识基础与术语；叙述生动，史实仍依典籍。', 'Meet the basics and terms through short stories — lively telling, sourced facts.')}</p>
+              {DOCS.academy.map((c) => <div key={c.id}>{acc('aca-' + c.id, c.title[0], c.title[1], null, (
+                <div>
+                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={180} />
+                  <p className="a-hist-p">{L(c.story[0], c.story[1])}</p>
+                  {c.glossaryLinks && c.glossaryLinks.length > 0 && <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => setGFocus(id)}>{g.zh} ↗</button> : null; })}</div>}
+                </div>
+              ))}</div>)}
+              <div className="a-sec">{L('图解', 'Diagrams')}</div>
+              <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={200} />)}</div>
+            </div>
+            <div className="a-card">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('用例', 'Examples')} <span className="en">{DOCS.cases.length}</span></div>
               <p className="a-hist-p" style={{ marginTop: 0 }}>{L('跟着真实场景走一遍，看工具如何帮你择日。', 'Walk real scenarios end-to-end to see how the tool helps.')}</p>
               {DOCS.cases.map((c) => <div key={c.id}>{acc('case-' + c.id, c.title[0], c.title[1], null, (
@@ -628,11 +684,11 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
 
         {/* bottom tabs */}
         <nav className="a-tabs" role="tablist" ref={refTabs}>
+          <button className={'a-tab' + (tab === 'home' ? ' on' : '')} role="tab" aria-selected={tab === 'home'} onClick={() => setTab('home')}><span className="ic"><Icon name="home" size={22} /></span><span className="tl">{L('首页', 'Home')}</span></button>
           <button className={'a-tab' + (tab === 'find' ? ' on' : '')} role="tab" aria-selected={tab === 'find'} onClick={() => setTab('find')}><span className="ic"><Icon name="find" size={22} /></span><span className="tl">{L('择日', 'Find')}</span></button>
           <button className={'a-tab' + (tab === 'calendar' ? ' on' : '')} role="tab" aria-selected={tab === 'calendar'} onClick={() => setTab('calendar')}><span className="ic"><Icon name="calendar" size={22} /></span><span className="tl">{L('黄历', 'Calendar')}</span></button>
           <button className={'a-tab' + (tab === 'learn' ? ' on' : '')} role="tab" aria-selected={tab === 'learn'} onClick={() => setTab('learn')}><span className="ic"><Icon name="learn" size={22} /></span><span className="tl">{L('学习', 'Learn')}</span></button>
           <button className={'a-tab' + (tab === 'tools' ? ' on' : '')} role="tab" aria-selected={tab === 'tools'} onClick={() => setTab('tools')}><span className="ic"><Icon name="tools" size={22} /></span><span className="tl">{L('工具', 'Tools')}</span></button>
-          <button className="a-tab" onClick={() => setSettingsOpen(true)}><span className="ic"><Icon name="settings" size={22} /></span><span className="tl">{L('设置', 'Settings')}</span></button>
         </nav>
       </div>
 

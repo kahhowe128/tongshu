@@ -24,10 +24,14 @@ D.GLOSS.forEach(g => {
   if (c.note && !pair(c.note)) throw 'CASE note ' + c.id;
   if (c.links && (!Array.isArray(c.links) || !c.links.every(id => ids.has(id)))) throw 'CASE links ' + c.id;
 });
-console.log('shapes OK — gloss entries:', D.GLOSS.length, '| cats:', D.GLOSS_CATS.length, '| cases:', (D.CASES || []).length);
+(D.ACADEMY || []).forEach(c => {
+  if (!c.id || !pair(c.title) || !pair(c.story)) throw 'ACADEMY shape ' + (c.id || '?');
+  if (!Array.isArray(c.glossaryLinks) || !c.glossaryLinks.length || !c.glossaryLinks.every(id => ids.has(id))) throw 'ACADEMY links ' + c.id;
+});
+console.log('shapes OK — gloss entries:', D.GLOSS.length, '| cats:', D.GLOSS_CATS.length, '| cases:', (D.CASES || []).length, '| academy:', (D.ACADEMY || []).length);
 
 // ---- (1) in-app consts ----
-const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [] };
+const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [], academy: D.ACADEMY || [] };
 let inapp = '// GENERATED from docs/source.js by scripts/gen-docs.mjs — single source; do not hand-edit.\n'
   + 'export const DOCS = ' + JSON.stringify(DOCS) + ';\n'
   + 'export const GLOSS_CATS = ' + JSON.stringify(D.GLOSS_CATS) + ';\n'
@@ -43,7 +47,7 @@ const pill = g => g ? `<span class="pill ${g==='H'?'ph':g==='M'?'pm':'po'}">${g}
 
 const toc = [
   ['about','关于本应用','About'],['quick','快速上手','Quick start'],['read','读懂一天','Reading a day'],
-  ['cases','用例','Examples'],['personalize','个人化','Personalize'],['tools','工具','Tools'],['trust','信任与边界','Trust & limits'],
+  ['academy','学堂','Academy'],['cases','用例','Examples'],['personalize','个人化','Personalize'],['tools','工具','Tools'],['trust','信任与边界','Trust & limits'],
   ['faq','常见问题','FAQ'],['hist','历法源流','How the calendar science came about'],['gloss','词汇表','Glossary'],
 ];
 
@@ -51,6 +55,7 @@ let body = '';
 body += `<section id="about">${h2('关于本应用','About this app','about')}${bi(D.ABOUT.what)}${bi(D.ABOUT.not)}<h3>方法 <i>Method</i></h3>${bi(D.ABOUT.method)}<h3>隐私 <i>Privacy</i></h3>${bi(D.ABOUT.privacy)}<p class="src">${esc(D.ABOUT.src[0])}<br>${esc(D.ABOUT.src[1])}</p></section>`;
 body += `<section id="quick">${h2('快速上手','Quick start','quick')}<ol>${D.QUICK.map(s=>`<li>${bi(s,'span')}</li>`).join('')}</ol></section>`;
 body += `<section id="read">${h2('读懂一天','Reading a day page','read')}<p class="note zh">日页自上而下的每个元素：</p><p class="note en">Every element of the day sheet, top to bottom:</p><dl>${D.READ.map(r=>`<dt>${esc(r.k[0])} <i>${esc(r.k[1])}</i></dt><dd>${bi(r.d,'span')}</dd>`).join('')}</dl></section>`;
+body += `<section id="academy">${h2('学堂','Academy','academy')}<p class="note zh">用故事认识基础与术语；叙述可生动，史实仍依典籍。</p><p class="note en">Meet the basics and terms through short stories; the telling is lively, the facts stay sourced.</p>${(D.ACADEMY||[]).map(c=>`<h3>${esc(c.title[0])} <i>${esc(c.title[1])}</i></h3>${bi(c.story)}`).join('')}</section>`;
 body += `<section id="cases">${h2('用例','Examples','cases')}<p class="note zh">跟着真实场景走一遍，看工具如何帮你择日。</p><p class="note en">Walk real scenarios end-to-end to see how the tool helps.</p>${(D.CASES||[]).map(c=>`<h3>${esc(c.title[0])} <i>${esc(c.title[1])}</i></h3><p class="note zh">${esc(c.scenario[0])}</p><p class="note en">${esc(c.scenario[1])}</p><ol>${c.steps.map(s=>`<li>${bi(s,'span')}</li>`).join('')}</ol><p class="zh"><b>解读：</b>${esc(c.reading[0])}</p><p class="en"><b>Reading: </b>${esc(c.reading[1])}</p>${c.note?`<div class="omit">${bi(c.note)}</div>`:''}`).join('')}</section>`;
 body += `<section id="personalize">${h2('个人化','Personalize','personalize')}<ul>${D.PERSONALIZE.map(s=>`<li>${bi(s,'span')}</li>`).join('')}</ul></section>`;
 body += `<section id="tools">${h2('工具','Tools','tools')}<ul>${D.TOOLS.map(s=>`<li>${bi(s,'span')}</li>`).join('')}</ul></section>`;

@@ -30,5 +30,17 @@ cases.forEach(c => {
   links.forEach(id => { if (!glossIds.has(id)) bad(`case ${c.id} bad glossary id: ${id}`); });
 });
 ['wedding', 'burial'].forEach(id => { const c = cases.find(x => x.id === id); if (!c) return bad(`missing case: ${id}`); const txt = JSON.stringify(c); if (!txt.includes('未纳入')) bad(`case ${id} missing 未纳入 caveat`); if (!/omitted/i.test(txt)) bad(`case ${id} missing "omitted" caveat`); });
-console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞 covered with matching grades; omitted list mirrors engine; ${cases.length} cases, glossary links resolve`);
+
+// ACADEMY (Phase 3 WS-1): shape, glossary deep-links resolve, honesty caveat where due
+const academy = DOCS.academy || [];
+if (academy.length < 5) bad(`ACADEMY too few: expected ≥5, got ${academy.length}`);
+academy.forEach(c => {
+  ['id', 'title', 'story', 'glossaryLinks'].forEach(k => { if (!c[k]) bad(`academy ${c.id || '?'} missing ${k}`); });
+  if (!Array.isArray(c.glossaryLinks) || !c.glossaryLinks.length) bad(`academy ${c.id} has no glossaryLinks`);
+  (c.glossaryLinks || []).forEach(id => { if (!glossIds.has(id)) bad(`academy ${c.id} unresolved glossary id: ${id}`); });
+});
+const spiritsCh = academy.find(c => c.id === 'spirits');
+if (!spiritsCh) bad('academy missing the spirits chapter (teaches the honesty principle)');
+else { const txt = JSON.stringify(spiritsCh); if (!txt.includes('未纳入')) bad('academy spirits chapter missing 未纳入 caveat'); if (!/omitted/i.test(txt)) bad('academy spirits chapter missing "omitted" caveat'); }
+console.log(fail ? `${fail} problem(s)` : `✅ docs lint clean — ${keys.length} scored 神煞; omitted list mirrors engine; ${cases.length} cases + ${academy.length} academy chapters, glossary links resolve`);
 process.exit(fail ? 1 : 0);

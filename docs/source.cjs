@@ -270,4 +270,52 @@ const CASES = [
   },
 ];
 
-module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES };
+// 学堂 / Academy — story-driven lessons (Phase 3 WS-1). Narrative may be vivid; facts stay attributed
+// and graded. Each chapter: id, title[zh,en], story[zh,en], figure (illustration asset name), and
+// glossaryLinks (ids that MUST exist in GLOSS — surfaced as "想深入 / Go deeper" deep-links).
+const ACADEMY = [
+  {
+    id: 'sky', figure: 'sky',
+    title: ['抬头看天', 'Looking up at the sky'],
+    story: ['很久以前，一位农夫每天望着太阳起落、月亮圆缺。他立一根杆子量影子：影子最长的那天是冬至——一年的锚点。把太阳走过的一圈均分，就有了二十四节气，告诉人们何时耕、何时收。《淮南子·天文训》早已列出今天这套节气之名。',
+      'Long ago a farmer watched the sun rise and set and the moon wax and wane. He set a pole to measure its shadow: the day the shadow was longest was the winter solstice — the anchor of the year. Dividing the sun\'s yearly circle gives the 24 solar terms that tell people when to plant and reap. The Han-era Huainanzi already lists the term names we use today.'],
+    glossaryLinks: ['jieqi', 'shuo', 'zhongqi'],
+  },
+  {
+    id: 'bargain', figure: 'bargain',
+    title: ['太阳和月亮的约定', 'The sun and moon\'s bargain'],
+    story: ['太阳管着四季，月亮管着月份——可十二个月亮（约354天）比太阳的一年（约365天）短了十一天。两位「商量」出一个办法：隔几年多塞进一个月，叫闰月。规则很巧：从冬至到下个冬至若有十三个月，第一个「没有中气」的月份就当闰月。',
+      'The sun governs the seasons, the moon the months — but twelve moons (~354 days) fall ~11 days short of the sun\'s year (~365). The two strike a bargain: every few years an extra month is slipped in — a leap month. The rule is neat: in a winter-solstice-to-winter-solstice span of thirteen months, the first month with no zhongqi becomes the leap month.'],
+    glossaryLinks: ['runyue', 'nongli'],
+  },
+  {
+    id: 'wheel', figure: 'wheel',
+    title: ['六十个名字的轮盘', 'The wheel of sixty names'],
+    story: ['古人给日子起名字，用的是一套循环游戏：十个「天干」配十二个「地支」，转成六十个组合（甲子、乙丑……），转完一轮再来。地支还对应十二生肖。最了不起的是：这套纪日两千多年从未间断，所以任何一天的「日柱」都能精确算出、对得上。',
+      'The ancients named days with a looping game: ten "heavenly stems" pair with twelve "earthly branches" into sixty combinations (jiazi, yichou…), then start over. The branches also map to the twelve zodiac animals. The marvel: this day-count has run unbroken for over two thousand years, so any day\'s pillar can be computed and checked exactly.'],
+    glossaryLinks: ['ganzhi', 'tiangan', 'dizhi', 'shengxiao'],
+  },
+  {
+    id: 'court', figure: 'court',
+    title: ['黄道吉日是怎么挑的', 'How a lucky day gets chosen'],
+    story: ['想象一座小小的「值日衙门」：十二位官人——建、除、满、平、定、执、破、危、成、收、开、闭——轮流当班，各管宜忌。天上还有黄道六神（吉）与黑道六神（凶）轮值。把当值的官人、神祇，加上二十八宿一并看，一天就「挣」到了它的吉凶。',
+      'Picture a little "court of the day": twelve officers — Jian, Chu, Man, Ping, Ding, Zhi, Po, Wei, Cheng, Shou, Kai, Bi — take turns on duty, each ruling what suits or not. Above them rotate six bright (auspicious) and six dark (inauspicious) path-gods. Read the day\'s officer, its path-god and its lunar mansion together, and the day earns its verdict.'],
+    glossaryLinks: ['jianchu', 'huangdao', 'ershibasu'],
+  },
+  {
+    id: 'spirits', figure: 'spirits',
+    title: ['神煞：吉神与凶煞', 'Spirits, good and ill'],
+    story: ['通书里还住着许多「神煞」：吉神带来好事，凶煞带来妨碍。难处在于——各家通书收录的神煞并不一致，起例也常有出入。本应用因此只采用高、中置信的神煞计分，把版本互斥、出处不足者明白标为「未纳入」，宁缺毋造。学会这一点，就懂了这门学问最重要的诚实。',
+      'The almanac is also home to many "spirits": benefics bring good, malefics bring obstruction. The catch — almanacs disagree on which spirits to include, and even their derivations vary. So this app scores only high- and medium-confidence spirits and openly marks the conflicting or thinly-sourced ones as omitted (未纳入) rather than inventing them. Grasp this and you grasp the honesty at the heart of the craft.'],
+    glossaryLinks: ['ss', 'grade'],
+  },
+  {
+    id: 'yourturn', figure: 'yourturn',
+    title: ['轮到你了', 'Your turn'],
+    story: ['现在你已认识天上的节律、地上的轮盘、值日的官人与神煞。回到「择日」：选好事项与范围，让工具排出吉凶，再点开候选日看清每条依据——就像本应用「用例」里那场秋日婚礼。记住：一切都是依传统规则的推算参考，非定论；大事仍请以纸本通书或择日师为准。',
+      'Now you know the rhythms of the sky, the wheel on the ground, the officers and spirits on duty. Back in Find: pick your activities and range, let the tool rank the days, then open a candidate to read every factor — like the autumn wedding in this app\'s Examples. Remember: everything is computed guidance per tradition, never definitive; for weighty matters, confirm with a printed almanac or a specialist.'],
+    glossaryLinks: ['verdict', 'exactgraded'],
+  },
+];
+
+module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES, ACADEMY };

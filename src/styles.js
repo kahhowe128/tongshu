@@ -390,5 +390,27 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-figure{margin:14px 0;padding:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r2);}
 .a-figcap{text-align:center;font-size:11px;color:var(--ink-faint);margin-top:6px;}
 .a-illus{color:var(--ink-soft);margin:6px auto;}
+/* WS-1 home / landing */
+.a-hero{text-align:center;padding:18px 8px 8px;}
+.a-hero .seal.big{width:56px;height:56px;border-radius:14px;font-size:30px;margin:0 auto 12px;}
+.a-hero-vp{font-size:15px;color:var(--ink-soft);max-width:34ch;margin:6px auto 16px;line-height:1.6;}
+.a-hero-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.a-hero-cta .a-btn,.a-hero-cta .a-btn-ghost{display:inline-flex;align-items:center;gap:7px;min-height:46px;width:auto;}
+.a-trust{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0;}
+@media (max-width:520px){.a-trust{grid-template-columns:1fr;}}
+.a-trust-pill{text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r2);padding:11px 12px;cursor:pointer;display:flex;flex-direction:column;gap:3px;font-family:var(--font-sans);color:var(--ink);}
+.a-trust-pill.static{cursor:default;}
+.a-trust-pill b{font-family:var(--font-serif);font-size:13px;}
+.a-trust-pill span{font-size:11px;color:var(--ink-faint);}
+@media (hover:hover){.a-trust-pill:not(.static):hover{background:var(--surface-hover);}}
+.a-tiers .a-tier{border-top:1px solid var(--line);padding:10px 0;}
+.a-tiers .a-tier:first-of-type{border-top:0;}
+.a-tiers .a-tier .lab{font-family:var(--font-serif);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;}
+.a-tiers .a-tier.up .lab{color:var(--seal);}
+.a-tiers .a-tier .desc{font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.55;}
+.a-home-foot{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;padding:18px 0 4px;margin-top:8px;border-top:1px solid var(--line);}
+.a-home-foot .lnk{border:0;background:none;color:var(--seal);font-size:12.5px;cursor:pointer;font-family:var(--font-sans);text-decoration:none;}
+.a-diagram-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+@media (max-width:520px){.a-diagram-grid{grid-template-columns:1fr;}}
 `;
 export { CSS };
