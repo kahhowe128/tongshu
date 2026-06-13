@@ -21,7 +21,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CSS } from './styles.js';
 import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
-import { loadSaved, saveLocal, loadSavedDates, saveSavedDates } from './lib/storage.js';
+import { loadSaved, saveLocal, loadSavedDates, saveSavedDates, loadProgress, saveProgress } from './lib/storage.js';
 import { Icon } from './assets/icons.jsx';
 import { Illustration } from './assets/illustrations.jsx';
 import { Diagram, DIAGRAM_NAMES } from './assets/diagrams.jsx';
@@ -92,6 +92,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false); // mobile "More" overflow sheet (WS-5)
   const [acaChapter, setAcaChapter] = useState(null); // Academy reader: chapter id or null (index) (WS-2)
+  const [progress, setProgress] = useState(() => loadProgress()); // Phase 5 LMS: completed chapter ids
   const [vidPlaying, setVidPlaying] = useState(null); // WS-4 lazy video embed (id currently playing)
   const [artId, setArtId] = useState(null); // WS-4 article reader: id or null (index)
   const [tourStep, setTourStep] = useState(-1);
@@ -147,6 +148,13 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const toggleSaved = (jdn) => setSavedJDNs(s => s.includes(jdn) ? s.filter(x => x !== jdn) : [...s, jdn].sort((a, b) => a - b));
   const clearSaved = () => setSavedJDNs([]);
   useEffect(() => { saveSavedDates(savedJDNs); }, [savedJDNs]);
+  // Phase 5 LMS — lesson progress
+  useEffect(() => { saveProgress(progress); }, [progress]);
+  const isDone = (id) => progress.includes(id);
+  const markDone = (id) => setProgress(p => p.includes(id) ? p : [...p, id]);
+  const toggleDone = (id) => setProgress(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
+  const acaDoneCount = () => (DOCS.academy || []).filter(c => progress.includes(c.id)).length;
+  const nextChapterId = () => { const a = DOCS.academy || []; return ((a.find(c => !progress.includes(c.id)) || a[0]) || {}).id; };
   // WS-3 licence helpers
   const applyLicence = (st) => { saveLicence(st); setLicence(st); };
   const removeLicence = () => { clearLicence(); setLicence(null); setLicMsg(null); };
@@ -819,16 +827,44 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
             {!acaChapter ? (<>
               <h1 className="a-h1">{L('学堂', 'Academy')}</h1>
               <p className="a-lede">{L('用故事认识择吉的基础与术语；叙述生动，史实仍依典籍。', 'Learn the basics and terms of date-selection through short stories — lively telling, sourced facts.')}</p>
-              <div className="a-lessons-grid">
-                {DOCS.academy.map((c, i) => (
-                  <button key={c.id} className="a-lesson-card" onClick={() => setAcaChapter(c.id)}>
-                    <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={320} />
-                    <div className="lc-no">{L(`第${i + 1}章`, `Chapter ${i + 1}`)} · {L('约 2 分钟', '~2 min')}</div>
-                    <div className="lc-title">{L(c.title[0], c.title[1])}</div>
-                    <div className="lc-teaser">{L(c.story[0], c.story[1]).slice(0, 56)}…</div>
-                  </button>
-                ))}
-              </div>
+              {(() => {
+                const total = DOCS.academy.length, done = acaDoneCount(), pct = total ? Math.round(done / total * 100) : 0;
+                const nx = DOCS.academy.find(c => c.id === nextChapterId());
+                return (
+                  <div className="a-progress-card">
+                    <div className="a-progress-head"><span>{L('学习进度', 'Your progress')}</span><span className="num">{done} / {total} · {pct}%</span></div>
+                    <div className="a-progress" aria-hidden="true"><i style={{ width: pct + '%' }} /></div>
+                    {nx && <button className="a-continue" onClick={() => setAcaChapter(nx.id)}>
+                      <span className="cl">{done === 0 ? L('开始学习', 'Start') : done >= total ? L('复习', 'Review') : L('继续学习', 'Continue')}</span>
+                      <span className="ct">{L(nx.title[0], nx.title[1])}</span>
+                      <span className="ca" aria-hidden="true">→</span>
+                    </button>}
+                  </div>
+                );
+              })()}
+              {DOCS.academyModules.map((m, mi) => {
+                const chs = m.chapters.map(cid => DOCS.academy.find(c => c.id === cid)).filter(Boolean);
+                return (
+                  <div key={m.id} className="a-module">
+                    <div className="a-module-head"><span className="mno">{['壹', '贰', '叁', '肆'][mi] || (mi + 1)}</span> {L(m.zh, m.en)}</div>
+                    <div className="a-path">
+                      <div className="a-path-spine" aria-hidden="true" />
+                      {chs.map(c => { const gi = DOCS.academy.indexOf(c); const done = isDone(c.id); const current = c.id === nextChapterId();
+                        return (
+                          <button key={c.id} className="a-path-item" onClick={() => setAcaChapter(c.id)} aria-label={L(c.title[0], c.title[1]) + (done ? ' · ' + L('已学完', 'done') : '')}>
+                            <span className={'a-path-node' + (done ? ' done' : current ? ' current' : '')}>{done ? '✓' : ''}</span>
+                            <span className="a-path-cover"><Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={120} /></span>
+                            <span className="a-path-body">
+                              <span className="pt">{L(c.title[0], c.title[1])}</span>
+                              <span className="pm">{L(`第 ${gi + 1} 章`, `Chapter ${gi + 1}`)} · {L('约 2 分钟', '~2 min')}</span>
+                            </span>
+                            <span className={'a-path-chip' + (done ? ' done' : current ? ' current' : '')}>{done ? L('已学完', 'Done') : current ? L('继续', 'Continue') : L('未学', 'New')}</span>
+                          </button>
+                        ); })}
+                    </div>
+                  </div>
+                );
+              })}
               <div className="a-sec">{L('图解', 'Diagrams')}</div>
               <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={240} />)}</div>
             </>) : (() => {
@@ -839,7 +875,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                 <article className="a-reader">
                   <button className="a-seemore" onClick={() => setAcaChapter(null)}>‹ {L('返回课程', 'All lessons')}</button>
                   <div className="a-progress" aria-hidden="true"><i style={{ width: ((idx + 1) / DOCS.academy.length * 100) + '%' }} /></div>
-                  <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}</div>
+                  <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}{isDone(c.id) ? ' · ✓ ' + L('已学完', 'done') : ''}</div>
                   <h1 className="a-h1">{L(c.title[0], c.title[1])}</h1>
                   <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={460} />
                   <p className="a-reader-body">{L(c.story[0], c.story[1])}</p>
@@ -847,6 +883,11 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <div className="a-reader-cross">
                     <button className="a-btn-ghost" onClick={() => setTab('learn')}><Icon name="article" size={15} /> {L('看用例', 'See a worked example')}</button>
                     <button className="a-btn-ghost" onClick={() => setTab('find')}><Icon name="calendar" size={15} /> {L('试试看 →', 'Try it →')}</button>
+                  </div>
+                  <div className="a-reader-actions">
+                    <button className={'a-btn-ghost' + (isDone(c.id) ? ' on' : '')} onClick={() => toggleDone(c.id)}>{isDone(c.id) ? L('✓ 已学完', '✓ Completed') : L('标记为已学完', 'Mark complete')}</button>
+                    {next ? <button className="a-btn" style={{ width: 'auto', padding: '0 18px' }} onClick={() => { markDone(c.id); setAcaChapter(next.id); }}>{L('完成并继续', 'Complete & next')} →</button>
+                          : <button className="a-btn" style={{ width: 'auto', padding: '0 18px' }} onClick={() => { markDone(c.id); setAcaChapter(null); }}>{L('完成课程 ✓', 'Finish course ✓')}</button>}
                   </div>
                   <div className="a-reader-nav">
                     {prev ? <button className="a-btn-ghost" onClick={() => setAcaChapter(prev.id)}>‹ {L(prev.title[0], prev.title[1])}</button> : <span />}

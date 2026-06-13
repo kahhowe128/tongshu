@@ -28,6 +28,12 @@ D.GLOSS.forEach(g => {
   if (!c.id || !pair(c.title) || !pair(c.story)) throw 'ACADEMY shape ' + (c.id || '?');
   if (!Array.isArray(c.glossaryLinks) || !c.glossaryLinks.length || !c.glossaryLinks.every(id => ids.has(id))) throw 'ACADEMY links ' + c.id;
 });
+const acaIds = new Set((D.ACADEMY || []).map(c => c.id)); const inModule = {};
+(D.ACADEMY_MODULES || []).forEach(m => {
+  if (!m.id || !pair([m.zh, m.en]) || !Array.isArray(m.chapters)) throw 'ACADEMY_MODULE ' + (m.id || '?');
+  m.chapters.forEach(cid => { if (!acaIds.has(cid)) throw 'module ' + m.id + ' references unknown chapter ' + cid; if (inModule[cid]) throw 'chapter in two modules: ' + cid; inModule[cid] = m.id; });
+});
+(D.ACADEMY || []).forEach(c => { if (!inModule[c.id]) throw 'academy chapter not in any module: ' + c.id; });
 const MEDIA = D.MEDIA || { videos: [], articles: [] };
 (MEDIA.videos || []).forEach(v => { if (!v.id || !pair(v.title) || !pair(v.teaser)) throw 'MEDIA.video ' + (v.id || '?'); });
 (MEDIA.articles || []).forEach(a => {
@@ -38,7 +44,7 @@ const MEDIA = D.MEDIA || { videos: [], articles: [] };
 console.log('shapes OK — gloss entries:', D.GLOSS.length, '| cats:', D.GLOSS_CATS.length, '| cases:', (D.CASES || []).length, '| academy:', (D.ACADEMY || []).length, '| media:', (MEDIA.videos || []).length + 'v/' + (MEDIA.articles || []).length + 'a');
 
 // ---- (1) in-app consts ----
-const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [], academy: D.ACADEMY || [], media: D.MEDIA || { videos: [], articles: [] } };
+const DOCS = { v: D.V, about: D.ABOUT, quick: D.QUICK, read: D.READ, personalize: D.PERSONALIZE, tools: D.TOOLS, trust: D.TRUST, faq: D.FAQ, hist: D.HIST, cases: D.CASES || [], academy: D.ACADEMY || [], academyModules: D.ACADEMY_MODULES || [], media: D.MEDIA || { videos: [], articles: [] } };
 let inapp = '// GENERATED from docs/source.js by scripts/gen-docs.mjs — single source; do not hand-edit.\n'
   + 'export const DOCS = ' + JSON.stringify(DOCS) + ';\n'
   + 'export const GLOSS_CATS = ' + JSON.stringify(D.GLOSS_CATS) + ';\n'

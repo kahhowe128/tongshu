@@ -39,6 +39,10 @@ academy.forEach(c => {
   if (!Array.isArray(c.glossaryLinks) || !c.glossaryLinks.length) bad(`academy ${c.id} has no glossaryLinks`);
   (c.glossaryLinks || []).forEach(id => { if (!glossIds.has(id)) bad(`academy ${c.id} unresolved glossary id: ${id}`); });
 });
+const acaModules = DOCS.academyModules || [];
+const inMod = {};
+acaModules.forEach(m => { if (!m.id || !m.zh || !m.en || !Array.isArray(m.chapters)) bad(`academy module shape: ${m.id || '?'}`); (m.chapters || []).forEach(cid => { if (!academy.find(c => c.id === cid)) bad(`module ${m.id} references unknown chapter ${cid}`); inMod[cid] = (inMod[cid] || 0) + 1; }); });
+academy.forEach(c => { if (inMod[c.id] !== 1) bad(`academy chapter ${c.id} must be in exactly one module (got ${inMod[c.id] || 0})`); });
 const spiritsCh = academy.find(c => c.id === 'spirits');
 if (!spiritsCh) bad('academy missing the spirits chapter (teaches the honesty principle)');
 else { const txt = JSON.stringify(spiritsCh); if (!txt.includes('未纳入')) bad('academy spirits chapter missing 未纳入 caveat'); if (!/omitted/i.test(txt)) bad('academy spirits chapter missing "omitted" caveat'); }

@@ -530,5 +530,38 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-vidmeta{padding:10px 12px;}
 .a-vidmeta .vt{font-family:var(--font-serif);font-size:14px;font-weight:700;color:var(--ink);}
 .a-vidmeta .vte{font-size:12px;color:var(--ink-soft);margin-top:3px;line-height:1.5;}
+
+/* ===== Phase 5 LMS — progress, continue, curriculum path ===== */
+.a-progress-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);padding:14px;box-shadow:var(--sh);margin:8px 0 20px;}
+.a-progress-head{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--ink-soft);margin-bottom:8px;}
+.a-progress-head .num{font-family:var(--font-mono);color:var(--ink);}
+.a-continue{display:flex;align-items:center;gap:10px;width:100%;margin-top:12px;padding:11px 14px;border:0;border-radius:var(--r1);background:var(--seal);color:var(--on-seal);cursor:pointer;text-align:left;font-family:var(--font-sans);}
+.a-continue .cl{font-size:10.5px;opacity:.85;text-transform:uppercase;letter-spacing:.1em;}
+.a-continue .ct{font-family:var(--font-serif);font-weight:700;font-size:15px;}
+.a-continue .ca{margin-left:auto;font-size:18px;}
+.a-continue:active{background:var(--seal-pressed);}
+@media (hover:hover){.a-continue:hover{background:var(--seal-deep);}}
+.a-module{margin:20px 0;}
+.a-module-head{font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.a-module-head .mno{color:var(--seal);}
+.a-path{position:relative;}
+.a-path-spine{position:absolute;left:23px;top:38px;bottom:38px;width:2px;background:var(--line-2);}
+.a-path-item{display:flex;align-items:center;gap:12px;width:100%;padding:8px;border:0;background:none;cursor:pointer;text-align:left;border-radius:var(--r2);font-family:var(--font-sans);position:relative;}
+@media (hover:hover){.a-path-item:hover{background:var(--surface-hover);}}
+.a-path-item:active{background:var(--surface-pressed);}
+.a-path-node{flex:0 0 30px;height:30px;border-radius:50%;background:var(--surface);border:2px solid var(--line-2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--ink-faint);z-index:1;}
+.a-path-node.done{background:var(--good);border-color:var(--good);color:var(--on-seal);}
+.a-path-node.current{border-color:var(--seal);color:var(--seal);}
+.a-path-cover{flex:0 0 60px;height:60px;border-radius:10px;overflow:hidden;background:var(--surface-2);display:flex;align-items:center;justify-content:center;border:1px solid var(--line);}
+.a-path-cover .a-illus{max-width:60px;}
+.a-path-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.a-path-body .pt{font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink);}
+.a-path-body .pm{font-size:11.5px;color:var(--ink-faint);}
+.a-path-chip{flex:none;font-size:11px;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);}
+.a-path-chip.done{background:var(--good-soft);color:var(--good);}
+.a-path-chip.current{background:var(--seal);color:var(--on-seal);}
+.a-reader-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:16px 0;}
+.a-reader-actions .a-btn{min-height:42px;}
+.a-reader-actions .a-btn-ghost.on{color:var(--good);border-color:var(--good);}
 `;
 export { CSS };

@@ -17,3 +17,12 @@ export function loadSavedDates() {
 export function saveSavedDates(jdns) {
   try { if (typeof localStorage !== 'undefined') localStorage.setItem(SAVED_KEY, JSON.stringify(jdns)); } catch (e) {}
 }
+
+// Academy lesson progress (Phase 5) — local only; a JSON array of completed chapter ids.
+const PROGRESS_KEY = 'tongshu.progress.v1';
+export function loadProgress() {
+  try { if (typeof localStorage === 'undefined') return []; const a = JSON.parse(localStorage.getItem(PROGRESS_KEY) || '[]'); return Array.isArray(a) ? a.filter(x => typeof x === 'string') : []; } catch (e) { return []; }
+}
+export function saveProgress(ids) {
+  try { if (typeof localStorage !== 'undefined') localStorage.setItem(PROGRESS_KEY, JSON.stringify(ids)); } catch (e) {}
+}

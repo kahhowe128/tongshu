@@ -318,6 +318,13 @@ const ACADEMY = [
   },
 ];
 
+// 学堂模块 / Academy modules (Phase 5) — group the chapters into a curriculum path. Single source for
+// the grouping + order; every ACADEMY chapter id must appear in exactly one module (docs lint enforces).
+const ACADEMY_MODULES = [
+  { id: 'foundations', zh: '基础', en: 'Foundations', chapters: ['sky', 'bargain', 'wheel'] },
+  { id: 'choosing', zh: '择吉', en: 'Choosing', chapters: ['court', 'spirits', 'yourturn'] },
+];
+
 // 视频 / 文章 — content scaffolding (Phase 4 WS-4). The OWNER adds real items later; the app renders
 // graceful "coming soon" states while a src/body is empty. Shapes:
 //   video:   { id, title:[zh,en], teaser:[zh,en], poster:'', src:'' | '<youtube id>' | '<file url>',
@@ -335,4 +342,4 @@ const MEDIA = {
   ],
 };
 
-module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES, ACADEMY, MEDIA };
+module.exports = { V, ABOUT, QUICK, READ, PERSONALIZE, TOOLS, TRUST, FAQ, HIST, GLOSS_CATS, GLOSS, CASES, ACADEMY, ACADEMY_MODULES, MEDIA };
