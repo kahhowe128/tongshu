@@ -423,5 +423,31 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .ex-tag.exact{background:var(--good-soft);color:var(--good);}
 .ex-tag.graded{background:var(--warn-soft);color:var(--warn);}
 .ex-txt{line-height:1.5;}
+
+/* ===== Phase 4 responsive shell — breakpoints: mobile <768, tablet 768–1023, desktop ≥1024 ===== */
+.a-brand{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;padding:0;color:inherit;flex:none;}
+.a-brand .brandtext{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+/* desktop top nav + quick controls — hidden on mobile, shown ≥1024 */
+.a-dnav,.a-dctl{display:none;}
+.a-dnav{align-items:center;gap:2px;margin-left:14px;flex-wrap:nowrap;overflow:hidden;}
+.a-dlink{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border:0;background:none;border-radius:9px;cursor:pointer;color:var(--ink-soft);font-family:var(--font-sans);font-size:13.5px;white-space:nowrap;}
+.a-dlink:hover{background:var(--surface-hover);color:var(--ink);}
+.a-dlink.on{color:var(--seal);background:var(--surface-2);font-weight:600;}
+.a-dctl{align-items:center;gap:6px;}
+.a-dupg{min-height:34px;padding:0 14px;border:0;border-radius:9px;background:var(--seal);color:var(--on-seal);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font-sans);}
+.a-dupg:hover{background:var(--seal-deep);}
+/* mobile "More" sheet links */
+.a-morelink{display:flex;align-items:center;gap:12px;width:100%;padding:14px 6px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font-size:15px;font-family:var(--font-sans);cursor:pointer;text-align:left;}
+.a-morelink:active{background:var(--surface-pressed);}
+
+@media (min-width:768px){ .a-app{max-width:760px;} }
+@media (min-width:1024px){
+  .a-app{max-width:1280px;}
+  .a-tabs{display:none;}
+  .a-dnav{display:flex;} .a-dctl{display:flex;}
+  .a-screen{padding-bottom:40px;}
+  .a-bar{height:60px;padding:0 22px;}
+  .a-screen{padding-left:24px;padding-right:24px;}
+}
 `;
 export { CSS };

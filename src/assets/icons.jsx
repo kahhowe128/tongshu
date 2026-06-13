@@ -21,6 +21,9 @@ const PATHS = {
   email: <g><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3.5 7 8.5 6 8.5-6" /></g>,
   back: <path d="M15 5 8 12l7 7" />,
   close: <path d="m6 6 12 12M18 6 6 18" />,
+  video: <g><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M10 9.3v5.4l4.6-2.7z" /></g>,
+  article: <g><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></g>,
+  info: <g><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 7.6v.01" /></g>,
   // verdict glyphs (filled / stroke)
   vGood: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   vBad: <path d="m6.5 6.5 11 11M17.5 6.5l-11 11" />,

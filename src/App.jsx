@@ -64,6 +64,20 @@ function Gate({ paid, lang, onUpgrade, children }) {
   );
 }
 
+// Phase 4 — single source for the primary routes (used by the desktop nav and the mobile tab bar).
+const NAV = [
+  { id: 'home', icon: 'home', zh: '首页', en: 'Home' },
+  { id: 'find', icon: 'calendar', zh: '黄历', en: 'Calendar' },
+  { id: 'academy', icon: 'academy', zh: '学堂', en: 'Academy' },
+  { id: 'videos', icon: 'video', zh: '视频', en: 'Videos' },
+  { id: 'articles', icon: 'article', zh: '文章', en: 'Articles' },
+  { id: 'tools', icon: 'tools', zh: '工具', en: 'Tools' },
+  { id: 'learn', icon: 'info', zh: '关于', en: 'About' },
+];
+const MOBILE_TABS = ['home', 'find', 'academy', 'tools']; // 5th slot is the "More" overflow
+const THEME_CYCLE = { light: 'dark', dark: 'contrast', contrast: 'red', red: 'light' };
+const THEME_SHORT = { light: '浅', dark: '深', contrast: '高', red: '红' };
+
 export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', initialFindView = 'list' } = {}) {
   const now = new Date();
   const today = { y: now.getFullYear(), mo: now.getMonth() + 1, d: now.getDate() };
@@ -74,6 +88,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   // ---- state ----
   const [tab, setTab] = useState(initialTab);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false); // mobile "More" overflow sheet (WS-5)
   const [tourStep, setTourStep] = useState(-1);
   const [tourRect, setTourRect] = useState(null);
   const [gq, setGq] = useState(''); const [gFocus, setGFocus] = useState(null);
@@ -385,12 +400,20 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
       <div className="a-app" onClick={() => popId && setPopId(null)}>
         {/* top bar */}
         <header className="a-bar">
-          <div className="seal">通</div>
-          <div><div className="ttl">通書擇日</div><div className="sub">Tong Shu · {tab === 'find' ? 'Find' : tab === 'calendar' ? 'Calendar' : tab === 'learn' ? 'Learn' : 'Tools'}</div></div>
+          <button className="a-brand" onClick={() => setTab('home')} aria-label={L('首页', 'Home')}><span className="seal">通</span><span className="brandtext"><span className="ttl">通書擇日</span><span className="sub">Tong Shu</span></span></button>
+          {/* desktop primary nav (CSS-hidden on mobile) */}
+          <nav className="a-dnav" aria-label={L('主导航', 'Primary')}>
+            {NAV.map(n => { const on = tab === n.id || (n.id === 'find' && tab === 'calendar'); return <button key={n.id} className={'a-dlink' + (on ? ' on' : '')} aria-current={on ? 'page' : undefined} onClick={() => setTab(n.id)}><Icon name={n.icon} size={18} /><span>{L(n.zh, n.en)}</span></button>; })}
+          </nav>
           <div className="sp" />
-          <button className="a-iconbtn" aria-label={L('收藏', 'Saved')} onClick={() => setTab('saved')} style={{ marginRight: '8px', position: 'relative' }}>{savedJDNs.length ? '★' : '☆'}{savedJDNs.length > 0 && <span className="a-badge">{savedJDNs.length}</span>}</button>
-          <button className="a-iconbtn" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)} style={{ marginRight: '8px' }}>?</button>
-          <button className="a-iconbtn" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
+          <div className="a-dctl">
+            <button className="a-iconbtn" aria-label={L('语言', 'Language')} onClick={() => setLang(l => l === 'zh' ? 'en' : l === 'en' ? 'both' : 'zh')}>{lang === 'zh' ? '中' : lang === 'en' ? 'EN' : '中EN'}</button>
+            <button className="a-iconbtn" aria-label={L('主题', 'Theme')} onClick={() => setTheme(t => THEME_CYCLE[t] || 'light')}>{THEME_SHORT[theme] || '浅'}</button>
+            <button className="a-dupg" onClick={() => setSettingsOpen(true)}>{paid ? L('已升级', 'Pro') : L('升级', 'Upgrade')}</button>
+          </div>
+          <button className="a-iconbtn" aria-label={L('收藏', 'Saved')} onClick={() => setTab('saved')} style={{ position: 'relative' }}>{savedJDNs.length ? '★' : '☆'}{savedJDNs.length > 0 && <span className="a-badge">{savedJDNs.length}</span>}</button>
+          <button className="a-iconbtn a-hide-desktop" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)}>?</button>
+          <button className="a-iconbtn a-hide-desktop" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
         </header>
 
         {/* ===================== HOME ===================== */}
@@ -436,9 +459,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
           </main>
         )}
 
-        {/* ===================== FIND ===================== */}
+        {/* ===================== FIND / CALENDAR ===================== */}
         {tab === 'find' && (
-          <main className="a-screen">
+          <main className="a-screen a-find">
             <h1 className="a-h1">{L('择吉日', 'Find a date')}</h1>
             <p className="a-lede">{L('选事项与范围，得到排序后的宜忌建议。', 'Choose activities and a range for ranked guidance.')}</p>
 
@@ -741,15 +764,52 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
           </main>
         )}
 
-        {/* bottom tabs */}
+        {/* ===================== ACADEMY (WS-2 fills) ===================== */}
+        {tab === 'academy' && (
+          <main className="a-screen a-academy">
+            <h1 className="a-h1">{L('学堂', 'Academy')}</h1>
+            <p className="a-lede">{L('用故事认识择吉的基础与术语。', 'Learn the basics and terms of date-selection through short stories.')}</p>
+          </main>
+        )}
+
+        {/* ===================== VIDEOS (WS-4 fills) ===================== */}
+        {tab === 'videos' && (
+          <main className="a-screen a-media a-videos">
+            <h1 className="a-h1">{L('视频', 'Videos')}</h1>
+            <div className="a-empty">{L('课程视频即将上线。', 'Video lessons coming soon.')}</div>
+          </main>
+        )}
+
+        {/* ===================== ARTICLES (WS-4 fills) ===================== */}
+        {tab === 'articles' && (
+          <main className="a-screen a-media a-articles">
+            <h1 className="a-h1">{L('文章', 'Articles')}</h1>
+            <div className="a-empty">{L('文章敬请期待。', 'Articles coming soon.')}</div>
+          </main>
+        )}
+
+        {/* bottom tabs (mobile only; desktop uses the persistent top nav) */}
         <nav className="a-tabs" role="tablist" ref={refTabs}>
-          <button className={'a-tab' + (tab === 'home' ? ' on' : '')} role="tab" aria-selected={tab === 'home'} onClick={() => setTab('home')}><span className="ic"><Icon name="home" size={22} /></span><span className="tl">{L('首页', 'Home')}</span></button>
-          <button className={'a-tab' + (tab === 'find' ? ' on' : '')} role="tab" aria-selected={tab === 'find'} onClick={() => setTab('find')}><span className="ic"><Icon name="find" size={22} /></span><span className="tl">{L('择日', 'Find')}</span></button>
-          <button className={'a-tab' + (tab === 'calendar' ? ' on' : '')} role="tab" aria-selected={tab === 'calendar'} onClick={() => setTab('calendar')}><span className="ic"><Icon name="calendar" size={22} /></span><span className="tl">{L('黄历', 'Calendar')}</span></button>
-          <button className={'a-tab' + (tab === 'learn' ? ' on' : '')} role="tab" aria-selected={tab === 'learn'} onClick={() => setTab('learn')}><span className="ic"><Icon name="learn" size={22} /></span><span className="tl">{L('学习', 'Learn')}</span></button>
-          <button className={'a-tab' + (tab === 'tools' ? ' on' : '')} role="tab" aria-selected={tab === 'tools'} onClick={() => setTab('tools')}><span className="ic"><Icon name="tools" size={22} /></span><span className="tl">{L('工具', 'Tools')}</span></button>
+          {MOBILE_TABS.map(id => { const n = NAV.find(x => x.id === id); const on = tab === id || (id === 'find' && tab === 'calendar'); return <button key={id} className={'a-tab' + (on ? ' on' : '')} role="tab" aria-selected={on} onClick={() => setTab(id)}><span className="ic"><Icon name={n.icon} size={22} /></span><span className="tl">{L(n.zh, n.en)}</span></button>; })}
+          <button className={'a-tab' + (['videos', 'articles', 'learn', 'saved'].includes(tab) ? ' on' : '')} aria-haspopup="true" aria-expanded={moreOpen} onClick={() => setMoreOpen(true)}><span className="ic"><Icon name="catMisc" size={22} /></span><span className="tl">{L('更多', 'More')}</span></button>
         </nav>
       </div>
+
+      {/* ===================== MORE (mobile overflow) ===================== */}
+      {moreOpen && (
+        <>
+          <div className="a-scrim" onClick={() => setMoreOpen(false)} />
+          <div className="a-sheet settings" role="dialog" aria-modal="true" aria-label={L('更多', 'More')}>
+            <div className="a-handle" />
+            <div className="a-sheet-head"><div className="a-glance"><div className="gg" style={{ fontSize: '18px' }}>{L('更多', 'More')}</div></div><div className="a-sheet-nav"><button className="a-iconbtn" aria-label="close" onClick={() => setMoreOpen(false)}>×</button></div></div>
+            <div className="a-sheet-body">
+              {[['videos', '视频', 'Videos', 'video'], ['articles', '文章', 'Articles', 'article'], ['learn', '关于', 'About', 'info'], ['saved', '收藏', 'Saved', 'save']].map(([id, zh, en, ic]) => <button key={id} className="a-morelink" onClick={() => { setTab(id); setMoreOpen(false); }}><Icon name={ic} size={20} /> {L(zh, en)}</button>)}
+              <button className="a-morelink" onClick={() => { setMoreOpen(false); goTour(0); }}><Icon name="info" size={20} /> {L('使用教程', 'Tutorial')}</button>
+              <button className="a-morelink" onClick={() => { setMoreOpen(false); setSettingsOpen(true); }}><Icon name="settings" size={20} /> {L('设置', 'Settings')}</button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* ===================== DAY SHEET ===================== */}
       {D && (
