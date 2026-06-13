@@ -21,7 +21,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { CSS } from './styles.js';
 import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
-import { loadSaved, saveLocal } from './lib/storage.js';
+import { loadSaved, saveLocal, loadSavedDates, saveSavedDates } from './lib/storage.js';
 import {
   STEMS, BRANCHES, ZODIAC, gregorianToJDN, jdnToGregorian, weekday, TERMS24, termCivilJDN, yearPillarForCivilJDN, MANSIONS, MANSION_ANIMAL, SEVEN, mansionIndex, mansionSeven, nayin, clash, LUNAR_DAY_NAMES, lunarLabel, siliSijue, ACTIVITIES, CATEGORIES, CATEGORIES_EN, verdictForActivity, computeDay, rankHours, hourClass, MANSION_GOOD, sanniang, marriageMonthLuck, MARRIAGE_OMIT_ZH, MARRIAGE_OMIT_EN, chongSangDay, BURIAL_OMIT_ZH, BURIAL_OMIT_EN, EL_NAMES, EL_EN, wuxingProfile, DIR_EN, dayDirections, DAYDIR_OMIT_ZH, DAYDIR_OMIT_EN, wuHuangDir, sanShaDir, annualLayer, dayPillarWithConvention, TZ_PRESETS, birthPillars, leapPlacementCheck, razorEdgeYears, runSelfTests, findLunarDate, termClock, solarTermOf, dayView, DOW_ZH, DOW_EN
 } from './engine/tongshu.js';
@@ -84,6 +84,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
   const [calY, setCalY] = useState(today.y);
   const [calM, setCalM] = useState(today.mo);
   const [selJDN, setSelJDN] = useState(null);
+  const [savedJDNs, setSavedJDNs] = useState(() => loadSavedDates()); // WS-4: local-only favourites (JDN array)
   const [openAcc, setOpenAcc] = useState({ acts: true, shensha: true });
   const [popId, setPopId] = useState(null);
   const [ssCal, setSsCal] = useState({});
@@ -98,6 +99,11 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
   const L = (zh, en) => (lang === 'en' ? en : lang === 'both' ? `${zh} / ${en}` : zh);
   const colorClass = c => ({ green: 'v-good', red: 'v-bad', amber: 'v-amber', grey: 'v-grey' }[c] || 'v-grey');
   const vIcon = c => ({ green: '✓', red: '✗', amber: '～', grey: '·' }[c] || '·');
+  // WS-4 saved/favourite dates — local only, persisted on change
+  const isSaved = (jdn) => savedJDNs.includes(jdn);
+  const toggleSaved = (jdn) => setSavedJDNs(s => s.includes(jdn) ? s.filter(x => x !== jdn) : [...s, jdn].sort((a, b) => a - b));
+  const clearSaved = () => setSavedJDNs([]);
+  useEffect(() => { saveSavedDates(savedJDNs); }, [savedJDNs]);
 
   // ---- derived ----
   const dayCache = useRef({});
@@ -273,6 +279,26 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
 
   const preset = (sj, ej) => { const s = jdnToGregorian(sj), e = jdnToGregorian(ej); setStartStr(fmtYMD(s.y, s.m, s.d)); setEndStr(fmtYMD(e.y, e.m, e.d)); };
 
+  // a ranked-date card with a star toggle — shared by the Find list and the Saved view (WS-4)
+  const dateCard = (jdn, day = getDay(jdn), dv = dayView(day, selActs, birthYearBranch, screenZodiac, profile, extraBranches, wuxProfile)) => {
+    const reason = (() => { const fa = dv.perActivity[0]; if (!fa) return day.officer + L('日', ''); const f = fa.v.factors.find(x => x.strong) || fa.v.factors[0]; return f ? (lang === 'en' ? f.en : f.zh) : day.officer + L('日', ''); })();
+    const sv = isSaved(jdn);
+    return (
+      <button key={jdn} className={'a-dcard ' + colorClass(dv.color)} onClick={() => setSelJDN(jdn)}>
+        <div><div className="dn">{day.greg.m}/{day.greg.d}</div><div className="dw">{L(DOW_ZH[day.weekday], DOW_EN[day.weekday])}</div></div>
+        <div className="dm">
+          <div className="dl">{lunarLabel(day)} · {day.dayGanzhi}{L('日', '')} · {day.officer}{L('日', '')}</div>
+          <div className="dr">{reason}</div>
+          <div className="dz">{L('冲', 'clash')}{day.clash.clashZodiac} · {calMansion(day).name}{L('宿', '')}{day.shensha.goodCount ? ` · ${L('吉神', '吉')}${day.shensha.goodCount}` : ''}{day.shensha.badCount ? ` · ${L('凶煞', '凶')}${day.shensha.badCount}` : ''}{(dv.benmingChong || dv.clashedPersons.length) ? <span className="a-flag">⚠{L('冲生肖', 'clash')}</span> : null}</div>
+        </div>
+        <div className={'a-vbadge ' + colorClass(dv.color)}>{vIcon(dv.color)} {lang === 'en' ? dv.verdictEn : dv.verdict}</div>
+        <span className={'a-star' + (sv ? ' on' : '')} role="button" tabIndex={0} aria-pressed={sv} aria-label={L(sv ? '取消收藏' : '收藏', sv ? 'Unsave' : 'Save')} onClick={(e) => { e.stopPropagation(); toggleSaved(jdn); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleSaved(jdn); } }}>{sv ? '★' : '☆'}</span>
+      </button>
+    );
+  };
+  // corner star toggle for calendar cells (stops propagation so the cell still opens the sheet)
+  const cellStar = (jdn) => { const sv = isSaved(jdn); return <span className={'a-cell-star' + (sv ? ' on' : '')} role="button" tabIndex={0} aria-pressed={sv} aria-label={L(sv ? '取消收藏' : '收藏', sv ? 'Unsave' : 'Save')} onClick={(e) => { e.stopPropagation(); toggleSaved(jdn); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); toggleSaved(jdn); } }}>{sv ? '★' : '☆'}</span>; };
+
   // =========================== RENDER ===========================
   return (
     <div className="a-root" data-theme={theme} data-sheet={selJDN != null ? '1' : '0'}>
@@ -302,6 +328,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
           <div className="seal">通</div>
           <div><div className="ttl">通書擇日</div><div className="sub">Tong Shu · {tab === 'find' ? 'Find' : tab === 'calendar' ? 'Calendar' : tab === 'learn' ? 'Learn' : 'Tools'}</div></div>
           <div className="sp" />
+          <button className="a-iconbtn" aria-label={L('收藏', 'Saved')} onClick={() => setTab('saved')} style={{ marginRight: '8px', position: 'relative' }}>{savedJDNs.length ? '★' : '☆'}{savedJDNs.length > 0 && <span className="a-badge">{savedJDNs.length}</span>}</button>
           <button className="a-iconbtn" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)} style={{ marginRight: '8px' }}>?</button>
           <button className="a-iconbtn" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
         </header>
@@ -363,6 +390,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
                         <span className="g">{c.dnum}</span>
                         {selActs.length > 0 && <span className="vg">{vIcon(c.dv.color)}</span>}
                         {screenZodiac && (c.dv.benmingChong || c.dv.clashedPersons.length) ? <span className="cf" aria-hidden="true">⚠</span> : null}
+                        {cellStar(c.jdn)}
                       </button>
                   )}
                 </div>
@@ -370,21 +398,23 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
               </div>
             ) : (<>
               {listData.length === 0 && <div className="a-empty">{L('没有可显示的日期。', 'No days to show.')}</div>}
-              {listData.slice(0, 120).map(({ jdn, day, dv }) => {
-                const reason = (() => { const fa = dv.perActivity[0]; if (!fa) return day.officer + L('日', ''); const f = fa.v.factors.find(x => x.strong) || fa.v.factors[0]; return f ? (lang === 'en' ? f.en : f.zh) : day.officer + L('日', ''); })();
-                return (
-                  <button key={jdn} className={'a-dcard ' + colorClass(dv.color)} onClick={() => setSelJDN(jdn)}>
-                    <div><div className="dn">{day.greg.m}/{day.greg.d}</div><div className="dw">{L(DOW_ZH[day.weekday], DOW_EN[day.weekday])}</div></div>
-                    <div className="dm">
-                      <div className="dl">{lunarLabel(day)} · {day.dayGanzhi}{L('日', '')} · {day.officer}{L('日', '')}</div>
-                      <div className="dr">{reason}</div>
-                      <div className="dz">{L('冲', 'clash')}{day.clash.clashZodiac} · {calMansion(day).name}{L('宿', '')}{day.shensha.goodCount ? ` · ${L('吉神', '吉')}${day.shensha.goodCount}` : ''}{day.shensha.badCount ? ` · ${L('凶煞', '凶')}${day.shensha.badCount}` : ''}{(dv.benmingChong || dv.clashedPersons.length) ? <span className="a-flag">⚠{L('冲生肖', 'clash')}</span> : null}</div>
-                    </div>
-                    <div className={'a-vbadge ' + colorClass(dv.color)}>{vIcon(dv.color)} {lang === 'en' ? dv.verdictEn : dv.verdict}</div>
-                  </button>
-                );
-              })}
+              {listData.slice(0, 120).map(({ jdn, day, dv }) => dateCard(jdn, day, dv))}
             </>)}
+            <div className="a-disc">{L('推算参考，非定论。', 'Computed guidance, not definitive.')}</div>
+          </main>
+        )}
+
+        {/* ===================== SAVED ===================== */}
+        {tab === 'saved' && (
+          <main className="a-screen">
+            <h1 className="a-h1">{L('收藏', 'Saved dates')}</h1>
+            <p className="a-lede">{L('已收藏的日子，仅存于本机、不上传。', 'Your starred days — stored on this device only, never transmitted.')} <span className="en">{savedJDNs.length} saved</span></p>
+            {savedJDNs.length === 0
+              ? <div className="a-empty">{L('还没有收藏。在列表、日历或日详情点 ☆ 收藏。', 'No saved dates yet. Tap ☆ on a list row, a calendar day, or the day sheet to save one.')}</div>
+              : (<>
+                  {savedJDNs.slice().sort((a, b) => a - b).map(jdn => dateCard(jdn))}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '12px' }}><button className="a-btn-ghost" onClick={clearSaved}>{L('清除全部收藏', 'Clear all saved')}</button></div>
+                </>)}
             <div className="a-disc">{L('推算参考，非定论。', 'Computed guidance, not definitive.')}</div>
           </main>
         )}
@@ -427,6 +457,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
                         <span className="g">{dnum + 1}</span>
                         <span className="l">{LUNAR_DAY_NAMES[day.lunar.day] === '初一' ? monthNamesZh[day.lunar.monthNum] + '月' : LUNAR_DAY_NAMES[day.lunar.day]}</span>
                         {selActs.length > 0 && <span className={'dot ' + colorClass(dv.color)} />}
+                        {cellStar(jdn)}
                       </button>
                     );
                   }
@@ -612,6 +643,7 @@ export default function TongShuApp({ initialTab = 'find', initialLang = 'zh', in
             <div className="a-handle" />
             <div className="a-sheet-head">
               <div className="a-sheet-nav">
+                <button className={'a-iconbtn' + (isSaved(selJDN) ? ' starred' : '')} aria-pressed={isSaved(selJDN)} aria-label={L(isSaved(selJDN) ? '取消收藏' : '收藏', isSaved(selJDN) ? 'Unsave' : 'Save')} onClick={() => toggleSaved(selJDN)}>{isSaved(selJDN) ? '★' : '☆'}</button>
                 <button className="a-iconbtn" aria-label="prev day" onClick={() => setSelJDN(j => j - 1)}>‹</button>
                 <button className="a-iconbtn" aria-label="next day" onClick={() => setSelJDN(j => j + 1)}>›</button>
                 <button className="a-iconbtn" aria-label="close" onClick={() => setSelJDN(null)}>×</button>

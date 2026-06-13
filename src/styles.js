@@ -84,7 +84,7 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .v-grey .a-vbadge,.a-vbadge.v-grey{background:var(--grey-soft);color:var(--grey);}
 
 /* ranked date card */
-.a-dcard{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;width:100%;
+.a-dcard{display:grid;grid-template-columns:auto 1fr auto auto;gap:12px;align-items:center;width:100%;
   text-align:left;background:var(--surface);border:1px solid var(--line);border-left-width:4px;
   border-radius:var(--r2);padding:12px 14px;cursor:pointer;margin-bottom:8px;font-family:var(--font-sans);}
 .a-dcard:active{background:var(--surface-pressed);}
@@ -100,6 +100,14 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-dcard .dr{font-size:11.5px;color:var(--ink-soft);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .a-dcard .dz{font-size:10.5px;color:var(--ink-faint);margin-top:2px;}
 .a-flag{display:inline-block;font-size:10px;font-weight:700;color:var(--bad);background:var(--bad-soft);border-radius:5px;padding:0 5px;margin-left:4px;}
+/* saved/favourite star (WS-4) */
+.a-star{font-size:19px;line-height:1;color:var(--ink-faint);cursor:pointer;align-self:center;padding:2px;border-radius:8px;}
+.a-star.on{color:var(--seal);}
+.a-star:active{background:var(--surface-pressed);}
+.a-cell-star{position:absolute;top:1px;left:2px;font-size:10px;line-height:1;color:var(--ink-faint);opacity:.45;cursor:pointer;padding:1px;}
+.a-cell-star.on{color:var(--seal);opacity:1;}
+.a-badge{position:absolute;top:-3px;right:-3px;min-width:15px;height:15px;padding:0 3px;border-radius:999px;background:var(--seal);color:var(--on-seal);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);}
+.a-iconbtn.starred{color:var(--seal);}
 
 /* annual band + ribbon */
 .a-annual{display:flex;flex-wrap:wrap;align-items:center;gap:5px 12px;padding:10px 12px;border-radius:var(--r2);
