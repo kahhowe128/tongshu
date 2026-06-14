@@ -1,28 +1,28 @@
-// Raster art slot (Phase 5) — lets you drop bundled painterly images onto the marketing surfaces
-// (home hero + lesson covers) while keeping the themeable SVG everywhere else, with a graceful fallback.
+// Bundled vector art (Phase 6) — on-palette illustrations generated with Recraft 4.1 (via Higgsfield),
+// exported as SVG so they're crisp and tiny, for the marketing surfaces: home hero + 6 lesson covers.
 //
-// HOW TO ADD ART (no code change beyond this one list):
-//   1. Put an image at  public/art/<name>.webp  (recommended: webp/avif, ~1000–1400px, < 150 KB).
-//      Names: hero · sky · bargain · wheel · court · spirits · yourturn  (see public/art/README.md).
-//   2. Add that <name> to ART_AVAILABLE below. That surface then shows your raster; everything else
-//      keeps the colourful SVG.
+// THEME BEHAVIOUR (by design): these vectors are baked for the LIGHT theme (warm cream ground). On the
+// dark / contrast / 红运 themes we fall back to the themeable inline SVG (illustrations.jsx) so the art
+// always reads on its background and still recolours per theme. If a file is missing or you're offline
+// and it isn't cached, it also falls back automatically.
 //
-// Trade-offs (by design): bundled raster does NOT recolour per theme (light/dark/contrast/红运) and
-// adds weight. If the file is missing or you're offline and it isn't cached, it falls back to the SVG.
+// TO SWAP ART: replace public/art/<name>.svg (names below). To remove a piece, delete its name here.
 import React from 'react';
 import { Illustration } from './illustrations.jsx';
 
 export const ART_AVAILABLE = new Set([
-  // 'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
+  'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
 ]);
 
-export function Art({ name, alt, size = 320, className, style, lang = 'zh' }) {
+export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light' }) {
   const [failed, setFailed] = React.useState(false);
-  if (!name || !ART_AVAILABLE.has(name) || failed) {
+  // bundled art only on the light theme; dark / contrast / 红运 use the themeable inline SVG
+  const useArt = name && ART_AVAILABLE.has(name) && !failed && theme === 'light';
+  if (!useArt) {
     return <Illustration name={name} lang={lang} size={size} className={className} style={style} />;
   }
   return (
-    <img src={'art/' + name + '.webp'} alt={alt || name} loading="lazy" decoding="async"
+    <img src={'art/' + name + '.svg'} alt={alt || name} loading="lazy" decoding="async"
       onError={() => setFailed(true)}
       className={'a-illus ' + (className || '')}
       style={{ maxWidth: size, width: '100%', height: 'auto', display: 'block', ...style }} />

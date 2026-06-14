@@ -491,7 +491,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <button className="a-launch-go" onClick={() => goFind()}><Icon name="find" size={18} /> {L('选吉日', 'Find dates')}</button>
                 </div>
               </div>
-              <div className="a-launch-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} size={300} /></div>
+              <div className="a-launch-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={300} /></div>
             </section>
 
             {/* quick start — the four things you do most */}
@@ -525,7 +525,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
             <div className="a-feature-row">
               {DOCS.academy.slice(0, 4).map(c => (
                 <button key={c.id} className="a-feature-card" onClick={() => { setAcaChapter(c.id); setTab('academy'); }}>
-                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={240} />
+                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={240} />
                   <div className="ft">{L(c.title[0], c.title[1])}</div>
                 </button>
               ))}
@@ -924,7 +924,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                         return (
                           <button key={c.id} className="a-path-item" onClick={() => setAcaChapter(c.id)} aria-label={L(c.title[0], c.title[1]) + (done ? ' · ' + L('已学完', 'done') : '')}>
                             <span className={'a-path-node' + (done ? ' done' : current ? ' current' : '')}>{done ? '✓' : ''}</span>
-                            <span className="a-path-cover"><Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={120} /></span>
+                            <span className="a-path-cover"><Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={120} /></span>
                             <span className="a-path-body">
                               <span className="pt">{L(c.title[0], c.title[1])}</span>
                               <span className="pm">{L(`第 ${gi + 1} 章`, `Chapter ${gi + 1}`)} · {L('约 2 分钟', '~2 min')}</span>
@@ -948,7 +948,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <div className="a-progress" aria-hidden="true"><i style={{ width: ((idx + 1) / DOCS.academy.length * 100) + '%' }} /></div>
                   <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}{isDone(c.id) ? ' · ✓ ' + L('已学完', 'done') : ''}</div>
                   <h1 className="a-h1">{L(c.title[0], c.title[1])}</h1>
-                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={460} />
+                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={460} />
                   <p className="a-reader-body">{L(c.story[0], c.story[1])}</p>
                   <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => { setTab('learn'); setGFocus(id); }}>{g.zh} ↗</button> : null; })}</div>
                   <div className="a-reader-cross">
