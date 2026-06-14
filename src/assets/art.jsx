@@ -13,19 +13,25 @@ import { Illustration } from './illustrations.jsx';
 export const ART_AVAILABLE = new Set([
   'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
   'terms', 'zodiacclash', 'hours', 'openshop',
-  'openshop_read', 'openshop_tea',
+  'openshop_read', 'openshop_tea', 'openshop_almanac', 'openshop_clash', 'openshop_hour',
+]);
+
+// Photoreal pieces are bundled as .webp; everything else is on-palette .svg vector.
+export const ART_PHOTO = new Set([
+  'openshop', 'openshop_read', 'openshop_tea', 'openshop_almanac', 'openshop_clash', 'openshop_hour',
 ]);
 
 export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light', onlyLight = false }) {
   const [failed, setFailed] = React.useState(false);
-  // Lesson covers show the bundled art on every theme; the big hero is light-only (onlyLight) so the
-  // dark / contrast / 红运 launcher falls back to the themeable inline SVG instead of a bright cream block.
+  // Lesson art shows on every theme; the big hero is light-only (onlyLight) so the dark / contrast / 红运
+  // launcher falls back to the themeable inline SVG instead of a bright block.
   const useArt = name && ART_AVAILABLE.has(name) && !failed && (!onlyLight || theme === 'light');
   if (!useArt) {
     return <Illustration name={name} lang={lang} size={size} className={className} style={style} />;
   }
+  const ext = ART_PHOTO.has(name) ? 'webp' : 'svg';
   return (
-    <img src={'art/' + name + '.svg'} alt={alt || name} loading="lazy" decoding="async"
+    <img src={'art/' + name + '.' + ext} alt={alt || name} loading="lazy" decoding="async"
       onError={() => setFailed(true)}
       className={'a-illus ' + (className || '')}
       style={{ maxWidth: size, width: '100%', height: 'auto', display: 'block', ...style }} />

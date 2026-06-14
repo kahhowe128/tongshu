@@ -952,11 +952,26 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={460} />
                   {c.readMin && <div className="a-reader-meta"><Icon name="academy" size={14} /> {L(`约 ${c.readMin} 分钟阅读`, `${c.readMin} min read`)}{(c.sections || []).length ? ' · ' + (c.sections.length + 1) + (lang === 'en' ? ' parts' : ' 节') : ''}</div>}
                   <p className="a-reader-lead">{L(c.story[0], c.story[1])}</p>
+                  {(c.sections || []).length > 2 && (
+                    <nav className="a-rtoc" aria-label={L('本课目录', 'In this lesson')}>
+                      <div className="a-rtoc-h">{L('本课目录', 'In this lesson')}</div>
+                      {c.sections.map((s, si) => <button key={si} onClick={() => { try { document.getElementById('rsec-' + si).scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }}><span className="n">{si + 1}</span>{L(s.h[0], s.h[1])}</button>)}
+                    </nav>
+                  )}
                   {(c.sections || []).map((s, si) => (
-                    <section key={si} className="a-reader-sec">
+                    <section key={si} id={'rsec-' + si} className="a-reader-sec">
                       <h2 className="a-reader-h2"><span className="rh-no">{si + 1}</span>{L(s.h[0], s.h[1])}</h2>
-                      {s.figure && <Art name={s.figure} alt={L(s.h[0], s.h[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={560} className="a-reader-fig" />}
+                      {s.figure && <Art name={s.figure} alt={L(s.h[0], s.h[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={640} className="a-reader-fig" />}
                       {L(s.body[0], s.body[1]).split('\n\n').map((p, pi) => <p key={pi} className="a-reader-body">{p}</p>)}
+                      {s.table && (
+                        <div className="a-rtable-wrap">
+                          <table className="a-rtable">
+                            {s.table.head && <thead><tr>{s.table.head.map((h, hi) => <th key={hi}>{Array.isArray(h) ? L(h[0], h[1]) : h}</th>)}</tr></thead>}
+                            <tbody>{s.table.rows.map((r, ri) => <tr key={ri}>{r.map((cl, ci) => <td key={ci}>{Array.isArray(cl) ? L(cl[0], cl[1]) : cl}</td>)}</tr>)}</tbody>
+                          </table>
+                          {s.table.caption && <div className="a-rtable-cap">{L(s.table.caption[0], s.table.caption[1])}</div>}
+                        </div>
+                      )}
                     </section>
                   ))}
                   {(c.cases || []).length > 0 && (
