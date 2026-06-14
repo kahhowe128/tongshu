@@ -491,7 +491,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <button className="a-launch-go" onClick={() => goFind()}><Icon name="find" size={18} /> {L('选吉日', 'Find dates')}</button>
                 </div>
               </div>
-              <div className="a-launch-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={300} /></div>
+              <div className="a-launch-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} onlyLight size={300} /></div>
             </section>
 
             {/* quick start — the four things you do most */}
@@ -937,25 +937,6 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   </section>
                 );
               })}
-              {/* upcoming lessons — placeholders; swap each for a real chapter as content is produced (see generation brief) */}
-              <section className="a-track">
-                <div className="a-track-head">
-                  <span className="a-track-no plus">＋</span>
-                  <div className="a-track-meta"><h2 className="a-track-title">{L('进阶课程', 'Going further')}</h2><span className="a-track-sub">{L('即将上线', 'Coming soon')}</span></div>
-                </div>
-                <div className="a-lgrid">
-                  {[['二十四节气详解', 'The 24 solar terms, in depth'], ['十二生肖与冲煞', 'Your zodiac sign & clashes'], ['每日吉时怎么看', 'Reading the lucky hours'], ['择日实战：开新店', 'Worked example: opening a shop']].map(([zh, en], i) => (
-                    <div key={i} className="a-lcard soon" aria-disabled="true">
-                      <span className="a-lcard-cover soon"><Icon name="academy" size={38} /></span>
-                      <span className="a-lcard-body">
-                        <span className="a-lcard-meta">{L('新课程', 'New lesson')}</span>
-                        <span className="a-lcard-title">{L(zh, en)}</span>
-                        <span className="a-lcard-chip soon">{L('敬请期待', 'Coming soon')}</span>
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </section>
               <div className="a-sec">{L('图解', 'Diagrams')}</div>
               <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={240} />)}</div>
             </>) : (() => {

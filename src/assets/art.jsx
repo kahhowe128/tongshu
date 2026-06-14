@@ -12,12 +12,14 @@ import { Illustration } from './illustrations.jsx';
 
 export const ART_AVAILABLE = new Set([
   'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
+  'terms', 'zodiacclash', 'hours', 'openshop',
 ]);
 
-export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light' }) {
+export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light', onlyLight = false }) {
   const [failed, setFailed] = React.useState(false);
-  // bundled art only on the light theme; dark / contrast / 红运 use the themeable inline SVG
-  const useArt = name && ART_AVAILABLE.has(name) && !failed && theme === 'light';
+  // Lesson covers show the bundled art on every theme; the big hero is light-only (onlyLight) so the
+  // dark / contrast / 红运 launcher falls back to the themeable inline SVG instead of a bright cream block.
+  const useArt = name && ART_AVAILABLE.has(name) && !failed && (!onlyLight || theme === 'light');
   if (!useArt) {
     return <Illustration name={name} lang={lang} size={size} className={className} style={style} />;
   }

@@ -316,6 +316,34 @@ const ACADEMY = [
       'Now you know the rhythms of the sky, the wheel on the ground, the officers and spirits on duty. Back in Find: pick your activities and range, let the tool rank the days, then open a candidate to read every factor — like the autumn wedding in this app\'s Examples. Remember: everything is computed guidance per tradition, never definitive; for weighty matters, confirm with a printed almanac or a specialist.'],
     glossaryLinks: ['verdict', 'exactgraded'],
   },
+  {
+    id: 'terms', figure: 'terms',
+    title: ['二十四节气详解', 'The 24 solar terms, in depth'],
+    story: ['把太阳在黄道上走过的一圈三百六十度，均分为二十四段，每段十五度，便是二十四节气。它们交替分为「节」与「气」：立春、惊蛰等十二个为「节」，雨水、春分等十二个为「中气」。节气只随太阳，故在公历里日期几乎固定（前后一两天）。古人靠它定农时——「清明前后，种瓜点豆」。《淮南子·天文训》已完整列出今天这套名称与次序。节气也是历法的骨架：没有「中气」的那个月，便定为闰月。',
+      'Divide the sun\'s 360° yearly path along the ecliptic into 24 equal arcs of 15° each and you have the 24 solar terms. They alternate between "nodes" (jie) — Lichun, Jingzhe… — and "mid-terms" (zhongqi) — Yushui, Chunfen… Because they track the sun alone, their Gregorian dates barely move (within a day or two). Farmers timed the year by them: "around Qingming, plant the melons and beans." The Han-era Huainanzi already lists this exact set and order. The terms are also the calendar\'s skeleton: the month with no zhongqi becomes the leap month.'],
+    glossaryLinks: ['jieqi', 'zhongqi', 'runyue'],
+  },
+  {
+    id: 'zodiacclash', figure: 'zodiacclash',
+    title: ['十二生肖与冲煞', 'Your zodiac sign & day-clashes'],
+    story: ['十二地支配上十二种动物，便是生肖：子鼠、丑牛、寅虎……每个人按出生年的地支属一个生肖。地支两两相隔六位会「相冲」——子午冲、丑未冲、寅申冲……通书里每天都标「冲某煞某方」：那天地支所冲的生肖，传统上宜避开重大事。这并非吉凶定论，而是一条提醒。本应用会在所选日为你点出所冲的生肖与方位，供你权衡，而非盲从。生肖出自地支，根仍在干支纪法。',
+      'Pair the twelve earthly branches with twelve animals and you get the zodiac: Rat (zi), Ox (chou), Tiger (yin)… Your sign comes from the branch of your birth year. Branches six apart "clash" — zi–wu, chou–wei, yin–shen… Every almanac day is marked "clashes X, ill direction Y": tradition says the sign clashed that day should avoid major undertakings. It is not a verdict, only a flag — this app points out the clashed sign and direction for a chosen day so you can weigh it, not obey it blindly. The zodiac grows from the branches, rooted in the ganzhi count.'],
+    glossaryLinks: ['shengxiao', 'dizhi', 'ganzhi'],
+  },
+  {
+    id: 'hours', figure: 'hours',
+    title: ['每日吉时怎么看', 'Reading the lucky hours'],
+    story: ['一天也按地支分成十二个「时辰」，每个时辰两小时：子时（23–1）、丑时（1–3）……午时（11–13）。与日子一样，时辰也有黄道、黑道之别，并各有所冲。择了吉日，再择日内的吉时，是传统择吉的「精挑」一步——开市、签约，常取当日黄道而不冲的时辰。本应用为每天列出十二时辰，并以「宜／平／忌」三态标示，凶险（冲）时辰绝不标为宜。时辰之分仍出自地支与值日神。',
+      'A day is also split by the earthly branches into twelve "double-hours" (shichen) of two hours each: zi (23:00–01:00), chou (01:00–03:00)… wu (11:00–13:00). Like days, each double-hour can be a bright-path or dark-path hour and carries its own clash. After choosing a good day, picking a good hour within it is the fine-tuning step — for opening shop or signing a contract one often takes a bright, non-clashing hour. This app lists all twelve double-hours per day, graded favourable / neutral / avoid, and never marks a clashing hour favourable. The hours flow from the branches and the day\'s officers.'],
+    glossaryLinks: ['dizhi', 'huangdao', 'verdict'],
+  },
+  {
+    id: 'openshop', figure: 'openshop',
+    title: ['择日实战：开新店', 'Worked example: opening a shop'],
+    story: ['把前面所学走一遍。想为新店择「开市」吉日：先在「黄历／择日」选事项「开市」，定下一两个月的范围，工具便按宜忌为每天打分、排序。翻看高分日，留意三点——当日是否逢「开、成、定」等利商的建除神，是否黄道，以及是否冲到你的生肖。选定后，再挑当日一个黄道而不冲的吉时开门。最后务必记得：这是依传统规则的推算参考，非定论；重大决策仍宜请教择日师，或参以纸本通书。',
+      'Put it all together. To choose an "open for business" day for a new shop: in Calendar / Find, pick the activity 开市, set a one-to-two-month range, and let the tool score and rank every day. Scan the high scorers for three things — whether the day\'s officer is a commerce-friendly one (Kai, Cheng, Ding), whether it is a bright-path day, and whether it clashes your zodiac sign. Once chosen, pick a bright, non-clashing hour to open the doors. And always remember: this is computed guidance per tradition, not a verdict; for big decisions, consult a specialist or a printed almanac.'],
+    glossaryLinks: ['jianchu', 'huangdao', 'verdict'],
+  },
 ];
 
 // 学堂模块 / Academy modules (Phase 5) — group the chapters into a curriculum path. Single source for
@@ -323,6 +351,7 @@ const ACADEMY = [
 const ACADEMY_MODULES = [
   { id: 'foundations', zh: '基础', en: 'Foundations', chapters: ['sky', 'bargain', 'wheel'] },
   { id: 'choosing', zh: '择吉', en: 'Choosing', chapters: ['court', 'spirits', 'yourturn'] },
+  { id: 'further', zh: '进阶', en: 'Going further', chapters: ['terms', 'zodiacclash', 'hours', 'openshop'] },
 ];
 
 // 视频 / 文章 — content scaffolding (Phase 4 WS-4). The OWNER adds real items later; the app renders
