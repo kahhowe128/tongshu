@@ -16,6 +16,8 @@ export const ART_AVAILABLE = new Set([
   'openshop_read', 'openshop_tea', 'openshop_almanac', 'openshop_clash', 'openshop_hour',
   // Foundations lesson photos (P6-K)
   'sky_gnomon', 'sky_season', 'bargain_moon', 'bargain_festival', 'wheel_tokens', 'wheel_record',
+  // Choosing lesson photos (P6-L)
+  'court_officers', 'court_path', 'court_stars', 'spirits_talisman', 'spirits_books', 'yourturn_calendar', 'yourturn_read',
 ]);
 
 // Photoreal pieces are bundled as .webp; everything else is on-palette .svg vector.
@@ -24,6 +26,9 @@ export const ART_PHOTO = new Set([
   // Foundations: photoreal covers + section figures (P6-K)
   'sky', 'bargain', 'wheel',
   'sky_gnomon', 'sky_season', 'bargain_moon', 'bargain_festival', 'wheel_tokens', 'wheel_record',
+  // Choosing: photoreal covers + section figures (P6-L)
+  'court', 'spirits', 'yourturn',
+  'court_officers', 'court_path', 'court_stars', 'spirits_talisman', 'spirits_books', 'yourturn_calendar', 'yourturn_read',
 ]);
 
 export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light', onlyLight = false }) {
