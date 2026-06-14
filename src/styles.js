@@ -236,13 +236,13 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-pillar .gz{font-family:var(--font-serif);font-size:22px;font-weight:700;color:var(--seal);line-height:1.1;margin-top:3px;}
 .a-pillar .ny{font-size:9px;color:var(--ink-faint);margin-top:2px;}
 
-/* five-element bars */
+/* five-element bars (scoped to .a-bars so it never clobbers the header .a-bar) */
 .a-bars{display:flex;flex-direction:column;gap:5px;}
-.a-bar{display:grid;grid-template-columns:48px 1fr 30px;align-items:center;gap:8px;font-size:12px;}
-.a-bar .bl{font-family:var(--font-serif);color:var(--ink-soft);}
-.a-bar .bt{height:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden;}
-.a-bar .bt i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--warn));}
-.a-bar .bn{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-align:right;}
+.a-bars .a-bar{display:grid;grid-template-columns:48px 1fr 30px;align-items:center;gap:8px;font-size:12px;height:auto;padding:0;background:none;border:0;position:static;}
+.a-bars .a-bar .bl{font-family:var(--font-serif);color:var(--ink-soft);}
+.a-bars .a-bar .bt{height:8px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;overflow:hidden;}
+.a-bars .a-bar .bt i{display:block;height:100%;background:linear-gradient(90deg,var(--good),var(--warn));}
+.a-bars .a-bar .bn{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);text-align:right;}
 
 /* hours grid — three-state (吉/平/忌), driven by rankHours weight */
 .a-hours{display:flex;flex-direction:column;gap:6px;}
@@ -437,8 +437,9 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .ex-txt{line-height:1.5;}
 
 /* ===== Phase 4 responsive shell — breakpoints: mobile <768, tablet 768–1023, desktop ≥1024 ===== */
-.a-brand{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;padding:0;color:inherit;flex:none;}
+.a-brand{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;padding:0;color:inherit;flex:0 0 auto;}
 .a-brand .brandtext{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.a-brand .ttl,.a-brand .sub{white-space:nowrap;}
 /* desktop top nav + quick controls — hidden on mobile, shown ≥1024 */
 .a-dnav,.a-dctl{display:none;}
 .a-dnav{align-items:center;gap:2px;margin-left:14px;flex-wrap:nowrap;overflow:hidden;}
