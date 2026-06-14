@@ -26,7 +26,7 @@ for (const r of routes) {
   let html = '';
   try { html = renderToString(React.createElement(App, { initialTab: r.tab })); }
   catch (e) { bad(`route ${r.tab} threw: ${e.message}`); continue; }
-  if (!html.includes('a-dnav')) bad(`route ${r.tab}: persistent desktop nav (a-dnav) missing`);
+  if (!html.includes('a-rail')) bad(`route ${r.tab}: persistent desktop sidebar (a-rail) missing`);
   if (!html.includes('a-tabs')) bad(`route ${r.tab}: mobile tab bar (a-tabs) missing`);
   if (!html.includes(r.cls)) bad(`route ${r.tab}: screen class "${r.cls}" missing`);
 }

@@ -324,11 +324,12 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 /* Desktop two-pane "almanac desk": the day detail becomes an in-flow right pane (not a modal).
    .a-sheet is already a sibling of .a-app inside .a-root, so docking = make .a-root a centered flex row. */
 @media (min-width:1024px){
-  .a-root[data-sheet="1"]{display:flex;flex-direction:row;align-items:flex-start;max-width:1320px;margin:0 auto;}
-  .a-root[data-sheet="1"] .a-app{flex:1 1 auto;min-width:0;max-width:none;margin:0;border-right:0;}
+  .a-root[data-sheet="1"]{display:flex;flex-direction:row;align-items:flex-start;max-width:none;margin:0;}
+  .a-root[data-sheet="1"] .a-app{flex:1 1 auto;min-width:0;max-width:none;margin:0 0 0 236px;border:0;}
+  .a-root[data-sheet="1"] .a-screen{max-width:none;}
   .a-root[data-sheet="1"] .a-scrim{display:none;}
   .a-root[data-sheet="1"] .a-sheet:not(.settings){position:sticky;top:0;left:auto;right:auto;bottom:auto;transform:none;
-    flex:0 0 440px;width:440px;height:100vh;max-height:100vh;border-radius:0;border-left:1px solid var(--line);box-shadow:none;animation:none;}
+    flex:0 0 420px;width:420px;height:100vh;max-height:100vh;border-radius:0;border-left:1px solid var(--line);box-shadow:none;animation:none;}
   .a-root[data-sheet="1"] .a-sheet:not(.settings) .a-handle{display:none;}
 }
 
@@ -453,14 +454,32 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-morelink{display:flex;align-items:center;gap:12px;width:100%;padding:14px 6px;border:0;border-bottom:1px solid var(--line);background:none;color:var(--ink);font-size:15px;font-family:var(--font-sans);cursor:pointer;text-align:left;}
 .a-morelink:active{background:var(--surface-pressed);}
 
+/* ===== Phase 6: desktop left sidebar (rail). Hidden on mobile/tablet; shown ≥1024. ===== */
+.a-rail{display:none;}
+.a-rail-brand{display:flex;align-items:center;gap:10px;background:none;border:0;cursor:pointer;padding:6px 8px;margin-bottom:4px;color:inherit;border-radius:12px;}
+.a-rail-brand:hover{background:var(--surface-hover);}
+.a-rail-brand .seal{width:34px;height:34px;border-radius:9px;background:var(--seal);color:var(--on-seal);display:flex;align-items:center;justify-content:center;font-family:var(--font-serif);font-size:20px;flex:none;}
+.a-rail-brand .brandtext{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;}
+.a-rail-brand .ttl{font-family:var(--font-serif);font-size:18px;font-weight:700;letter-spacing:.04em;white-space:nowrap;}
+.a-rail-brand .sub{font-size:9.5px;color:var(--ink-faint);letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;}
+.a-rail-nav{display:flex;flex-direction:column;gap:3px;margin-top:10px;}
+.a-rail-link{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;background:none;border-radius:10px;cursor:pointer;color:var(--ink-soft);font-family:var(--font-sans);font-size:14.5px;text-align:left;position:relative;}
+.a-rail-link:hover{background:var(--surface-hover);color:var(--ink);}
+.a-rail-link.on{color:var(--seal);background:var(--seal-soft);font-weight:600;}
+.a-rail-link .a-rail-ico{width:20px;text-align:center;font-size:15px;flex:none;}
+.a-rail-foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:12px;border-top:1px solid var(--line);}
+.a-rail-ctlrow{display:flex;gap:6px;}
+.a-rail-ctlrow .a-iconbtn{flex:1;width:auto;height:36px;}
+.a-dupg.rail{width:100%;height:38px;}
+.a-badge.rail{position:absolute;right:10px;left:auto;top:50%;transform:translateY(-50%);}
+
 @media (min-width:768px){ .a-app{max-width:760px;} }
 @media (min-width:1024px){
-  .a-app{max-width:1280px;}
+  .a-rail{display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;width:236px;padding:16px 14px;background:var(--surface);border-right:1px solid var(--line);overflow-y:auto;z-index:40;}
+  .a-app{max-width:none;margin:0 0 0 236px;border:0;}
+  .a-screen{max-width:1180px;margin:0 auto;padding:26px 28px 48px;}
   .a-tabs{display:none;}
-  .a-dnav{display:flex;} .a-dctl{display:flex;}
-  .a-screen{padding-bottom:40px;}
-  .a-bar{height:60px;padding:0 22px;}
-  .a-screen{padding-left:24px;padding-right:24px;}
+  .a-bar{display:none;}
 }
 
 /* ===== WS-3 richer almanac-desk calendar cells + legend ===== */

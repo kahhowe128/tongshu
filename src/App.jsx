@@ -412,20 +412,32 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         </div>
       )}
 
+      {/* desktop left sidebar (shown ≥1024; mobile/tablet keep the top bar + bottom tabs) */}
+      <aside className="a-rail" aria-label={L('主导航', 'Primary')}>
+        <button className="a-rail-brand" onClick={() => setTab('home')} aria-label={L('首页', 'Home')}>
+          <span className="seal">通</span>
+          <span className="brandtext"><span className="ttl">通書擇日</span><span className="sub">Tong Shu</span></span>
+        </button>
+        <nav className="a-rail-nav">
+          {NAV.map(n => { const on = tab === n.id || (n.id === 'find' && tab === 'calendar'); return <button key={n.id} className={'a-rail-link' + (on ? ' on' : '')} aria-current={on ? 'page' : undefined} onClick={() => setTab(n.id)}><Icon name={n.icon} size={20} /><span>{L(n.zh, n.en)}</span></button>; })}
+        </nav>
+        <div className="a-rail-foot">
+          <button className="a-rail-link" onClick={() => setTab('saved')}><span className="a-rail-ico">{savedJDNs.length ? '★' : '☆'}</span><span>{L('收藏', 'Saved')}</span>{savedJDNs.length > 0 && <span className="a-badge rail">{savedJDNs.length}</span>}</button>
+          <div className="a-rail-ctlrow">
+            <button className="a-iconbtn" aria-label={L('语言', 'Language')} onClick={() => setLang(l => l === 'zh' ? 'en' : l === 'en' ? 'both' : 'zh')}>{lang === 'zh' ? '中' : lang === 'en' ? 'EN' : '中EN'}</button>
+            <button className="a-iconbtn" aria-label={L('主题', 'Theme')} onClick={() => setTheme(t => THEME_CYCLE[t] || 'light')}>{THEME_SHORT[theme] || '浅'}</button>
+            <button className="a-iconbtn" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)}>?</button>
+            <button className="a-iconbtn" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
+          </div>
+          <button className="a-dupg rail" onClick={() => setSettingsOpen(true)}>{paid ? L('已升级', 'Pro') : L('升级 · 解锁导出', 'Upgrade')}</button>
+        </div>
+      </aside>
+
       <div className="a-app" onClick={() => popId && setPopId(null)}>
         {/* top bar */}
         <header className="a-bar">
           <button className="a-brand" onClick={() => setTab('home')} aria-label={L('首页', 'Home')}><span className="seal">通</span><span className="brandtext"><span className="ttl">通書擇日</span><span className="sub">Tong Shu</span></span></button>
-          {/* desktop primary nav (CSS-hidden on mobile) */}
-          <nav className="a-dnav" aria-label={L('主导航', 'Primary')}>
-            {NAV.map(n => { const on = tab === n.id || (n.id === 'find' && tab === 'calendar'); return <button key={n.id} className={'a-dlink' + (on ? ' on' : '')} aria-current={on ? 'page' : undefined} onClick={() => setTab(n.id)}><Icon name={n.icon} size={18} /><span>{L(n.zh, n.en)}</span></button>; })}
-          </nav>
           <div className="sp" />
-          <div className="a-dctl">
-            <button className="a-iconbtn" aria-label={L('语言', 'Language')} onClick={() => setLang(l => l === 'zh' ? 'en' : l === 'en' ? 'both' : 'zh')}>{lang === 'zh' ? '中' : lang === 'en' ? 'EN' : '中EN'}</button>
-            <button className="a-iconbtn" aria-label={L('主题', 'Theme')} onClick={() => setTheme(t => THEME_CYCLE[t] || 'light')}>{THEME_SHORT[theme] || '浅'}</button>
-            <button className="a-dupg" onClick={() => setSettingsOpen(true)}>{paid ? L('已升级', 'Pro') : L('升级', 'Upgrade')}</button>
-          </div>
           <button className="a-iconbtn" aria-label={L('收藏', 'Saved')} onClick={() => setTab('saved')} style={{ position: 'relative' }}>{savedJDNs.length ? '★' : '☆'}{savedJDNs.length > 0 && <span className="a-badge">{savedJDNs.length}</span>}</button>
           <button className="a-iconbtn a-hide-desktop" aria-label={L('使用教程', 'tutorial')} onClick={() => goTour(0)}>?</button>
           <button className="a-iconbtn a-hide-desktop" aria-label={L('设置', 'settings')} onClick={() => setSettingsOpen(true)}>⚙</button>
