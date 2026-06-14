@@ -3,7 +3,8 @@
 // Schematic by design; marked TODO where the art could later be refined.
 import React from 'react';
 
-const VAR = { ink: 'currentColor', soft: 'var(--ink-soft)', faint: 'var(--ink-faint)', line: 'var(--line-2)', seal: 'var(--seal)', good: 'var(--good)', bad: 'var(--bad)', warn: 'var(--warn)' };
+// colourful palette (Phase 5) — uses the vivid per-theme --ill-* accents so diagrams pop yet still theme
+const VAR = { ink: 'currentColor', soft: 'var(--ink-soft)', faint: 'var(--ill-ink)', line: 'var(--line-2)', seal: 'var(--ill-cinnabar)', good: 'var(--ill-jade)', bad: 'var(--ill-terra)', warn: 'var(--ill-gold)', plum: 'var(--ill-plum)' };
 const cx = 100, cy = 100;
 const onCircle = (r, deg) => [cx + r * Math.cos((deg - 90) * Math.PI / 180), cy + r * Math.sin((deg - 90) * Math.PI / 180)];
 
@@ -23,7 +24,7 @@ function Wuxing() {
 function JianchuCycle() {
   const offs = '建除满平定执破危成收开闭'.split('');
   const bright = [1, 4, 5, 8, 9, 10]; // 除定执成开 + 危 family (schematic)
-  return (<>{offs.map((o, i) => { const [x, y] = onCircle(76, i * 30); const good = bright.includes(i); return (<g key={i}><circle cx={x} cy={y} r="13" fill={good ? 'var(--good-soft)' : 'var(--warn-soft)'} stroke={good ? VAR.good : VAR.warn} strokeWidth="1.4" /><text x={x} y={y + 4} textAnchor="middle" fontSize="12" fill={good ? VAR.good : VAR.warn} fontFamily="var(--font-serif)">{o}</text></g>); })}<circle cx={cx} cy={cy} r="30" fill="none" stroke={VAR.line} strokeWidth="1" strokeDasharray="3 3" /></>);
+  return (<>{offs.map((o, i) => { const [x, y] = onCircle(76, i * 30); const good = bright.includes(i); return (<g key={i}><circle cx={x} cy={y} r="13" fill={good ? 'var(--ill-jadeSoft)' : 'var(--ill-goldSoft)'} stroke={good ? VAR.good : VAR.warn} strokeWidth="1.4" /><text x={x} y={y + 4} textAnchor="middle" fontSize="12" fill={good ? VAR.good : VAR.warn} fontFamily="var(--font-serif)">{o}</text></g>); })}<circle cx={cx} cy={cy} r="30" fill="none" stroke={VAR.line} strokeWidth="1" strokeDasharray="3 3" /></>);
 }
 
 // 60 甲子 wheel — 10 stems (outer) × 12 branches (inner)
@@ -53,7 +54,7 @@ function LeapDiagram() {
   return (<>
     <line x1="14" y1="60" x2="226" y2="60" stroke={VAR.line} strokeWidth="1.5" />
     {months.map(m => { const x = 28 + m * 36; const leap = m === 3; return (<g key={m}>
-      <rect x={x - 14} y="46" width="28" height="28" rx="4" fill={leap ? 'var(--warn-soft)' : 'var(--surface-2)'} stroke={leap ? VAR.warn : VAR.line} strokeWidth="1.4" />
+      <rect x={x - 14} y="46" width="28" height="28" rx="4" fill={leap ? 'var(--ill-goldSoft)' : 'var(--surface-2)'} stroke={leap ? VAR.warn : VAR.line} strokeWidth="1.4" />
       {!leap && <circle cx={x} cy="36" r="3" fill={VAR.seal} />}
       <text x={x} y="64" textAnchor="middle" fontSize="11" fill={leap ? VAR.warn : VAR.soft} fontFamily="var(--font-serif)">{leap ? '闰' : '中'}</text>
     </g>); })}
