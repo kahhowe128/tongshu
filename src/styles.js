@@ -499,6 +499,11 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-launch-go{flex:0 0 auto;height:42px;padding:0 20px;border:0;border-radius:10px;background:var(--seal);color:var(--on-seal);font-size:15px;font-weight:600;font-family:var(--font-sans);cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
 .a-launch-go:hover{background:var(--seal-deep);}
 .a-launch-art{display:none;}
+/* mobile: activity + range share a row, Find is a full-width CTA below */
+@media (max-width:767px){
+  .a-launch-field,.a-launch-field.act{flex:1 1 calc(50% - 5px);}
+  .a-launch-go{flex:1 1 100%;justify-content:center;}
+}
 
 .a-qs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;}
 .a-qs-card{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;text-align:left;font-family:var(--font-sans);box-shadow:var(--sh);transition:transform .12s ease,background .12s ease;}
@@ -536,6 +541,27 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 @media (min-width:1024px){
   .a-launch-h1{font-size:36px;}
   .a-launch-art{width:300px;right:34px;}
+}
+
+/* page header band — launcher-style, used on every screen (Find/Calendar/Academy/Videos/Articles/Tools/About/Saved) */
+.a-phero{position:relative;display:flex;align-items:center;gap:14px;overflow:hidden;border:1px solid var(--line);border-radius:var(--r3);
+  background:radial-gradient(120% 170% at 100% 0,var(--seal-soft) 0,transparent 60%),linear-gradient(180deg,var(--surface) 0,var(--surface-2) 100%);
+  padding:18px 18px;margin-bottom:14px;box-shadow:var(--sh);}
+.a-phero-main{flex:1 1 auto;min-width:0;}
+.a-phero .a-eyebrow{margin-bottom:6px;}
+.a-phero-h1{font-family:var(--font-serif);font-size:23px;font-weight:700;line-height:1.2;margin:0;color:var(--ink);}
+.a-phero-sub{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:6px 0 0;max-width:62ch;}
+.a-phero-sub .en{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);}
+.a-phero-ico{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:15px;color:var(--ill-cinnabar);background:var(--seal-soft);}
+.a-phero.jade .a-phero-ico{color:var(--ill-jade);background:var(--ill-jadeSoft);}
+.a-phero.gold .a-phero-ico{color:var(--ill-gold);background:var(--ill-goldSoft);}
+.a-phero.plum .a-phero-ico{color:var(--ill-plum);background:var(--ill-plumSoft);}
+.a-phero.terra .a-phero-ico{color:var(--ill-terra);background:var(--ill-terraSoft);}
+.a-phero.ink .a-phero-ico{color:var(--ill-ink);background:var(--surface-2);}
+@media (min-width:768px){
+  .a-phero{padding:22px 26px;gap:18px;}
+  .a-phero-h1{font-size:28px;}
+  .a-phero-ico{width:60px;height:60px;border-radius:17px;}
 }
 
 /* ===== WS-3 richer almanac-desk calendar cells + legend ===== */

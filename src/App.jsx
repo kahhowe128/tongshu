@@ -142,6 +142,17 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const refActivities = useRef(null), refRange = useRef(null), refList = useRef(null), refTabs = useRef(null), refGlance = useRef(null), refAccGroup = useRef(null);
 
   const L = (zh, en) => (lang === 'en' ? en : lang === 'both' ? `${zh} / ${en}` : zh);
+  // Phase 6 — consistent gradient page header (launcher-style) used across every screen
+  const PageHero = ({ zh, en, sub, eyebrow, icon, accent = 'cinnabar' }) => (
+    <section className={'a-phero ' + accent}>
+      <div className="a-phero-main">
+        {eyebrow && <div className="a-eyebrow">{eyebrow}</div>}
+        <h1 className="a-phero-h1">{L(zh, en)}</h1>
+        {sub && <p className="a-phero-sub">{sub}</p>}
+      </div>
+      {icon && <span className="a-phero-ico"><Icon name={icon} size={26} /></span>}
+    </section>
+  );
   const colorClass = c => ({ green: 'v-good', red: 'v-bad', amber: 'v-amber', grey: 'v-grey' }[c] || 'v-grey');
   const vIcon = c => ({ green: '✓', red: '✗', amber: '～', grey: '·' }[c] || '·');
   const topYiCat = (dv) => { const g = (dv.perActivity || []).find(p => p.v.color === 'green'); return g ? CAT_ICON[g.act.cat] : null; }; // decorative top-宜 glyph
@@ -559,8 +570,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== FIND / CALENDAR ===================== */}
         {tab === 'find' && (
           <main className="a-screen a-find">
-            <h1 className="a-h1">{L('择吉日', 'Find a date')}</h1>
-            <p className="a-lede">{L('选事项与范围，得到排序后的宜忌建议。', 'Choose activities and a range for ranked guidance.')}</p>
+            <PageHero zh="择吉日" en="Find a date" icon="calendar" accent="cinnabar"
+              eyebrow={L('历法 · 宜忌 · 排序', 'Almanac · 宜/忌 · Ranked')}
+              sub={L('选事项与范围，得到排序后的宜忌建议。', 'Choose activities and a range for ranked guidance.')} />
 
             <div className="a-card" ref={refActivities}>
               <div className="a-sec" style={{ marginTop: 0 }}>{L('事项', 'Activities')} <span className="en">{selActs.length} selected</span></div>
@@ -653,8 +665,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== SAVED ===================== */}
         {tab === 'saved' && (
           <main className="a-screen">
-            <h1 className="a-h1">{L('收藏', 'Saved dates')}</h1>
-            <p className="a-lede">{L('已收藏的日子，仅存于本机、不上传。', 'Your starred days — stored on this device only, never transmitted.')} <span className="en">{savedJDNs.length} saved</span></p>
+            <PageHero zh="收藏" en="Saved dates" icon="save" accent="plum"
+              eyebrow={L('本机 · 私密', 'On-device · Private')}
+              sub={<>{L('已收藏的日子，仅存于本机、不上传。', 'Your starred days — stored on this device only, never transmitted.')} <span className="en">{savedJDNs.length} saved</span></>} />
             {savedJDNs.length === 0
               ? <div className="a-empty">{L('还没有收藏。在列表、日历或日详情点 ☆ 收藏。', 'No saved dates yet. Tap ☆ on a list row, a calendar day, or the day sheet to save one.')}</div>
               : (<>
@@ -668,7 +681,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== CALENDAR ===================== */}
         {tab === 'calendar' && (
           <main className="a-screen">
-            <h1 className="a-h1">{L('黄历', 'Almanac')}</h1>
+            <PageHero zh="黄历" en="Almanac" icon="calendar" accent="jade"
+              eyebrow={L('干支 · 节气 · 神煞', 'Ganzhi · Terms · Spirits')}
+              sub={L('逐月查看每日干支、宜忌与吉时。', 'Browse each day’s ganzhi, 宜/忌 and lucky hours, month by month.')} />
             <div className="a-annual">
               <span className="yr">{calY} {STEMS[annualCal.yp.stem] + BRANCHES[annualCal.yp.branch]}{L('年', '')}</span>
               <span><b>{L('太岁', 'Tai Sui')}</b> {annualCal.taiSuiZodiac}·{annualCal.taiSuiDir}</span>
@@ -718,7 +733,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== TOOLS ===================== */}
         {tab === 'tools' && (
           <main className="a-screen">
-            <h1 className="a-h1">{L('工具', 'Tools')}</h1>
+            <PageHero zh="工具" en="Tools" icon="tools" accent="gold"
+              eyebrow={L('校验 · 自检 · 速查', 'Verify · Self-test · Lookup')}
+              sub={L('历法校验与速查工具，可核对节气、朔望与神煞。', 'Calendar checks and quick lookups — verify terms, moons and spirits.')} />
 
             <div className="a-card">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('生辰八字', 'Birth chart')} <span className="en">optional</span></div>
@@ -803,6 +820,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
 
         {tab === 'learn' && (
           <main className="a-screen">
+            <PageHero zh="关于" en="About" icon="info" accent="ink"
+              eyebrow={L('指南 · 词汇 · 源流', 'Guide · Glossary · Sources')}
+              sub={L('快速上手、用例、词汇表与历法源流；推算参考，非定论。', 'Quick start, examples, glossary and sources — computed guidance, never definitive.')} />
             <div className="a-card">
               <div className="a-sec" style={{ marginTop: 0 }}>{L('快速上手', 'Quick start')}</div>
               <ol className="a-ql">{DOCS.quick.map((s, i) => <li key={i}>{L(s[0], s[1])}</li>)}</ol>
@@ -875,8 +895,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {tab === 'academy' && (
           <main className="a-screen a-academy">
             {!acaChapter ? (<>
-              <h1 className="a-h1">{L('学堂', 'Academy')}</h1>
-              <p className="a-lede">{L('用故事认识择吉的基础与术语；叙述生动，史实仍依典籍。', 'Learn the basics and terms of date-selection through short stories — lively telling, sourced facts.')}</p>
+              <PageHero zh="学堂" en="Academy" icon="academy" accent="cinnabar"
+                eyebrow={L('故事 · 图解 · 课程', 'Stories · Diagrams · Lessons')}
+                sub={L('用故事认识择吉的基础与术语；叙述生动，史实仍依典籍。', 'Learn the basics and terms of date-selection through short stories — lively telling, sourced facts.')} />
               {(() => {
                 const total = DOCS.academy.length, done = acaDoneCount(), pct = total ? Math.round(done / total * 100) : 0;
                 const nx = DOCS.academy.find(c => c.id === nextChapterId());
@@ -952,8 +973,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== VIDEOS ===================== */}
         {tab === 'videos' && (
           <main className="a-screen a-media a-videos">
-            <h1 className="a-h1">{L('视频', 'Videos')}</h1>
-            <p className="a-lede">{L('择吉与历法的短课程。', 'Short lessons on date-selection and the almanac.')}</p>
+            <PageHero zh="视频" en="Videos" icon="video" accent="terra"
+              eyebrow={L('短课 · 视频', 'Short lessons · Video')}
+              sub={L('择吉与历法的短课程。', 'Short lessons on date-selection and the almanac.')} />
             {(DOCS.media.videos || []).length === 0
               ? <div className="a-empty">{L('课程视频即将上线。', 'Video lessons coming soon.')}</div>
               : <div className="a-vidgrid">{DOCS.media.videos.map(v => {
@@ -996,8 +1018,9 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                 </article>
               );
               return (<>
-                <h1 className="a-h1">{L('文章', 'Articles')}</h1>
-                <p className="a-lede">{L('深入的择吉与历法文章。', 'In-depth articles on date-selection and the almanac.')}</p>
+                <PageHero zh="文章" en="Articles" icon="article" accent="plum"
+                  eyebrow={L('深读 · 文章', 'In-depth · Articles')}
+                  sub={L('深入的择吉与历法文章。', 'In-depth articles on date-selection and the almanac.')} />
                 {arts.length === 0
                   ? <div className="a-empty">{L('文章敬请期待。', 'Articles coming soon.')}</div>
                   : <div className="a-lessons-grid">{arts.map(a => (
