@@ -394,8 +394,11 @@ const ACADEMY_MODULES = [
 // INTEGRITY: a non-empty article body MUST carry a non-empty sourceAttribution (docs lint enforces this);
 // never fabricate fengshui claims; never bundle copyrighted media; only youtube-nocookie embeds are allowed.
 const MEDIA = {
+  // TO PUBLISH A VIDEO (YouTube path — ready now): upload the clip to YouTube (unlisted is fine), copy its
+  // 11-char video id (the v=XXXXXXXXXXX part), and paste it into `src` below. provider stays 'youtube'; it
+  // embeds via privacy-friendly youtube-nocookie and passes the offline/asset gate. Empty src => "coming soon".
   videos: [
-    { id: 'intro', title: ['通書擇日 · 上手介绍', 'Tong Shu · Getting started'], teaser: ['一分钟了解如何挑一个吉日。', 'A one-minute tour of finding an auspicious date.'], poster: '', src: '', provider: '', duration: '', tags: ['intro'] },
+    { id: 'intro', title: ['通書擇日 · 上手介绍', 'Tong Shu · Getting started'], teaser: ['一分钟了解如何挑一个吉日。', 'A one-minute tour of finding an auspicious date.'], poster: '', src: '', provider: 'youtube', duration: '', tags: ['intro'] },
   ],
   articles: [
     { id: 'read-a-day', title: ['如何读懂一天', 'How to read a day page'], excerpt: ['日页各部分的含义速览。', 'A quick tour of what each part of the day sheet means.'], cover: '', body: null, author: '', date: '', tags: ['guide'], sourceAttribution: '' },
