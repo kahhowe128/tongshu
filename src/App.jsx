@@ -24,6 +24,7 @@ import { DOCS, GLOSS_CATS, GLOSSARY } from './docs.gen.js';
 import { loadSaved, saveLocal, loadSavedDates, saveSavedDates, loadProgress, saveProgress } from './lib/storage.js';
 import { Icon } from './assets/icons.jsx';
 import { Illustration } from './assets/illustrations.jsx';
+import { Art } from './assets/art.jsx';
 import { Diagram, DIAGRAM_NAMES } from './assets/diagrams.jsx';
 import { loadLicence, saveLicence, clearLicence, isEntitled, needsRevalidation, validateLicence, WORKER_URL, CHECKOUT } from './lib/entitlement.js';
 import { buildExplanation, explanationToText } from './lib/explain.js';
@@ -443,7 +444,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <button className="a-btn-ghost" onClick={() => setTab('academy')}><Icon name="academy" size={18} /> {L('开始学习', 'Start learning')} →</button>
                 </div>
               </div>
-              <div className="a-hero-art"><Illustration name="hero" lang={lang === 'en' ? 'en' : 'zh'} size={380} /></div>
+              <div className="a-hero-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} size={380} /></div>
             </section>
 
             <div className="a-trust">
@@ -464,7 +465,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
             <div className="a-feature-row">
               {DOCS.academy.slice(0, 4).map(c => (
                 <button key={c.id} className="a-feature-card" onClick={() => { setAcaChapter(c.id); setTab('academy'); }}>
-                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={240} />
+                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={240} />
                   <div className="ft">{L(c.title[0], c.title[1])}</div>
                 </button>
               ))}
@@ -853,7 +854,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                         return (
                           <button key={c.id} className="a-path-item" onClick={() => setAcaChapter(c.id)} aria-label={L(c.title[0], c.title[1]) + (done ? ' · ' + L('已学完', 'done') : '')}>
                             <span className={'a-path-node' + (done ? ' done' : current ? ' current' : '')}>{done ? '✓' : ''}</span>
-                            <span className="a-path-cover"><Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={120} /></span>
+                            <span className="a-path-cover"><Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={120} /></span>
                             <span className="a-path-body">
                               <span className="pt">{L(c.title[0], c.title[1])}</span>
                               <span className="pm">{L(`第 ${gi + 1} 章`, `Chapter ${gi + 1}`)} · {L('约 2 分钟', '~2 min')}</span>
@@ -877,7 +878,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <div className="a-progress" aria-hidden="true"><i style={{ width: ((idx + 1) / DOCS.academy.length * 100) + '%' }} /></div>
                   <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}{isDone(c.id) ? ' · ✓ ' + L('已学完', 'done') : ''}</div>
                   <h1 className="a-h1">{L(c.title[0], c.title[1])}</h1>
-                  <Illustration name={c.figure} lang={lang === 'en' ? 'en' : 'zh'} size={460} />
+                  <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} size={460} />
                   <p className="a-reader-body">{L(c.story[0], c.story[1])}</p>
                   <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => { setTab('learn'); setGFocus(id); }}>{g.zh} ↗</button> : null; })}</div>
                   <div className="a-reader-cross">
