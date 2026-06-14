@@ -916,26 +916,46 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
               {DOCS.academyModules.map((m, mi) => {
                 const chs = m.chapters.map(cid => DOCS.academy.find(c => c.id === cid)).filter(Boolean);
                 return (
-                  <div key={m.id} className="a-module">
-                    <div className="a-module-head"><span className="mno">{['壹', '贰', '叁', '肆'][mi] || (mi + 1)}</span> {L(m.zh, m.en)}</div>
-                    <div className="a-path">
-                      <div className="a-path-spine" aria-hidden="true" />
+                  <section key={m.id} className="a-track">
+                    <div className="a-track-head">
+                      <span className="a-track-no">{['壹', '贰', '叁', '肆'][mi] || (mi + 1)}</span>
+                      <div className="a-track-meta"><h2 className="a-track-title">{L(m.zh, m.en)}</h2><span className="a-track-sub">{chs.length} {L('课', chs.length === 1 ? 'lesson' : 'lessons')}</span></div>
+                    </div>
+                    <div className="a-lgrid">
                       {chs.map(c => { const gi = DOCS.academy.indexOf(c); const done = isDone(c.id); const current = c.id === nextChapterId();
                         return (
-                          <button key={c.id} className="a-path-item" onClick={() => setAcaChapter(c.id)} aria-label={L(c.title[0], c.title[1]) + (done ? ' · ' + L('已学完', 'done') : '')}>
-                            <span className={'a-path-node' + (done ? ' done' : current ? ' current' : '')}>{done ? '✓' : ''}</span>
-                            <span className="a-path-cover"><Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={120} /></span>
-                            <span className="a-path-body">
-                              <span className="pt">{L(c.title[0], c.title[1])}</span>
-                              <span className="pm">{L(`第 ${gi + 1} 章`, `Chapter ${gi + 1}`)} · {L('约 2 分钟', '~2 min')}</span>
+                          <button key={c.id} className="a-lcard" onClick={() => setAcaChapter(c.id)} aria-label={L(c.title[0], c.title[1]) + (done ? ' · ' + L('已学完', 'done') : '')}>
+                            <span className="a-lcard-cover"><Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={480} />{done && <span className="a-lcard-done" aria-hidden="true">✓</span>}</span>
+                            <span className="a-lcard-body">
+                              <span className="a-lcard-meta">{L(`第 ${gi + 1} 章`, `Lesson ${gi + 1}`)} · {L('约 2 分钟', '~2 min read')}</span>
+                              <span className="a-lcard-title">{L(c.title[0], c.title[1])}</span>
+                              <span className={'a-lcard-chip' + (done ? ' done' : current ? ' current' : '')}>{done ? '✓ ' + L('已学完', 'Completed') : current ? L('继续学习 →', 'Continue →') : L('开始 →', 'Start →')}</span>
                             </span>
-                            <span className={'a-path-chip' + (done ? ' done' : current ? ' current' : '')}>{done ? L('已学完', 'Done') : current ? L('继续', 'Continue') : L('未学', 'New')}</span>
                           </button>
                         ); })}
                     </div>
-                  </div>
+                  </section>
                 );
               })}
+              {/* upcoming lessons — placeholders; swap each for a real chapter as content is produced (see generation brief) */}
+              <section className="a-track">
+                <div className="a-track-head">
+                  <span className="a-track-no plus">＋</span>
+                  <div className="a-track-meta"><h2 className="a-track-title">{L('进阶课程', 'Going further')}</h2><span className="a-track-sub">{L('即将上线', 'Coming soon')}</span></div>
+                </div>
+                <div className="a-lgrid">
+                  {[['二十四节气详解', 'The 24 solar terms, in depth'], ['十二生肖与冲煞', 'Your zodiac sign & clashes'], ['每日吉时怎么看', 'Reading the lucky hours'], ['择日实战：开新店', 'Worked example: opening a shop']].map(([zh, en], i) => (
+                    <div key={i} className="a-lcard soon" aria-disabled="true">
+                      <span className="a-lcard-cover soon"><Icon name="academy" size={38} /></span>
+                      <span className="a-lcard-body">
+                        <span className="a-lcard-meta">{L('新课程', 'New lesson')}</span>
+                        <span className="a-lcard-title">{L(zh, en)}</span>
+                        <span className="a-lcard-chip soon">{L('敬请期待', 'Coming soon')}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </section>
               <div className="a-sec">{L('图解', 'Diagrams')}</div>
               <div className="a-diagram-grid">{DIAGRAM_NAMES.map(n => <Diagram key={n} name={n} lang={lang === 'en' ? 'en' : 'zh'} size={240} />)}</div>
             </>) : (() => {
