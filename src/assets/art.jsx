@@ -14,11 +14,16 @@ export const ART_AVAILABLE = new Set([
   'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
   'terms', 'zodiacclash', 'hours', 'openshop',
   'openshop_read', 'openshop_tea', 'openshop_almanac', 'openshop_clash', 'openshop_hour',
+  // Foundations lesson photos (P6-K)
+  'sky_gnomon', 'sky_season', 'bargain_moon', 'bargain_festival', 'wheel_tokens', 'wheel_record',
 ]);
 
 // Photoreal pieces are bundled as .webp; everything else is on-palette .svg vector.
 export const ART_PHOTO = new Set([
   'openshop', 'openshop_read', 'openshop_tea', 'openshop_almanac', 'openshop_clash', 'openshop_hour',
+  // Foundations: photoreal covers + section figures (P6-K)
+  'sky', 'bargain', 'wheel',
+  'sky_gnomon', 'sky_season', 'bargain_moon', 'bargain_festival', 'wheel_tokens', 'wheel_record',
 ]);
 
 export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light', onlyLight = false }) {
