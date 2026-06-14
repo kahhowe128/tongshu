@@ -114,6 +114,7 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const [sortMode, setSortMode] = useState('score');
   const [actTab, setActTab] = useState('everyday'); // activity picker tab: 'everyday' | 'xiong'
   const [findView, setFindView] = useState(initialFindView); // 'list' | 'cal' (heat-strip)
+  const [homeRange, setHomeRange] = useState(90); // Phase 6 launcher date-range (days)
   const [findCalY, setFindCalY] = useState(today.y);
   const [findCalM, setFindCalM] = useState(today.mo);
   const [mansionOffset, setMansionOffset] = useState(0);
@@ -156,6 +157,14 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
   const toggleDone = (id) => setProgress(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id]);
   const acaDoneCount = () => (DOCS.academy || []).filter(c => progress.includes(c.id)).length;
   const nextChapterId = () => { const a = DOCS.academy || []; return ((a.find(c => !progress.includes(c.id)) || a[0]) || {}).id; };
+  // Phase 6 launcher — optionally preset the activity, set the date range, jump to the calendar
+  const goFind = (actId) => {
+    if (actId) setSelIds([actId]);
+    const ed = new Date(today.y, today.mo - 1, today.d + homeRange);
+    setStartStr(fmtYMD(today.y, today.mo, today.d));
+    setEndStr(fmtYMD(ed.getFullYear(), ed.getMonth() + 1, ed.getDate()));
+    setFindView('cal'); setTab('find');
+  };
   // WS-3 licence helpers
   const applyLicence = (st) => { saveLicence(st); setLicence(st); };
   const removeLicence = () => { clearLicence(); setLicence(null); setLicMsg(null); };
@@ -446,23 +455,51 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
         {/* ===================== HOME ===================== */}
         {tab === 'home' && (
           <main className="a-screen a-home">
-            <section className="a-hero">
-              <div className="a-hero-text">
+            {/* launcher hero — pick an activity + range, jump to the ranked calendar (Firefly-style prompt bar) */}
+            <section className="a-launch">
+              <div className="a-launch-main">
                 <div className="a-eyebrow">{L('传统 · 历法 · 择吉', 'Tradition · Almanac · Date-selection')}</div>
-                <h1 className="a-hero-h1">{L('擇日的學問', 'The art of the almanac')}</h1>
-                <p className="a-hero-vp">{L('读懂一天，挑一个好日子——算得准，说得明白。', 'Read a day, choose a good one — computed exactly, explained honestly.')}</p>
-                <div className="a-hero-cta">
-                  <button className="a-btn" style={{ width: 'auto', padding: '0 22px' }} onClick={() => setTab('find')}><Icon name="calendar" size={18} /> {L('选个吉日', 'Find a date')}</button>
-                  <button className="a-btn-ghost" onClick={() => setTab('academy')}><Icon name="academy" size={18} /> {L('开始学习', 'Start learning')} →</button>
+                <h1 className="a-launch-h1">{L('想挑个什么好日子？', 'What are you choosing a date for?')}</h1>
+                <p className="a-launch-sub">{L('选事项与日期范围，得到按吉凶排序、并说明原因的日子。', 'Pick an activity and a range — get the days ranked by favourability, each with the reason why.')}</p>
+                <div className="a-launch-bar">
+                  <label className="a-launch-field act">
+                    <span>{L('我要办', 'Activity')}</span>
+                    <select value={selIds[0] || 'jiaqu'} onChange={e => setSelIds([e.target.value])}>
+                      {ACTIVITIES.map(a => <option key={a.id} value={a.id}>{L(a.zh, a.en)}</option>)}
+                    </select>
+                  </label>
+                  <label className="a-launch-field">
+                    <span>{L('范围', 'Range')}</span>
+                    <select value={homeRange} onChange={e => setHomeRange(+e.target.value)}>
+                      <option value={30}>{L('未来 30 天', 'Next 30 days')}</option>
+                      <option value={60}>{L('未来 60 天', 'Next 60 days')}</option>
+                      <option value={90}>{L('未来 90 天', 'Next 90 days')}</option>
+                      <option value={180}>{L('未来半年', 'Next 6 months')}</option>
+                    </select>
+                  </label>
+                  <button className="a-launch-go" onClick={() => goFind()}><Icon name="find" size={18} /> {L('选吉日', 'Find dates')}</button>
                 </div>
               </div>
-              <div className="a-hero-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} size={380} /></div>
+              <div className="a-launch-art"><Art name="hero" alt={L('通书择日', 'Tong Shu almanac')} lang={lang === 'en' ? 'en' : 'zh'} size={300} /></div>
             </section>
 
-            <div className="a-trust">
-              <button className="a-trust-pill" onClick={() => setTab('tools')}><b>{L('历法精确可验证', 'Verifiable astronomy')}</b><span>{L('节气、朔、置闰皆可核对', 'Check terms, new moons, leaps')}</span></button>
-              <button className="a-trust-pill" onClick={() => { setTab('learn'); setGFocus('exactgraded'); }}><b>{L('传统如实分级', 'Honestly graded')}</b><span>{L('高/中置信，未纳入者明示', 'H/M confidence; omissions shown')}</span></button>
-              <div className="a-trust-pill static"><b>{L('离线·不收集数据', 'Offline & private')}</b><span>{L('全部本机计算，传输为零', 'All on-device, nothing sent')}</span></div>
+            {/* quick start — the four things you do most */}
+            <div className="a-qs-grid">
+              <button className="a-qs-card" onClick={() => goFind()}><span className="a-qs-ico jade"><Icon name="find" size={22} /></span><b>{L('择吉日', 'Find a date')}</b><span>{L('按宜忌排序', 'Ranked by 宜/忌')}</span></button>
+              <button className="a-qs-card" onClick={() => setSelJDN(todayJDN)}><span className="a-qs-ico gold"><Icon name="calendar" size={22} /></span><b>{L('今日通书', 'Today')}</b><span>{L('看今天这一日', 'Open today’s sheet')}</span></button>
+              <button className="a-qs-card" onClick={() => setTab('academy')}><span className="a-qs-ico cinnabar"><Icon name="academy" size={22} /></span><b>{L('学堂', 'Academy')}</b><span>{L('故事与课程', 'Stories & lessons')}</span></button>
+              <button className="a-qs-card" onClick={() => setTab('saved')}><span className="a-qs-ico plum"><Icon name="save" size={22} /></span><b>{L('收藏', 'Saved')}</b><span>{savedJDNs.length ? L(savedJDNs.length + ' 个已存', savedJDNs.length + ' saved') : L('收藏的日子', 'Your saved days')}</span></button>
+            </div>
+
+            {/* common scenarios — one tap presets the calculator */}
+            <div className="a-sec">{L('常见场景', 'Common scenarios')} <span className="en">{L('一键带入择日', 'one-tap presets')}</span></div>
+            <div className="a-scn-grid">
+              {[['jiaqu', 'cinnabar'], ['banjia', 'jade'], ['kaishi', 'gold'], ['chuxing', 'plum'], ['qifu', 'terra'], ['anzang', 'ink']].map(([id, ac]) => { const a = ACTIVITIES.find(x => x.id === id); if (!a) return null; return (
+                <button key={id} className={'a-scn-tile ' + ac} onClick={() => goFind(id)}>
+                  <span className="a-scn-ico"><Icon name={CAT_ICON[a.cat] || 'catMisc'} size={20} /></span>
+                  <span className="a-scn-tl">{L(a.zh, a.en)}</span>
+                </button>
+              ); })}
             </div>
 
             {/* today's almanac teaser — real engine, free */}

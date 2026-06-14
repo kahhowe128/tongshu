@@ -482,6 +482,62 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
   .a-bar{display:none;}
 }
 
+/* ===== Phase 6: launcher home (hero prompt-bar + quick-start cards + scenario tiles) ===== */
+.a-launch{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:var(--r3);
+  background:radial-gradient(130% 150% at 100% 0,var(--seal-soft) 0,transparent 55%),linear-gradient(180deg,var(--surface) 0,var(--surface-2) 100%);
+  padding:22px 20px;margin-bottom:14px;box-shadow:var(--sh);}
+.a-launch-main{position:relative;z-index:1;}
+.a-launch .a-eyebrow{margin-bottom:8px;}
+.a-launch-h1{font-family:var(--font-serif);font-size:26px;line-height:1.18;font-weight:700;margin:0 0 8px;color:var(--ink);}
+.a-launch-sub{font-size:14px;color:var(--ink-soft);line-height:1.6;margin:0 0 16px;max-width:52ch;}
+.a-launch-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;max-width:680px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r2);box-shadow:var(--sh);}
+.a-launch-field{display:flex;flex-direction:column;gap:4px;flex:1 1 140px;min-width:0;}
+.a-launch-field.act{flex:2 1 200px;}
+.a-launch-field span{font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;padding-left:2px;}
+.a-launch-field select{appearance:none;-webkit-appearance:none;width:100%;height:42px;padding:0 30px 0 12px;border:1px solid var(--line-2);border-radius:10px;color:var(--ink);font-family:var(--font-sans);font-size:14.5px;cursor:pointer;
+  background:var(--surface) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4.5l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.6'/></svg>") no-repeat right 10px center;}
+.a-launch-go{flex:0 0 auto;height:42px;padding:0 20px;border:0;border-radius:10px;background:var(--seal);color:var(--on-seal);font-size:15px;font-weight:600;font-family:var(--font-sans);cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+.a-launch-go:hover{background:var(--seal-deep);}
+.a-launch-art{display:none;}
+
+.a-qs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:6px;}
+.a-qs-card{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:14px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;text-align:left;font-family:var(--font-sans);box-shadow:var(--sh);transition:transform .12s ease,background .12s ease;}
+.a-qs-card:active{background:var(--surface-pressed);}
+@media (hover:hover){.a-qs-card:hover{background:var(--surface-hover);transform:translateY(-1px);}}
+.a-qs-card b{font-family:var(--font-serif);font-size:14.5px;color:var(--ink);}
+.a-qs-card span:last-child{font-size:11px;color:var(--ink-soft);}
+.a-qs-ico{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:11px;margin-bottom:6px;}
+.a-qs-ico.jade{color:var(--ill-jade);background:var(--ill-jadeSoft);}
+.a-qs-ico.gold{color:var(--ill-gold);background:var(--ill-goldSoft);}
+.a-qs-ico.cinnabar{color:var(--ill-cinnabar);background:var(--seal-soft);}
+.a-qs-ico.plum{color:var(--ill-plum);background:var(--ill-plumSoft);}
+
+.a-scn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:6px;}
+.a-scn-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;padding:16px 8px;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface);cursor:pointer;font-family:var(--font-sans);box-shadow:var(--sh);transition:transform .12s ease;}
+.a-scn-tile:active{background:var(--surface-pressed);}
+@media (hover:hover){.a-scn-tile:hover{transform:translateY(-2px);}}
+.a-scn-ico{display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:50%;}
+.a-scn-tl{font-family:var(--font-serif);font-size:13.5px;font-weight:700;color:var(--ink);}
+.a-scn-tile.cinnabar .a-scn-ico{color:var(--ill-cinnabar);background:var(--seal-soft);}
+.a-scn-tile.jade .a-scn-ico{color:var(--ill-jade);background:var(--ill-jadeSoft);}
+.a-scn-tile.gold .a-scn-ico{color:var(--ill-gold);background:var(--ill-goldSoft);}
+.a-scn-tile.plum .a-scn-ico{color:var(--ill-plum);background:var(--ill-plumSoft);}
+.a-scn-tile.terra .a-scn-ico{color:var(--ill-terra);background:var(--ill-terraSoft);}
+.a-scn-tile.ink .a-scn-ico{color:var(--ill-ink);background:var(--surface-2);}
+
+@media (min-width:768px){
+  .a-qs-grid{grid-template-columns:repeat(4,1fr);}
+  .a-scn-grid{grid-template-columns:repeat(6,1fr);}
+  .a-launch{padding:30px 28px;}
+  .a-launch-main{max-width:640px;}
+  .a-launch-h1{font-size:32px;}
+  .a-launch-art{display:block;position:absolute;right:18px;bottom:-8px;width:250px;opacity:.95;z-index:0;pointer-events:none;}
+}
+@media (min-width:1024px){
+  .a-launch-h1{font-size:36px;}
+  .a-launch-art{width:300px;right:34px;}
+}
+
 /* ===== WS-3 richer almanac-desk calendar cells + legend ===== */
 .a-cal-rich .a-cell{aspect-ratio:auto;min-height:60px;gap:1px;padding:4px 3px;justify-content:flex-start;}
 .a-cell .cl{font-size:8.5px;color:var(--ink-faint);line-height:1.1;}
