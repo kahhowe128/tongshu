@@ -641,6 +641,25 @@ textarea.a-in{min-height:64px;resize:vertical;line-height:1.5;}
 .a-reader-body{font-size:15px;line-height:1.85;color:var(--ink);margin:12px 0;}
 .a-reader-cross{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
 .a-reader-cross .a-btn-ghost{display:inline-flex;align-items:center;gap:6px;}
+
+/* ===== Phase 6: rich lesson reader — sections, inline figures, case studies, takeaways ===== */
+.a-reader-meta{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);background:var(--surface-2);border-radius:999px;padding:4px 12px;margin:8px 0 12px;}
+.a-reader-lead{font-size:16.5px;line-height:1.8;color:var(--ink);margin:6px 0 20px;font-weight:500;}
+.a-reader-sec{margin:24px 0;}
+.a-reader-h2{display:flex;align-items:center;gap:10px;font-family:var(--font-serif);font-size:20px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.25;}
+.a-reader-h2 .rh-no{flex:none;width:28px;height:28px;border-radius:8px;background:var(--seal-soft);color:var(--seal);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:13px;font-weight:700;}
+.a-reader-fig{display:block;margin:10px auto 14px;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden;background:var(--surface-2);max-width:560px;width:100%;}
+.a-casebox{margin:26px 0;border:1px solid var(--line);border-left:3px solid var(--seal);border-radius:var(--r2);background:var(--surface-2);padding:16px 18px;}
+.a-casebox-h{display:flex;align-items:center;gap:7px;font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--seal);margin-bottom:10px;}
+.a-case{margin:12px 0;}
+.a-case + .a-case{border-top:1px dashed var(--line-2);padding-top:14px;}
+.a-case-t{font-family:var(--font-serif);font-size:15.5px;font-weight:700;color:var(--ink);margin:6px 0;}
+.a-case p{font-size:14px;line-height:1.75;color:var(--ink-soft);margin:6px 0;}
+.a-takeaways{margin:24px 0;border:1px solid var(--line);border-radius:var(--r2);background:var(--surface-2);padding:14px 18px;}
+.a-takeaways-h{font-family:var(--font-serif);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+.a-takeaways ul{margin:0;padding-left:20px;}
+.a-takeaways li{font-size:14px;line-height:1.7;color:var(--ink-soft);margin:6px 0;}
+.a-takeaways li::marker{color:var(--good);}
 .a-reader-nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px;border-top:1px solid var(--line);padding-top:14px;}
 .a-reader-nav .a-btn-ghost{max-width:48%;text-align:left;}
 

@@ -950,7 +950,33 @@ export default function TongShuApp({ initialTab = 'home', initialLang = 'zh', in
                   <div className="a-reader-no">{L(`第 ${idx + 1} 章`, `Chapter ${idx + 1}`)} / {DOCS.academy.length}{isDone(c.id) ? ' · ✓ ' + L('已学完', 'done') : ''}</div>
                   <h1 className="a-h1">{L(c.title[0], c.title[1])}</h1>
                   <Art name={c.figure} alt={L(c.title[0], c.title[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={460} />
-                  <p className="a-reader-body">{L(c.story[0], c.story[1])}</p>
+                  {c.readMin && <div className="a-reader-meta"><Icon name="academy" size={14} /> {L(`约 ${c.readMin} 分钟阅读`, `${c.readMin} min read`)}{(c.sections || []).length ? ' · ' + (c.sections.length + 1) + (lang === 'en' ? ' parts' : ' 节') : ''}</div>}
+                  <p className="a-reader-lead">{L(c.story[0], c.story[1])}</p>
+                  {(c.sections || []).map((s, si) => (
+                    <section key={si} className="a-reader-sec">
+                      <h2 className="a-reader-h2"><span className="rh-no">{si + 1}</span>{L(s.h[0], s.h[1])}</h2>
+                      {s.figure && <Art name={s.figure} alt={L(s.h[0], s.h[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={560} className="a-reader-fig" />}
+                      {L(s.body[0], s.body[1]).split('\n\n').map((p, pi) => <p key={pi} className="a-reader-body">{p}</p>)}
+                    </section>
+                  ))}
+                  {(c.cases || []).length > 0 && (
+                    <div className="a-casebox">
+                      <div className="a-casebox-h"><Icon name="article" size={15} /> {L('案例研究', 'Case studies')}</div>
+                      {c.cases.map((cs, ci) => (
+                        <div key={ci} className="a-case">
+                          {cs.figure && <Art name={cs.figure} alt={L(cs.t[0], cs.t[1])} lang={lang === 'en' ? 'en' : 'zh'} theme={theme} size={520} className="a-reader-fig" />}
+                          <div className="a-case-t">{L(cs.t[0], cs.t[1])}</div>
+                          {L(cs.body[0], cs.body[1]).split('\n\n').map((p, pi) => <p key={pi}>{p}</p>)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {(c.takeaways || []).length > 0 && (
+                    <div className="a-takeaways">
+                      <div className="a-takeaways-h">{L('要点回顾', 'Key takeaways')}</div>
+                      <ul>{c.takeaways.map((t, ti) => <li key={ti}>{L(t[0], t[1])}</li>)}</ul>
+                    </div>
+                  )}
                   <div className="a-case-links"><span style={{ fontSize: '11px', color: 'var(--ink-faint)', alignSelf: 'center' }}>{L('想深入', 'Go deeper')}:</span>{c.glossaryLinks.map(id => { const g = GLOSSARY.find(e => e.id === id); return g ? <button key={id} className="a-case-link" onClick={() => { setTab('learn'); setGFocus(id); }}>{g.zh} ↗</button> : null; })}</div>
                   <div className="a-reader-cross">
                     <button className="a-btn-ghost" onClick={() => setTab('learn')}><Icon name="article" size={15} /> {L('看用例', 'See a worked example')}</button>

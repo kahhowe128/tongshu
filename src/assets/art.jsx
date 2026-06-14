@@ -13,6 +13,7 @@ import { Illustration } from './illustrations.jsx';
 export const ART_AVAILABLE = new Set([
   'hero', 'sky', 'bargain', 'wheel', 'court', 'spirits', 'yourturn',
   'terms', 'zodiacclash', 'hours', 'openshop',
+  'openshop_read', 'openshop_tea',
 ]);
 
 export function Art({ name, alt, size = 320, className, style, lang = 'zh', theme = 'light', onlyLight = false }) {
